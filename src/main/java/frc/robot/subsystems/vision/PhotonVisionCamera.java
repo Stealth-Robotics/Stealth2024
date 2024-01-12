@@ -88,10 +88,29 @@ public class PhotonVisionCamera extends SubsystemBase{
 
     public Optional<Pose3d> getFieldPositionFromTargets(List<PhotonTrackedTarget> targets){
         Optional<Pose3d> fieldPosition = Optional.empty();
+        Pose3d camera0FieldPose = new Pose3d();
+        Pose3d camera1FieldPose = new Pose3d();
         if(targets.get(0) != null){
             Optional<Pose3d> aprilTagPose = aprilTagFieldLayout.getTagPose(targets.get(0).getFiducialId());
-            Pose3d camera0FieldPose = PhotonUtils.estimateFieldToRobotAprilTag(targets.get(0).getBestCameraToTarget(), aprilTagPose.get(), kCamera0Offset);
+            camera0FieldPose = PhotonUtils.estimateFieldToRobotAprilTag(targets.get(0).getBestCameraToTarget(), aprilTagPose.get(), kCamera0Offset);
             
+        }
+        if(targets.get(1) != null){
+            Optional<Pose3d> aprilTagPose = aprilTagFieldLayout.getTagPose(targets.get(1).getFiducialId());
+            camera1FieldPose = PhotonUtils.estimateFieldToRobotAprilTag(targets.get(1).getBestCameraToTarget(), aprilTagPose.get(), kCamera1Offset);
+            
+        }
+        if(targets.get(0) != null && targets.get(1) != null){
+            Pose3d averagePose = new Pose3d();
+            averagePose = camera0FieldPose.plus(new Transform3d(camera1FieldPose.getTranslation(), camera1FieldPose.getRotation()));
+            averagePose = averagePose.times(0.5);
+            fieldPosition = Optional.of(averagePose);
+        }
+        else if(targets.get(0) != null){
+            fieldPosition = Optional.of(camera0FieldPose);
+        }
+        else if(targets.get(1) != null){
+            fieldPosition = Optional.of(camera1FieldPose);
         }
 
         return fieldPosition;
