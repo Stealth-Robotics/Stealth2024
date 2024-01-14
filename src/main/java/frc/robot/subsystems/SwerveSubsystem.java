@@ -1,10 +1,9 @@
 package frc.robot.subsystems;
 
 import java.io.File;
-import java.io.IOException;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -12,6 +11,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Vision.PoseEstimationSystem;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
@@ -34,9 +34,11 @@ public class SwerveSubsystem extends SubsystemBase {
     private final File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(), "swerve");
 
     private final SwerveDrive swerveDrive;
+    private final PoseEstimationSystem poseEstimationSystem;
 
-    public SwerveSubsystem() {
+    public SwerveSubsystem(PoseEstimationSystem poseEstimationSystem) {
         SwerveDriveTelemetry.verbosity = telemetryVerbosity;
+        this.poseEstimationSystem = poseEstimationSystem;
         try {
             swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(maximumSpeed, angleConversionFactor,
                     driveConversionFactor);
@@ -139,6 +141,22 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Rotation2d getPitch() {
         return swerveDrive.getPitch();
+    }
+
+    @Override
+    public void periodic() {
+        if(poseEstimationSystem.getLeftVisionEstimatePresent() && poseEstimationSystem.getRightVisionEstimatePresent()){
+            Pose2d averagePose = poseEstimationSystem.getLeftVisionEstimatePose2d().plus(new Transform2d(
+                poseEstimationSystem.getRightVisionEstimatePose2d().getTranslation(), poseEstimationSystem.getRightVisionEstimatePose2d().getRotation()
+            )).div(2);
+            addVisionMeasurement(averagePose, poseEstimationSystem.getLeftVisionEstimateTimestamp());
+        }
+        else if(poseEstimationSystem.getLeftVisionEstimatePresent()){
+            addVisionMeasurement(poseEstimationSystem.getLeftVisionEstimatePose2d(), poseEstimationSystem.getLeftVisionEstimateTimestamp());
+        }
+        else if(poseEstimationSystem.getRightVisionEstimatePresent()){
+            addVisionMeasurement(poseEstimationSystem.getRightVisionEstimatePose2d(), poseEstimationSystem.getRightVisionEstimateTimestamp());
+        }
     }
 
 }
