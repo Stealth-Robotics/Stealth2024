@@ -145,16 +145,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if(poseEstimationSystem.getLeftVisionEstimatePresent() && poseEstimationSystem.getRightVisionEstimatePresent()){
-            Pose2d averagePose = poseEstimationSystem.getLeftVisionEstimatePose2d().plus(new Transform2d(
-                poseEstimationSystem.getRightVisionEstimatePose2d().getTranslation(), poseEstimationSystem.getRightVisionEstimatePose2d().getRotation()
-            )).div(2);
-            addVisionMeasurement(averagePose, poseEstimationSystem.getLeftVisionEstimateTimestamp());
-        }
-        else if(poseEstimationSystem.getLeftVisionEstimatePresent()){
+        
+        if(poseEstimationSystem.getLeftVisionEstimatePresent()){
             addVisionMeasurement(poseEstimationSystem.getLeftVisionEstimatePose2d(), poseEstimationSystem.getLeftVisionEstimateTimestamp());
         }
-        else if(poseEstimationSystem.getRightVisionEstimatePresent()){
+        if(poseEstimationSystem.getRightVisionEstimatePresent()){
             addVisionMeasurement(poseEstimationSystem.getRightVisionEstimatePose2d(), poseEstimationSystem.getRightVisionEstimateTimestamp());
         }
     }
