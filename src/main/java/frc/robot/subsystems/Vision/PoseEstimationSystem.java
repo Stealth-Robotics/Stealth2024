@@ -50,25 +50,37 @@ public class PoseEstimationSystem extends SubsystemBase {
 
     }
 
-
-
-    @Override
-    public void periodic() {
-        
-
-        if(leftCamera.getEstimatedGlobalPose().isPresent()){
-            leftCameraPose = leftCamera.getPoseEstimator().update();
-            System.out.println("left pose: " + leftCamera.getLatestResult().getBestTarget().getBestCameraToTarget());
-
-            System.out.println("left present: " + true);
-            System.out.println("left id: " + leftCamera.getLatestResult().getBestTarget().getFiducialId());
-            System.out.println("left id: " + leftCameraPose);
-
-        }
-
-
+    private boolean getVisionEstimatePresent(Optional<EstimatedRobotPose> visionEstimate) {
+        return visionEstimate.isPresent();
     }
 
+    public boolean getLeftVisionEstimatePresent() {
+        return getVisionEstimatePresent(leftCameraPose);
+    }
+
+    public boolean getRightVisionEstimatePresent() {
+        return getVisionEstimatePresent(rightCameraPose);
+    }
+
+    private Pose2d getVisionEstimatePose2d(Optional<EstimatedRobotPose> visionEstimate) {
+        return visionEstimate.get().estimatedPose.toPose2d();
+    }
+
+    public Pose2d getLeftVisionEstimatePose2d() {
+        return getVisionEstimatePose2d(leftCameraPose);
+    }
+
+    public Pose2d getRightVisionEstimatePose2d() {
+        return getVisionEstimatePose2d(rightCameraPose);
+    }
+
+    public double getLeftVisionEstimateTimestamp() {
+        return leftCameraTimestamp;
+    }
+
+    public double getRightVisionEstimateTimestamp() {
+        return rightCameraTimestamp;
+    }
 
     @Override
     public void periodic() {
@@ -78,17 +90,19 @@ public class PoseEstimationSystem extends SubsystemBase {
         if (getLeftVisionEstimatePresent()) {
             leftCameraTimestamp = leftCameraPose.get().timestampSeconds;
 
-            
-            // System.out.println("left present:" + getLeftVisionEstimatePresent() + ", timestamp: "
-            //         + getLeftVisionEstimateTimestamp() + ", pose2d:" + getLeftVisionEstimatePose2d());
+            // System.out.println("left present:" + getLeftVisionEstimatePresent() + ",
+            // timestamp: "
+            // + getLeftVisionEstimateTimestamp() + ", pose2d:" +
+            // getLeftVisionEstimatePose2d());
         }
 
         if (getRightVisionEstimatePresent()) {
             rightCameraTimestamp = rightCameraPose.get().timestampSeconds;
 
-
-            // System.out.println("right present:" + getRightVisionEstimatePresent() + ", timestamp: "
-            //         + getRightVisionEstimateTimestamp() + ", pose2d:" + getRightVisionEstimatePose2d());
+            // System.out.println("right present:" + getRightVisionEstimatePresent() + ",
+            // timestamp: "
+            // + getRightVisionEstimateTimestamp() + ", pose2d:" +
+            // getRightVisionEstimatePose2d());
 
         }
     }
