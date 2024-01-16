@@ -50,36 +50,23 @@ public class PoseEstimationSystem extends SubsystemBase {
 
     }
 
-    private boolean getVisionEstimatePresent(Optional<EstimatedRobotPose> visionEstimate) {
-        return visionEstimate.isPresent();
-    }
 
-    public boolean getLeftVisionEstimatePresent() {
-        return getVisionEstimatePresent(leftCameraPose);
-    }
 
-    public boolean getRightVisionEstimatePresent() {
-        return getVisionEstimatePresent(rightCameraPose);
-    }
+    @Override
+    public void periodic() {
+        
 
-    private Pose2d getVisionEstimatePose2d(Optional<EstimatedRobotPose> visionEstimate) {
-        return visionEstimate.get().estimatedPose.toPose2d();
-    }
+        if(leftCamera.getEstimatedGlobalPose().isPresent()){
+            leftCameraPose = leftCamera.getPoseEstimator().update();
+            System.out.println("left pose: " + leftCamera.getLatestResult().getBestTarget().getBestCameraToTarget());
 
-    public Pose2d getLeftVisionEstimatePose2d() {
-        return getVisionEstimatePose2d(leftCameraPose);
-    }
+            System.out.println("left present: " + true);
+            System.out.println("left id: " + leftCamera.getLatestResult().getBestTarget().getFiducialId());
+            System.out.println("left id: " + leftCameraPose);
 
-    public Pose2d getRightVisionEstimatePose2d() {
-        return getVisionEstimatePose2d(rightCameraPose);
-    }
+        }
 
-    public double getLeftVisionEstimateTimestamp() {
-        return leftCameraTimestamp;
-    }
 
-    public double getRightVisionEstimateTimestamp() {
-        return rightCameraTimestamp;
     }
 
 

@@ -20,7 +20,7 @@ public class CameraSubsystem {
 
     public CameraSubsystem(String cameraName, AprilTagFieldLayout fieldLayout, Transform3d robotTocamera) {
         camera = new PhotonCamera(cameraName);
-        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, robotTocamera);
+        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.LOWEST_AMBIGUITY, camera, robotTocamera);
         poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
@@ -36,6 +36,10 @@ public class CameraSubsystem {
             lastTimestamp = timestamp;
         }
         return visionEstimate;
+    }
+
+    public PhotonPoseEstimator getPoseEstimator(){
+        return poseEstimator;
     }
     
 }
