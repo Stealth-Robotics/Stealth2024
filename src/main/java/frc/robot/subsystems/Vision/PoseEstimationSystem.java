@@ -88,8 +88,22 @@ public class PoseEstimationSystem extends SubsystemBase {
         leftCameraPose = leftCamera.getEstimatedGlobalPose();
         rightCameraPose = rightCamera.getEstimatedGlobalPose();
 
-        leftCameraTimestamp = leftCameraPose.get().timestampSeconds;
-        rightCameraTimestamp = rightCameraPose.get().timestampSeconds;
+        if (getLeftVisionEstimatePresent()) {
+            leftCameraTimestamp = leftCameraPose.get().timestampSeconds;
+
+            
+            // System.out.println("left present:" + getLeftVisionEstimatePresent() + ", timestamp: "
+            //         + getLeftVisionEstimateTimestamp() + ", pose2d:" + getLeftVisionEstimatePose2d());
+        }
+
+        if (getRightVisionEstimatePresent()) {
+            rightCameraTimestamp = rightCameraPose.get().timestampSeconds;
+
+
+            // System.out.println("right present:" + getRightVisionEstimatePresent() + ", timestamp: "
+            //         + getRightVisionEstimateTimestamp() + ", pose2d:" + getRightVisionEstimatePose2d());
+
+        }
     }
 
 }
