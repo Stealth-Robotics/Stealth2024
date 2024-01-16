@@ -10,6 +10,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Vision.PoseEstimationSystem;
 import swervelib.SwerveController;
@@ -36,6 +39,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDrive swerveDrive;
     private final PoseEstimationSystem poseEstimationSystem;
 
+
+    private final Field2d field = new Field2d();
+
+
     public SwerveSubsystem(PoseEstimationSystem poseEstimationSystem) {
         SwerveDriveTelemetry.verbosity = telemetryVerbosity;
         this.poseEstimationSystem = poseEstimationSystem;
@@ -47,6 +54,8 @@ public class SwerveSubsystem extends SubsystemBase {
         }
 
         swerveDrive.setHeadingCorrection(false);
+
+        SmartDashboard.putData(field);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
@@ -151,6 +160,9 @@ public class SwerveSubsystem extends SubsystemBase {
         if(poseEstimationSystem.getRightVisionEstimatePresent()){
             addVisionMeasurement(poseEstimationSystem.getRightVisionEstimatePose2d(), poseEstimationSystem.getRightVisionEstimateTimestamp());
         }
+
+
+        field.setRobotPose(getPose());
     }
 
 }
