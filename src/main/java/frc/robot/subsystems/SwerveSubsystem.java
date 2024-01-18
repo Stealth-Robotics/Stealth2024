@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import java.io.File;
+
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -9,7 +12,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,6 +48,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final Field2d field = new Field2d();
 
 
+
     public SwerveSubsystem(PoseEstimationSystem poseEstimationSystem) {
         SwerveDriveTelemetry.verbosity = telemetryVerbosity;
         this.poseEstimationSystem = poseEstimationSystem;
@@ -55,7 +61,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
         swerveDrive.setHeadingCorrection(false);
 
-        SmartDashboard.putData(field);
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
@@ -152,6 +157,12 @@ public class SwerveSubsystem extends SubsystemBase {
         return swerveDrive.getPitch();
     }
 
+    // public double getDistanceMetersToGoal(){
+    //     if(DriverStation.getAlliance().get() == Alliance.Red){
+            
+    //     }
+    // }
+
     @Override
     public void periodic() {
         if(poseEstimationSystem.getLeftVisionEstimatePresent()){
@@ -162,7 +173,6 @@ public class SwerveSubsystem extends SubsystemBase {
         }
 
 
-        field.setRobotPose(getPose());
     }
 
 }
