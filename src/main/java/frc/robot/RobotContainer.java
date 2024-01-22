@@ -12,6 +12,7 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.PoseEstimationSystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -76,6 +77,8 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
+
+    new Trigger(driverController.povDown()).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is
     // pressed,
