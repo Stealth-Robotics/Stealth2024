@@ -4,13 +4,13 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.SwerveDefault;
+import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.Vision.PoseEstimationSystem;
+import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.vision.PoseEstimationSystem;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -25,16 +25,19 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private final int translationAxis = XboxController.Axis.kLeftY.value;
+  private final int strafeAxis = XboxController.Axis.kLeftX.value;
+  private final int rotationAxis = XboxController.Axis.kRightX.value;
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
 
-  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(poseEstimationSystem);
+  private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController driverController = new CommandXboxController(
-      OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController driverController = new CommandXboxController(0);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -42,9 +45,17 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    swerveSubsystem.setDefaultCommand(new SwerveDefault(swerveSubsystem,
-        () -> -driverController.getLeftY(), () -> -driverController.getLeftX(), () -> driverController.getRightX(),
-        () -> true));
+    swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
+        swerveSubsystem, 
+        () -> -joystickPower(driverController.getLeftY()),
+        () -> -joystickPower(driverController.getLeftX()),
+        () -> -joystickPower(driverController.getRightX()),
+        () -> false));
+
+  }
+
+  private final double joystickPower(double input) {
+    return Math.copySign(Math.pow(input, 1.5), input);
   }
 
   /**
