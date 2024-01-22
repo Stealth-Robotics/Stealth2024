@@ -1,7 +1,7 @@
 {
   "imu": {
-    "type": "pigeon2",
-    "id": 12,
+    "type": "pigeon",
+    "id": 13,
     "canbus": null
   },
   "invertedIMU": false,
