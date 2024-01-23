@@ -14,8 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
 
-  private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
-  private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
+  private final SwerveDrive swerveSubsystem = new SwerveDrive();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
 
@@ -24,11 +23,14 @@ public class RobotContainer {
     configureBindings();
     swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
         swerveSubsystem,
-        () -> -driverController.getLeftY(),
-        () -> driverController.getLeftX(),
-        () -> driverController.getRightX(),
+        () -> -adjustInput(driverController.getLeftY()),
+        () -> -adjustInput(driverController.getLeftX()),
+        () -> -adjustInput(driverController.getRightX()),
         () -> false));
+  }
 
+  private double adjustInput(double input){
+    return Math.copySign(Math.pow(Math.abs(input), 1.75), input);
   }
 
   private void configureBindings() {
@@ -36,6 +38,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new PrintCommand("Hello, world!");
+    return swerveSubsystem.followPathCommand("testPath", true);
   }
 }

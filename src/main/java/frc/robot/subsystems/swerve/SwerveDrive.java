@@ -29,7 +29,7 @@ public class SwerveDrive extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
-    private final PoseEstimationSystem visionSubsystem;
+    private PoseEstimationSystem visionSubsystem = null;
 
     public SwerveDrive(PoseEstimationSystem visionSubsystem) {
         gyro = new Pigeon2(SwerveConstants.pigeonID);
@@ -74,6 +74,49 @@ public class SwerveDrive extends SubsystemBase {
                 this);
 
         this.visionSubsystem = visionSubsystem;
+    }
+
+    public SwerveDrive() {
+        gyro = new Pigeon2(SwerveConstants.pigeonID);
+        gyro.getConfigurator().apply(new Pigeon2Configuration());
+        gyro.setYaw(0);
+
+        mSwerveMods = new SwerveModule[] {
+                new SwerveModule(0, SwerveConstants.Mod0.constants),
+                new SwerveModule(1, SwerveConstants.Mod1.constants),
+                new SwerveModule(2, SwerveConstants.Mod2.constants),
+                new SwerveModule(3, SwerveConstants.Mod3.constants)
+        };
+
+        Timer.delay(1.0);
+        resetModulesToAbsolute();
+
+        swerveOdometry = new SwerveDrivePoseEstimator(
+                SwerveConstants.swerveKinematics,
+                getGyroYaw(),
+                getModulePositions(),
+                new Pose2d());
+
+        AutoBuilder.configureHolonomic(
+                this::getPose,
+                this::setPose,
+                this::getRobotRelativeSpeeds,
+                this::driveRobotRelative,
+                new HolonomicPathFollowerConfig(
+                        new PIDConstants(SwerveConstants.AutoConstants.TRANSLATION_CONTROLLER_P_COEFF, 0.0, 0.0),
+                        new PIDConstants(SwerveConstants.AutoConstants.ROTATION_CONTROLLER_P_COEFF, 0.0, 0.0),
+                        SwerveConstants.maxSpeed,
+                        0.422930975455813818,
+                        new ReplanningConfig()),
+                () -> {
+
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                this);
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -169,16 +212,18 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
-        if (visionSubsystem.getLeftVisionEstimatePresent()) {
-            addVisionMeasurement(
-                    visionSubsystem.getLeftVisionEstimatePose2d(),
-                    visionSubsystem.getLeftVisionEstimateTimestamp());
-        }
+        if (visionSubsystem != null) {
+            if (visionSubsystem.getLeftVisionEstimatePresent()) {
+                addVisionMeasurement(
+                        visionSubsystem.getLeftVisionEstimatePose2d(),
+                        visionSubsystem.getLeftVisionEstimateTimestamp());
+            }
 
-        if (visionSubsystem.getRightVisionEstimatePresent()) {
-            addVisionMeasurement(
-                    visionSubsystem.getRightVisionEstimatePose2d(),
-                    visionSubsystem.getRightVisionEstimateTimestamp());
+            if (visionSubsystem.getRightVisionEstimatePresent()) {
+                addVisionMeasurement(
+                        visionSubsystem.getRightVisionEstimatePose2d(),
+                        visionSubsystem.getRightVisionEstimateTimestamp());
+            }
         }
 
         for (SwerveModule mod : mSwerveMods) {
