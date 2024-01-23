@@ -1,7 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -15,7 +17,7 @@ public class AutoAlignCommand extends Command {
 
     private Pose2d currentPose2d;
     // TODO: TUNE CONSTANTS
-    private final double kP = 0;
+    private final double kP = 0.1;
     private final double kI = 0;
     private final double kD = 0;
 
@@ -33,6 +35,7 @@ public class AutoAlignCommand extends Command {
 
     @Override
     public void initialize() {
+        swerve.setPose(new Pose2d(5, BLUE_GOAL_POSE.getY(), Rotation2d.fromDegrees(90)));
         currentPose2d = swerve.getPose();
 
         // Poses pulled from tag IDs 4 and 7, depending on alliance from here:
@@ -45,14 +48,17 @@ public class AutoAlignCommand extends Command {
 
         Translation2d targetPoseOffset = targetGoalPose.minus(currentPose2d.getTranslation());
 
-        double rotationGoal = Math.atan2(targetPoseOffset.getY(), targetPoseOffset.getX());
+        double rotationGoal = Math.toDegrees(Math.atan2(targetPoseOffset.getY(), targetPoseOffset.getX()));
 
         rotationPID.setSetpoint(rotationGoal);
     }
 
     @Override
     public void execute() {
-        double rotationOutput = rotationPID.calculate(swerve.getPose().getRotation().getRadians());
+        double rotationOutput = MathUtil.clamp(
+                rotationPID.calculate(swerve.getPose().getRotation().getDegrees()),
+                -0.5,
+                0.5);
         swerve.drive(new Translation2d(), rotationOutput, false);
     }
 
