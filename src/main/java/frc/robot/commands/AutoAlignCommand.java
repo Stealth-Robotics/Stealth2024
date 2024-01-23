@@ -37,10 +37,7 @@ public class AutoAlignCommand extends Command {
 
         // Poses pulled from tag IDs 4 and 7, depending on alliance from here:
         // https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2024-crescendo.json
-        boolean isRed = false;
-        if (DriverStation.getAlliance().isPresent()) {
-            isRed = (DriverStation.getAlliance().get() == Alliance.Red);
-        }
+        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
         Translation2d targetGoalPose = isRed
                 ? RED_GOAL_POSE
