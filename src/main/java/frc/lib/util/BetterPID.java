@@ -399,6 +399,7 @@ public class BetterPID implements Sendable, AutoCloseable {
         m_measurement = measurement;
         m_prevError = m_positionError;
         m_haveMeasurement = true;
+        double calc = m_kp * m_positionError + m_ki * m_totalError + m_kd * m_velocityError;
 
         if (m_continuous) {
             double errorBound = (m_maximumInput - m_minimumInput) / 2.0;
@@ -413,17 +414,21 @@ public class BetterPID implements Sendable, AutoCloseable {
         // total error
         if (Math.abs(m_positionError) > m_iZone) {
             m_totalError = 0;
-        //checks if input is saturated, doesn't integrate if it is
-        } else if (m_ki != 0 && Math.abs(m_kp * m_positionError + m_kd * m_velocityError) < 1.0) {
-            m_totalError += m_positionError * m_period;
-        if(m_kp * m_positionError + m_ki * m_totalError + m_kd * m_velocityError > 1.0){
-            return m_kp * m_positionError + m_kd * m_velocityError;
         }
-        } else if (m_ki != 0) {
+
+        else if (m_ki != 0 && Math.abs(m_kp * m_positionError + m_kd * m_velocityError) < 1.0) {
+            m_totalError += m_positionError * m_period;
+        }
+
+        else if (m_ki != 0) {
             m_totalError = MathUtil.clamp(
                     m_totalError + m_positionError * m_period,
                     m_minimumIntegral / m_ki,
                     m_maximumIntegral / m_ki);
+        }
+
+        if (calc > 0.9 && (Math.signum(calc) != Math.signum(m_positionError))) {
+            return m_kp * m_positionError + m_kd * m_velocityError;
         }
 
         return m_kp * m_positionError + m_ki * m_totalError + m_kd * m_velocityError;
