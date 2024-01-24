@@ -8,12 +8,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.lib.util.BetterPID;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class AutoAlignCommand extends Command {
 
     private final SwerveDrive swerve;
-    private final PIDController rotationPID;
+    private final BetterPID rotationPID;
 
     private Pose2d currentPose2d;
     // TODO: TUNE CONSTANTS
@@ -28,7 +29,7 @@ public class AutoAlignCommand extends Command {
 
     public AutoAlignCommand(SwerveDrive swerve) {
         this.swerve = swerve;
-        rotationPID = new PIDController(kP, kI, kD);
+        rotationPID = new BetterPID(kP, kI, kD);
         rotationPID.setTolerance(kTolerance);
         addRequirements(swerve);
     }
