@@ -24,6 +24,8 @@ public class AutoAlignCommand extends Command {
 
     private final double kTolerance = 0.1;
 
+    // Poses pulled from tag IDs 4 and 7, depending on alliance from here:
+        // https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2024-crescendo.json
     Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
     Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
 
@@ -39,8 +41,7 @@ public class AutoAlignCommand extends Command {
         swerve.setPose(new Pose2d(5, BLUE_GOAL_POSE.getY(), Rotation2d.fromDegrees(90)));
         currentPose2d = swerve.getPose();
 
-        // Poses pulled from tag IDs 4 and 7, depending on alliance from here:
-        // https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2024-crescendo.json
+        
         boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
         Translation2d targetGoalPose = isRed
@@ -56,10 +57,7 @@ public class AutoAlignCommand extends Command {
 
     @Override
     public void execute() {
-        double rotationOutput = MathUtil.clamp(
-                rotationPID.calculate(swerve.getPose().getRotation().getDegrees()),
-                -0.5,
-                0.5);
+        double rotationOutput = rotationPID.calculate(swerve.getPose().getRotation().getDegrees());
         swerve.drive(new Translation2d(), rotationOutput, false);
     }
 
