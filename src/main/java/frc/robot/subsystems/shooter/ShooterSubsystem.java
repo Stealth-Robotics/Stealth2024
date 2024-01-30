@@ -34,26 +34,26 @@ public class ShooterSubsystem extends SubsystemBase {
         leftMotor = new TalonFX(0);
         rightMotor = new TalonFX(0);
 
-        TalonFXConfiguration LEFT_MOTOR_TALONFX_CONFIG = new TalonFXConfiguration();
+        TalonFXConfiguration TALONFX_CONFIG = new TalonFXConfiguration();
 
         // TODO: Check On Robot
-        LEFT_MOTOR_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        LEFT_MOTOR_TALONFX_CONFIG.Slot0.kS = kS;
-        LEFT_MOTOR_TALONFX_CONFIG.Slot0.kV = kV;
-        LEFT_MOTOR_TALONFX_CONFIG.Slot0.kA = kA;
+        TALONFX_CONFIG.Slot0.kS = kS;
+        TALONFX_CONFIG.Slot0.kV = kV;
+        TALONFX_CONFIG.Slot0.kA = kA;
 
-        LEFT_MOTOR_TALONFX_CONFIG.Slot0.kP = kP;
-        LEFT_MOTOR_TALONFX_CONFIG.Slot0.kI = kI;
-        LEFT_MOTOR_TALONFX_CONFIG.Slot0.kD = kD;
+        TALONFX_CONFIG.Slot0.kP = kP;
+        TALONFX_CONFIG.Slot0.kI = kI;
+        TALONFX_CONFIG.Slot0.kD = kD;
 
-        TalonFXConfiguration RIGHT_MOTOR_TALONFX_CONFIG = new TalonFXConfiguration();
-        RIGHT_MOTOR_TALONFX_CONFIG = LEFT_MOTOR_TALONFX_CONFIG;
         // TODO: Check On Robot
-        RIGHT_MOTOR_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        leftMotor.getConfigurator().apply(LEFT_MOTOR_TALONFX_CONFIG);
-        rightMotor.getConfigurator().apply(LEFT_MOTOR_TALONFX_CONFIG);
+        leftMotor.getConfigurator().apply(TALONFX_CONFIG);
+        rightMotor.getConfigurator().apply(TALONFX_CONFIG);
+
+        leftMotor.setInverted(false);
+        rightMotor.setInverted(false);
     }
 
     /**
