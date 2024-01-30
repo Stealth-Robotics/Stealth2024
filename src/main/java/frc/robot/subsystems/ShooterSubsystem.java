@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -92,6 +93,12 @@ public class ShooterSubsystem extends SubsystemBase{
     private double getRightVelocityError(){
         return rightMotor.getVelocity().getValueAsDouble() - RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity;
     }
+
+    public void stopShooterMotors(){
+        rightMotor.setControl(new CoastOut());
+        leftMotor.setControl(new CoastOut());
+    }
+    
 
     /**
      * returns if both motors are within the velocity tolerance
