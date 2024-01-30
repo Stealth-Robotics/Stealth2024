@@ -8,28 +8,28 @@ import frc.robot.ShooterInterpolation;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
-public class ReadyShooter extends Command{
+public class ReadyShooter extends Command {
 
     private final ShooterSubsystem shooterSubsystem;
     private final SwerveDrive drive;
     private final double SPIN_MULTIPLIER = 0.8;
 
-    //allows us to modify the distance the robot thinks it is from the goal in order to live offset the shooter speed/angle
-    //will use some sort of slider or other thing, either virtual on dashboard screen or a physical slider on the driverstation
+    // allows us to modify the distance the robot thinks it is from the goal in
+    // order to live offset the shooter speed/angle
+    // will use some sort of slider or other thing, either virtual on dashboard
+    // screen or a physical slider on the driverstation
     private final DoubleSupplier distanceOffset;
 
-    public ReadyShooter(ShooterSubsystem shooterSubsystem, SwerveDrive drive, DoubleSupplier distanceOffset){
+    public ReadyShooter(ShooterSubsystem shooterSubsystem, SwerveDrive drive, DoubleSupplier distanceOffset) {
         this.shooterSubsystem = shooterSubsystem;
         this.drive = drive;
         this.distanceOffset = distanceOffset;
         addRequirements(shooterSubsystem);
     }
 
-    public ReadyShooter(ShooterSubsystem shooterSubsystem, SwerveDrive drive){
+    public ReadyShooter(ShooterSubsystem shooterSubsystem, SwerveDrive drive) {
         this(shooterSubsystem, drive, () -> 0.0);
     }
-
-
 
     @Override
     public void initialize() {
@@ -45,5 +45,5 @@ public class ReadyShooter extends Command{
     public boolean isFinished() {
         return shooterSubsystem.motorsAtTargetVelocity();
     }
-    
+
 }
