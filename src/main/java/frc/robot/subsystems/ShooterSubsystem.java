@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,8 +10,10 @@ public class ShooterSubsystem extends SubsystemBase{
     private final TalonFX leftMotor;
     private final TalonFX rightMotor;
     
-    private final TalonFXConfiguration LEFT_MOTION_MAGIC_CONFIG = new TalonFXConfiguration();
-    private final TalonFXConfiguration RIGHT_MOTION_MAGIC_CONFIG = new TalonFXConfiguration();
+    private final TalonFXConfiguration MOTION_MAGIC_CONFIG = new TalonFXConfiguration();
+
+    private final MotionMagicVelocityVoltage LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE = new MotionMagicVelocityVoltage(0);
+    private final MotionMagicVelocityVoltage RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE = new MotionMagicVelocityVoltage(0);
 
     private final double kS = 0.0;
     private final double kV = 0.0;
@@ -30,27 +33,26 @@ public class ShooterSubsystem extends SubsystemBase{
         rightMotor = new TalonFX(0);
 
 
-        LEFT_MOTION_MAGIC_CONFIG.Slot0.kS = kS;
-        LEFT_MOTION_MAGIC_CONFIG.Slot0.kV = kV;
-        LEFT_MOTION_MAGIC_CONFIG.Slot0.kA = kA;
-        LEFT_MOTION_MAGIC_CONFIG.Slot0.kP = kP;
-        LEFT_MOTION_MAGIC_CONFIG.Slot0.kI = kI;
-        LEFT_MOTION_MAGIC_CONFIG.Slot0.kD = kD;
+        MOTION_MAGIC_CONFIG.Slot0.kS = kS;
+        MOTION_MAGIC_CONFIG.Slot0.kV = kV;
+        MOTION_MAGIC_CONFIG.Slot0.kA = kA;
+        MOTION_MAGIC_CONFIG.Slot0.kP = kP;
+        MOTION_MAGIC_CONFIG.Slot0.kI = kI;
+        MOTION_MAGIC_CONFIG.Slot0.kD = kD;
 
-        RIGHT_MOTION_MAGIC_CONFIG.Slot0.kS = kS;
-        RIGHT_MOTION_MAGIC_CONFIG.Slot0.kV = kV;
-        RIGHT_MOTION_MAGIC_CONFIG.Slot0.kA = kA;
-        RIGHT_MOTION_MAGIC_CONFIG.Slot0.kP = kP;
-        RIGHT_MOTION_MAGIC_CONFIG.Slot0.kI = kI;
-        RIGHT_MOTION_MAGIC_CONFIG.Slot0.kD = kD;
+        //TODO: FIND THESE VALUES
+        MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicCruiseVelocity = 0;
+        MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicAcceleration = 0;
+        MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicJerk = 0;
+
 
 
         //TODO: CHEKC ON ROBOT
         leftMotor.setInverted(false);
         rightMotor.setInverted(false);
 
-        leftMotor.getConfigurator().apply(LEFT_MOTION_MAGIC_CONFIG);
-        rightMotor.getConfigurator().apply(RIGHT_MOTION_MAGIC_CONFIG);
+        leftMotor.getConfigurator().apply(MOTION_MAGIC_CONFIG);
+        rightMotor.getConfigurator().apply(MOTION_MAGIC_CONFIG);
 
 
 
@@ -62,13 +64,8 @@ public class ShooterSubsystem extends SubsystemBase{
      * @param velocity in rotations per second
      */
     public void setLeftVelocity(double velocity){
-        
-        LEFT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicCruiseVelocity = velocity;
-        //TODO: FIND THESE VALUES
-        LEFT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicAcceleration = 0;
-        LEFT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicJerk = 0;
-
-        leftMotor.getConfigurator().apply(LEFT_MOTION_MAGIC_CONFIG);
+        LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity = velocity;
+        leftMotor.setControl(LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE);
     }
 
     /**
@@ -76,13 +73,8 @@ public class ShooterSubsystem extends SubsystemBase{
      * @param velocity in rotations per second
      */
     public void setRightVelocity(double velocity){
-        
-        RIGHT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicCruiseVelocity = velocity;
-        //TODO: FIND THESE VALUES
-        RIGHT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicAcceleration = 0;
-        RIGHT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicJerk = 0;
-
-        rightMotor.getConfigurator().apply(RIGHT_MOTION_MAGIC_CONFIG);
+        RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity = velocity;
+        rightMotor.setControl(RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE);
     }
 
     /**
@@ -90,7 +82,7 @@ public class ShooterSubsystem extends SubsystemBase{
      * @return velocity error in rotations per second
      */
     private double getLeftVelocityError(){
-        return leftMotor.getVelocity().getValueAsDouble() - LEFT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicCruiseVelocity;
+        return leftMotor.getVelocity().getValueAsDouble() - LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity;
     }
 
     /**
@@ -98,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase{
      * @return velocity error in rotations per second
      */
     private double getRightVelocityError(){
-        return rightMotor.getVelocity().getValueAsDouble() - RIGHT_MOTION_MAGIC_CONFIG.MotionMagic.MotionMagicCruiseVelocity;
+        return rightMotor.getVelocity().getValueAsDouble() - RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity;
     }
 
     /**
