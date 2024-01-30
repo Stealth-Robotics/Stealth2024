@@ -32,10 +32,10 @@ public class SwerveDrive extends SubsystemBase {
 
     private PoseEstimationSystem visionSubsystem = null;
 
-    Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
-    Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
+    private final Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
+    private final Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
 
-    Translation2d targetGoalPose;
+    private final Translation2d targetGoalPose;
 
     public SwerveDrive(PoseEstimationSystem visionSubsystem) {
         gyro = new Pigeon2(SwerveConstants.pigeonID);
@@ -129,6 +129,12 @@ public class SwerveDrive extends SubsystemBase {
                     return false;
                 },
                 this);
+
+        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+
+        targetGoalPose = isRed
+                ? RED_GOAL_POSE
+                : BLUE_GOAL_POSE;
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -224,10 +230,12 @@ public class SwerveDrive extends SubsystemBase {
         return targetGoalPose;
     }
 
+    //returns the distance, in meters, from the center of the robot to the target goal
     public double getDistanceMetersToGoal() {
         return getTargetGoalPose().getDistance(swerveOdometry.getEstimatedPosition().getTranslation());
     }
-    
+
+    //returns the angle, in degrees, that the robot needs to be pointing in order to be pointing at the target goal
     public double getAngleDegreesToGoal() {
         Translation2d goalPose = getTargetGoalPose();
         Translation2d robotPose = swerveOdometry.getEstimatedPosition().getTranslation();

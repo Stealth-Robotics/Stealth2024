@@ -23,7 +23,7 @@ public class RobotContainer {
         swerveSubsystem,
         () -> -adjustInput(driverController.getLeftY()),
         () -> -adjustInput(driverController.getLeftX()),
-        () -> -adjustInput(driverController.getRightX()),
+        () -> adjustInput(driverController.getRightX()),
         () -> false));
   }
 
