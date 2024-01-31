@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +33,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double kTolerance = 0.0;
 
     private double MOTION_MAGIC_ACCELERATION = 0.0;
+    private double MOTION_MAGIC_VELOCITY = 0.0;
 
     private final TalonFXConfiguration ROTATOR_CONFIG_ONE = new TalonFXConfiguration();
 
@@ -50,13 +52,13 @@ public class RotatorSubsystem extends SubsystemBase {
     private void applyConfigs() {
         ROTATOR_CONFIG_ONE.Slot0.kS = kS;
         ROTATOR_CONFIG_ONE.Slot0.kV = kV;
-        ROTATOR_CONFIG_ONE.Slot0.kA = kA;
 
         ROTATOR_CONFIG_ONE.Slot0.kP = kP;
         ROTATOR_CONFIG_ONE.Slot0.kI = kI;
         ROTATOR_CONFIG_ONE.Slot0.kD = kD;
 
         ROTATOR_CONFIG_ONE.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
+        ROTATOR_CONFIG_ONE.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
 
         TalonFXConfiguration ROTATOR_CONFIG_TWO = ROTATOR_CONFIG_ONE;
         TalonFXConfiguration ROTATOR_CONFIG_THREE = ROTATOR_CONFIG_ONE;
@@ -73,6 +75,20 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorTwo.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
         rotatorMotorThree.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
 
+    }
+
+
+    //these methods will only be used with the buttons
+    public void setMotorsToCoast() {
+        rotatorMotorOne.setNeutralMode(NeutralModeValue.Coast);
+        rotatorMotorTwo.setNeutralMode(NeutralModeValue.Coast);
+        rotatorMotorThree.setNeutralMode(NeutralModeValue.Coast);
+    }
+
+    public void setMotorsToBrake() {
+        rotatorMotorOne.setNeutralMode(NeutralModeValue.Brake);
+        rotatorMotorTwo.setNeutralMode(NeutralModeValue.Brake);
+        rotatorMotorThree.setNeutralMode(NeutralModeValue.Brake);
     }
 
     private void setMotorTargetPosition(double angRad) {
