@@ -23,7 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
-            
+
     private final MotionMagicVelocityVoltage rightMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
 
@@ -31,17 +31,21 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: TUNE THIS TO A REASONABLE VALUE
     private final double VEOLOCITY_TOLERANCE = 0;
 
+    TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
+    TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
+
     public ShooterSubsystem() {
         // TODO: find can ids
         leftMotor = new TalonFX(0);
         rightMotor = new TalonFX(0);
 
-        TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
-        TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
+        applyConfigs();
+        // will remove when shooter is tested
+        throw new UnsupportedOperationException();
+    }
 
-        // TODO: Check On Robot
-        
-
+    private void applyConfigs() {
+        // TODO: check everything
         LEFT_TALONFX_CONFIG.Slot0.kS = kS;
         LEFT_TALONFX_CONFIG.Slot0.kV = kV;
         LEFT_TALONFX_CONFIG.Slot0.kA = kA;
@@ -52,16 +56,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
         RIGHT_TALONFX_CONFIG = LEFT_TALONFX_CONFIG;
 
-        
-        //TODO: CHECK DIRECTIONS
         LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         RIGHT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         leftMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
         rightMotor.getConfigurator().apply(RIGHT_TALONFX_CONFIG);
-
-        // will remove when shooter is tested
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -119,15 +118,37 @@ public class ShooterSubsystem extends SubsystemBase {
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
     }
 
-
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        builder.addDoubleProperty("current kS", () -> this.kS, (value) -> this.kS = value);
-        builder.addDoubleProperty("current kV", () -> this.kV, (value) -> this.kV = value);
-        builder.addDoubleProperty("current kA", () -> this.kA, (value) -> this.kA = value);
-        builder.addDoubleProperty("current kP", () -> this.kP, (value) -> this.kP = value);
-        builder.addDoubleProperty("current kI", () -> this.kI, (value) -> this.kI = value);
-        builder.addDoubleProperty("current kD", () -> this.kD, (value) -> this.kD = value);
+        builder.addDoubleProperty("current kS", () -> this.kS, (value) -> {
+            this.kS = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("current kV", () -> this.kV, (value) -> {
+            this.kV = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("current kA", () -> this.kA, (value) -> {
+            this.kA = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("current kP", () -> this.kP, (value) -> {
+            this.kP = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("current kI", () -> this.kI, (value) -> {
+            this.kI = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("current kD", () -> this.kD, (value) -> {
+            this.kD = value;
+            applyConfigs();
+        });
     }
 }
