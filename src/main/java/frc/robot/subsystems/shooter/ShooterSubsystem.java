@@ -119,63 +119,15 @@ public class ShooterSubsystem extends SubsystemBase {
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
     }
 
-    // getters and setters for pid constants thru shuffleboard
-    public double getkS() {
-        return kS;
-    }
-
-    public double getkV() {
-        return kV;
-    }
-
-    public double getkA() {
-        return kA;
-    }
-
-    public double getkP() {
-        return kP;
-    }
-
-    public double getkI() {
-        return kI;
-    }
-
-    public double getkD() {
-        return kD;
-    }
-
-    public void setkS(double kS) {
-        this.kS = kS;
-    }
-
-    public void setkV(double kV) {
-        this.kV = kV;
-    }
-
-    public void setkA(double kA) {
-        this.kA = kA;
-    }
-
-    public void setkP(double kP) {
-        this.kP = kP;
-    }
-
-    public void setkI(double kI) {
-        this.kI = kI;
-    }
-
-    public void setkD(double kD) {
-        this.kD = kD;
-    }
 
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        builder.addDoubleProperty("current kS", this::getkS, this::setkS);
-        builder.addDoubleProperty("current kV", this::getkV, this::setkV);
-        builder.addDoubleProperty("current kA", this::getkA, this::setkA);
-        builder.addDoubleProperty("current kP", this::getkP, this::setkP);
-        builder.addDoubleProperty("current kI", this::getkI, this::setkI);
-        builder.addDoubleProperty("current kD", this::getkD, this::setkD);
+        builder.addDoubleProperty("current kS", () -> {return this.kS;}, (double kS) -> {this.kS = kS;});
+        builder.addDoubleProperty("current kV", () -> {return this.kV;}, (double kV) -> {this.kV = kV;});
+        builder.addDoubleProperty("current kA", () -> {return this.kA;}, (double kA) -> {this.kA = kA;});
+        builder.addDoubleProperty("current kP", () -> {return this.kP;}, (double kP) -> {this.kP = kP;});
+        builder.addDoubleProperty("current kI", () -> {return this.kI;}, (double kI) -> {this.kI = kI;});
+        builder.addDoubleProperty("current kD", () -> {return this.kD;}, (double kD) -> {this.kD = kD;});
     }
 }
