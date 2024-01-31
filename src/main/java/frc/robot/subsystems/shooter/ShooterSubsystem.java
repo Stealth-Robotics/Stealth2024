@@ -6,23 +6,25 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
     private final TalonFX rightMotor;
 
-    private final double kS = 0.0;
-    private final double kV = 0.0;
-    private final double kA = 0.0;
+    private double kS = 0.0;
+    private double kV = 0.0;
+    private double kA = 0.0;
 
-    private final double kP = 0.0;
-    private final double kI = 0.0;
-    private final double kD = 0.0;
+    private double kP = 0.0;
+    private double kI = 0.0;
+    private double kD = 0.0;
 
-    private final MotionMagicVelocityVoltage LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE = new MotionMagicVelocityVoltage(0, 0,
+    private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
-    private final MotionMagicVelocityVoltage RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE = new MotionMagicVelocityVoltage(0, 0,
+            
+    private final MotionMagicVelocityVoltage rightMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
 
     // value is in rotations per second
@@ -54,6 +56,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
         leftMotor.setInverted(false);
         rightMotor.setInverted(false);
+
+        // will remove when shooter is tested
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -62,8 +67,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocity in rotations per second
      */
     public void setLeftVelocity(double velocity) {
-        LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity = velocity;
-        leftMotor.setControl(LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE);
+        leftMotionMagicVelocityVoltage.Velocity = velocity;
+        leftMotor.setControl(leftMotionMagicVelocityVoltage);
     }
 
     /**
@@ -72,8 +77,8 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velocity in rotations per second
      */
     public void setRightVelocity(double velocity) {
-        RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity = velocity;
-        rightMotor.setControl(RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE);
+        rightMotionMagicVelocityVoltage.Velocity = velocity;
+        rightMotor.setControl(rightMotionMagicVelocityVoltage);
     }
 
     /**
@@ -83,7 +88,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return velocity error in rotations per second
      */
     private double getLeftVelocityError() {
-        return leftMotor.getVelocity().getValueAsDouble() - LEFT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity;
+        return leftMotor.getVelocity().getValueAsDouble() - leftMotionMagicVelocityVoltage.Velocity;
     }
 
     /**
@@ -93,7 +98,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return velocity error in rotations per second
      */
     private double getRightVelocityError() {
-        return rightMotor.getVelocity().getValueAsDouble() - RIGHT_MOTION_MAGIC_VELOCITY_VOLTAGE.Velocity;
+        return rightMotor.getVelocity().getValueAsDouble() - rightMotionMagicVelocityVoltage.Velocity;
     }
 
     public void stopShooterMotors() {
@@ -109,5 +114,65 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean motorsAtTargetVelocity() {
         return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
+    }
+
+    // getters and setters for pid constants thru shuffleboard
+    public double getkS() {
+        return kS;
+    }
+
+    public double getkV() {
+        return kV;
+    }
+
+    public double getkA() {
+        return kA;
+    }
+
+    public double getkP() {
+        return kP;
+    }
+
+    public double getkI() {
+        return kI;
+    }
+
+    public double getkD() {
+        return kD;
+    }
+
+    public void setkS(double kS) {
+        this.kS = kS;
+    }
+
+    public void setkV(double kV) {
+        this.kV = kV;
+    }
+
+    public void setkA(double kA) {
+        this.kA = kA;
+    }
+
+    public void setkP(double kP) {
+        this.kP = kP;
+    }
+
+    public void setkI(double kI) {
+        this.kI = kI;
+    }
+
+    public void setkD(double kD) {
+        this.kD = kD;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.addDoubleProperty("current kS", this::getkS, this::setkS);
+        builder.addDoubleProperty("current kV", this::getkV, this::setkV);
+        builder.addDoubleProperty("current kA", this::getkA, this::setkA);
+        builder.addDoubleProperty("current kP", this::getkP, this::setkP);
+        builder.addDoubleProperty("current kI", this::getkI, this::setkI);
+        builder.addDoubleProperty("current kD", this::getkD, this::setkD);
     }
 }
