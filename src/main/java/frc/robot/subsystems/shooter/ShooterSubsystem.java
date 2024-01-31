@@ -21,6 +21,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private double kI = 0.0;
     private double kD = 0.0;
 
+    private double MOTION_MAGIC_ACCELERATION = 0.0;
+    private double MOTION_MAGIC_JERK = 0.0;
+
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
 
@@ -53,6 +56,9 @@ public class ShooterSubsystem extends SubsystemBase {
         LEFT_TALONFX_CONFIG.Slot0.kP = kP;
         LEFT_TALONFX_CONFIG.Slot0.kI = kI;
         LEFT_TALONFX_CONFIG.Slot0.kD = kD;
+
+        LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
+        LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
         RIGHT_TALONFX_CONFIG = LEFT_TALONFX_CONFIG;
 
@@ -121,6 +127,18 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
+
+        builder.addDoubleProperty("current motion magic acceleration", () -> this.MOTION_MAGIC_ACCELERATION,
+                (value) -> {
+                    this.MOTION_MAGIC_ACCELERATION = value;
+                    applyConfigs();
+                });
+
+        builder.addDoubleProperty("current motion magic jerk", () -> this.MOTION_MAGIC_JERK, (value) -> {
+            this.MOTION_MAGIC_JERK = value;
+            applyConfigs();
+        });
+
         builder.addDoubleProperty("current kS", () -> this.kS, (value) -> {
             this.kS = value;
             applyConfigs();
