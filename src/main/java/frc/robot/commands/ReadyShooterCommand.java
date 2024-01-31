@@ -4,7 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.shooter.ShooterInterpolationMaps;
+import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
@@ -35,7 +35,7 @@ public class ReadyShooterCommand extends Command {
     public void initialize() {
         // gets distance in feet because that's what the interpolation map uses
         double distance = Units.metersToFeet(drive.getDistanceMetersToGoal()) + distanceOffset.getAsDouble();
-        double targetSpeed = ShooterInterpolationMaps.getInterpolatedShooterSpeed(distance);
+        double targetSpeed = DistanceToShotValuesMap.getInterpolatedShooterSpeed(distance);
 
         shooterSubsystem.setRightVelocity(targetSpeed);
         shooterSubsystem.setLeftVelocity(targetSpeed * SPIN_MULTIPLIER);
