@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -26,8 +27,8 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kI = 0.0;
     private double kD = 0.0;
 
-    //tolerance in radians
-    //TODO: TUNE THIS
+    // tolerance in radians
+    // TODO: TUNE THIS
     private final double kTolerance = 0.0;
 
     private double MOTION_MAGIC_ACCELERATION = 0.0;
@@ -42,6 +43,8 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorThree = new TalonFX(0);
 
         applyConfigs();
+
+        throw new UnsupportedOperationException();
     }
 
     private void applyConfigs() {
@@ -72,22 +75,57 @@ public class RotatorSubsystem extends SubsystemBase {
 
     }
 
-    private void setMotorTargetPosition(double angRad){
+    private void setMotorTargetPosition(double angRad) {
         motionMagicVoltage.Position = angRad / ROTATOR_POSITION_COEFFICIENT;
         rotatorMotorOne.setControl(motionMagicVoltage);
     }
 
-    private double getMotorPosition(){
+    private double getMotorPosition() {
         return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
     }
 
-    private boolean isMotorAtTarget(){
+    private boolean isMotorAtTarget() {
         return Math.abs(getMotorPosition() - motionMagicVoltage.Position) <= kTolerance;
     }
 
-
-    public Command RotateToPositionCommand(double angRad){
+    public Command RotateToPositionCommand(double angRad) {
         return this.runOnce(() -> setMotorTargetPosition(angRad)).until(() -> this.isMotorAtTarget());
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.setSmartDashboardType("rotator gains");
+
+        builder.addDoubleProperty("ks", () -> this.kS, (value) -> {
+            this.kS = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("kv", () -> this.kV, (value) -> {
+            this.kV = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("ka", () -> this.kA, (value) -> {
+            this.kA = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("kp", () -> this.kP, (value) -> {
+            this.kP = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("ki", () -> this.kI, (value) -> {
+            this.kI = value;
+            applyConfigs();
+        });
+
+        builder.addDoubleProperty("kd", () -> this.kD, (value) -> {
+            this.kD = value;
+            applyConfigs();
+        });
     }
 
 }
