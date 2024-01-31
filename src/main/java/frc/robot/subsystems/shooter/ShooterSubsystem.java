@@ -123,11 +123,11 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        builder.addDoubleProperty("current kS", () -> kS, (value) -> this.kS = value);
-        builder.addDoubleProperty("current kV", () -> kV, (value) -> this.kV = value);
-        builder.addDoubleProperty("current kA", () -> kA, (value) -> this.kA = value);
-        builder.addDoubleProperty("current kP", () -> kP, (value) -> this.kP = value);
-        builder.addDoubleProperty("current kI", () -> kI, (value) -> this.kI = value);
-        builder.addDoubleProperty("current kD", () -> kD, (value) -> this.kD = value);
+        builder.addDoubleProperty("current kS", () -> this.kS, (value) -> this.kS = value);
+        builder.addDoubleProperty("current kV", () -> this.kV, (value) -> this.kV = value);
+        builder.addDoubleProperty("current kA", () -> this.kA, (value) -> this.kA = value);
+        builder.addDoubleProperty("current kP", () -> this.kP, (value) -> this.kP = value);
+        builder.addDoubleProperty("current kI", () -> this.kI, (value) -> this.kI = value);
+        builder.addDoubleProperty("current kD", () -> this.kD, (value) -> this.kD = value);
     }
 }
