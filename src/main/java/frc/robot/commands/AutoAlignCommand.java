@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,43 +17,29 @@ public class AutoAlignCommand extends Command {
     private final SwerveDrive swerve;
     private final BetterPID rotationPID;
 
-    private Pose2d currentPose2d;
     // TODO: TUNE CONSTANTS
     private final double kP = 0.1;
     private final double kI = 0;
     private final double kD = 0;
 
-    private final double kTolerance = 0.1;
+    private double kTolerance = 0.1;
 
     // Poses pulled from tag IDs 4 and 7, depending on alliance from here:
-        // https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2024-crescendo.json
-    Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
-    Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
+    // https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2024-crescendo.json
 
     public AutoAlignCommand(SwerveDrive swerve) {
         this.swerve = swerve;
         rotationPID = new BetterPID(kP, kI, kD);
         rotationPID.setTolerance(kTolerance);
         addRequirements(swerve);
+
+        //will remove once tested
+        throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
     }
 
     @Override
     public void initialize() {
-        swerve.setPose(new Pose2d(5, BLUE_GOAL_POSE.getY(), Rotation2d.fromDegrees(90)));
-        currentPose2d = swerve.getPose();
-
-        
-        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-
-        Translation2d targetGoalPose = isRed
-                ? RED_GOAL_POSE
-                : BLUE_GOAL_POSE;
-
-        Translation2d targetPoseOffset = targetGoalPose.minus(currentPose2d.getTranslation());
-
-        double rotationGoal = Math.toDegrees(Math.atan2(targetPoseOffset.getY(), targetPoseOffset.getX()));
-
-        rotationPID.setSetpoint(rotationGoal);
+        rotationPID.setSetpoint(swerve.getAngleDegreesToGoal());
     }
 
     @Override
@@ -69,6 +56,19 @@ public class AutoAlignCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         swerve.drive(new Translation2d(), 0, false);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        super.initSendable(builder);
+        builder.setSmartDashboardType("AutoAlign PID Gains");
+        builder.addDoubleProperty("kP", rotationPID::getP, rotationPID::setP);
+        builder.addDoubleProperty("kI", rotationPID::getI, rotationPID::setI);
+        builder.addDoubleProperty("kD", rotationPID::getD, rotationPID::setD);
+        builder.addDoubleProperty("kTolerance", () -> this.kTolerance, (value) -> {
+            this.kTolerance = value;
+            rotationPID.setTolerance(this.kTolerance);
+        });
     }
 
 }
