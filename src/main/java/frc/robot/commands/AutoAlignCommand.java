@@ -1,13 +1,7 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.util.BetterPID;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -24,16 +18,13 @@ public class AutoAlignCommand extends Command {
 
     private double kTolerance = 0.1;
 
-    // Poses pulled from tag IDs 4 and 7, depending on alliance from here:
-    // https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2024-crescendo.json
-
     public AutoAlignCommand(SwerveDrive swerve) {
         this.swerve = swerve;
         rotationPID = new BetterPID(kP, kI, kD);
         rotationPID.setTolerance(kTolerance);
         addRequirements(swerve);
 
-        //will remove once tested
+        // will remove once tested
         throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
     }
 
