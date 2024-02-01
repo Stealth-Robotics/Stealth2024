@@ -12,6 +12,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RotatorSubsystem extends SubsystemBase {
+
+    /**
+     *                             90 degrees
+     *                             |
+     *                             |
+     *                             |
+     *                             |
+     *                             |
+     *                             |
+     *                             |
+     *                             |
+     * 180 degrees ---------------|------------------- 0 degrees
+     * 
+     * 
+     */
+
     // TODO: find gear ratio once CAD does it
     private final double ROTATOR_GEAR_RATIO = 1;
     private final double ROTATOR_POSITION_COEFFICIENT = (2 * Math.PI) / (2048 * ROTATOR_GEAR_RATIO);
@@ -77,8 +93,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
     }
 
-
-    //these methods will only be used with the buttons
+    // these methods will only be used with the buttons
     public void setMotorsToCoast() {
         rotatorMotorOne.setNeutralMode(NeutralModeValue.Coast);
         rotatorMotorTwo.setNeutralMode(NeutralModeValue.Coast);
@@ -97,7 +112,11 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private double getMotorPosition() {
-        return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
+        return rotatorMotorOne.getRotorPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
+    }
+
+    public void resetEncoder() {
+        rotatorMotorOne.setPosition(0);
     }
 
     private boolean isMotorAtTarget() {
