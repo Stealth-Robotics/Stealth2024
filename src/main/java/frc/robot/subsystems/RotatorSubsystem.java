@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -13,24 +14,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RotatorSubsystem extends SubsystemBase {
 
-    /**
-     *                             90 degrees
-     *                             |
-     *                             |
-     *                             |
-     *                             |
-     *                             |
-     *                             |
-     *                             |
-     *                             |
-     * 180 degrees ---------------|------------------- 0 degrees
-     * 
-     * 
-     */
 
     // TODO: find gear ratio once CAD does it
+
+    //Explantation: Gear ration = how many turns of the motor shaft = 1 full revolution of the arm
+    //in applyConfigs, we specify sensor to mechanism ratio as gear ratio. This makes it so the sensor returns a value between 0 and 1
+    //with 0 being with the arm straight out, and 1 being 1 full revolution of the arm
+    //this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from being 0 to 1, to instead being 0 to 2 pi radians
     private final double ROTATOR_GEAR_RATIO = 1;
-    private final double ROTATOR_POSITION_COEFFICIENT = (2 * Math.PI) / (2048 * ROTATOR_GEAR_RATIO);
+    private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
@@ -38,7 +30,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
     private double kS = 0.0;
     private double kV = 0.0;
-    private double kA = 0.0;
+    private double kG = 0.0;
 
     private double kP = 0.0;
     private double kI = 0.0;
@@ -68,6 +60,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private void applyConfigs() {
         ROTATOR_CONFIG_ONE.Slot0.kS = kS;
         ROTATOR_CONFIG_ONE.Slot0.kV = kV;
+        ROTATOR_CONFIG_ONE.Slot0.kG = kG;
 
         ROTATOR_CONFIG_ONE.Slot0.kP = kP;
         ROTATOR_CONFIG_ONE.Slot0.kI = kI;
@@ -75,6 +68,10 @@ public class RotatorSubsystem extends SubsystemBase {
 
         ROTATOR_CONFIG_ONE.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         ROTATOR_CONFIG_ONE.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
+
+        ROTATOR_CONFIG_ONE.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+
+        ROTATOR_CONFIG_ONE.Feedback.SensorToMechanismRatio = ROTATOR_GEAR_RATIO;
 
         TalonFXConfiguration ROTATOR_CONFIG_TWO = ROTATOR_CONFIG_ONE;
         TalonFXConfiguration ROTATOR_CONFIG_THREE = ROTATOR_CONFIG_ONE;
@@ -119,8 +116,12 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorOne.setPosition(0);
     }
 
+    private double getTargetPosition() {
+        return motionMagicVoltage.Position * ROTATOR_POSITION_COEFFICIENT;
+    }
+
     private boolean isMotorAtTarget() {
-        return Math.abs(getMotorPosition() - motionMagicVoltage.Position) <= kTolerance;
+        return Math.abs(getMotorPosition() - getTargetPosition()) <= kTolerance;
     }
 
     public Command RotateToPositionCommand(double angRad) {
@@ -142,8 +143,8 @@ public class RotatorSubsystem extends SubsystemBase {
             applyConfigs();
         });
 
-        builder.addDoubleProperty("ka", () -> this.kA, (value) -> {
-            this.kA = value;
+        builder.addDoubleProperty("kg", () -> this.kG, (value) -> {
+            this.kG = value;
             applyConfigs();
         });
 
