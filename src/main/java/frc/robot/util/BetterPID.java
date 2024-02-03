@@ -68,6 +68,8 @@ public class BetterPID implements Sendable, AutoCloseable {
     private boolean m_haveMeasurement;
     private boolean m_haveSetpoint;
 
+    private boolean conditionalIntegration;
+
     /**
      * Allocates a PIDController with the given constants for kp, ki, and kd and a
      * default period of
@@ -80,8 +82,27 @@ public class BetterPID implements Sendable, AutoCloseable {
      * @throws IllegalArgumentException if ki &lt; 0
      * @throws IllegalArgumentException if kd &lt; 0
      */
+
     public BetterPID(double kp, double ki, double kd) {
+        this(kp, ki, kd, false);
+    }
+
+    /**
+     * Allocates a PIDController with the given constants for kp, ki, and kd and a
+     * default period of
+     * 0.02 seconds.
+     *
+     * @param kp                     The proportional coefficient.
+     * @param ki                     The integral coefficient.
+     * @param kd                     The derivative coefficient.
+     * @param conditionalIntegration Whether to use conditional integration
+     * @throws IllegalArgumentException if kp &lt; 0
+     * @throws IllegalArgumentException if ki &lt; 0
+     * @throws IllegalArgumentException if kd &lt; 0
+     */
+    public BetterPID(double kp, double ki, double kd, boolean conditionalIntegration) {
         this(kp, ki, kd, 0.02);
+        this.conditionalIntegration = conditionalIntegration;
     }
 
     /**
@@ -433,9 +454,11 @@ public class BetterPID implements Sendable, AutoCloseable {
                     m_maximumIntegral / m_ki);
         }
 
-        //checks if the input is saturated, and if the integral buildup is going the wrong way
-        //if this is the case, we return the calculated output without the integral term
-        if (calc > 0.9 && (Math.signum(calc) != Math.signum(m_positionError))) {
+        // checks if the input is saturated (caclc > 0.9), and if the integral buildup is going the
+        // wrong way (sign of calc is opposite of sign of position error)
+        // if this is the case, we return the calculated output without the integral
+        // term
+        if (calc > 0.9 && (Math.signum(calc) != Math.signum(m_positionError)) && conditionalIntegration) {
             return m_kp * m_positionError + m_kd * m_velocityError;
         }
 

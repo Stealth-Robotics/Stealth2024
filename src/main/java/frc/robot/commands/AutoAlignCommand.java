@@ -20,7 +20,7 @@ public class AutoAlignCommand extends Command {
 
     public AutoAlignCommand(SwerveDrive swerve) {
         this.swerve = swerve;
-        rotationPID = new BetterPID(kP, kI, kD);
+        rotationPID = new BetterPID(kP, kI, kD, true);
         rotationPID.setTolerance(kTolerance);
         addRequirements(swerve);
 
