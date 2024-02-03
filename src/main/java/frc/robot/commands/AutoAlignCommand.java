@@ -12,9 +12,9 @@ public class AutoAlignCommand extends Command {
     private final BetterPID rotationPID;
 
     // TODO: TUNE CONSTANTS
-    private final double kP = 0.1;
-    private final double kI = 0;
-    private final double kD = 0;
+    private double kP = 0.1;
+    private double kI = 0;
+    private double kD = 0;
 
     private double kTolerance = 0.1;
 
@@ -26,6 +26,13 @@ public class AutoAlignCommand extends Command {
 
         // will remove once tested
         throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
+    }
+
+    private void applyGains() {
+        rotationPID.setP(kP);
+        rotationPID.setI(kI);
+        rotationPID.setD(kD);
+        rotationPID.setTolerance(kTolerance);
     }
 
     @Override
@@ -53,12 +60,21 @@ public class AutoAlignCommand extends Command {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
         builder.setSmartDashboardType("AutoAlign PID Gains");
-        builder.addDoubleProperty("kP", rotationPID::getP, rotationPID::setP);
-        builder.addDoubleProperty("kI", rotationPID::getI, rotationPID::setI);
-        builder.addDoubleProperty("kD", rotationPID::getD, rotationPID::setD);
+        builder.addDoubleProperty("kP", () -> this.kP, (value) -> {
+            this.kP = value;
+            applyGains();
+        });
+        builder.addDoubleProperty("kI", () -> this.kI, (value) -> {
+            this.kI = value;
+            applyGains();
+        });
+        builder.addDoubleProperty("kD", () -> this.kD, (value) -> {
+            this.kD = value;
+            applyGains();
+        });
         builder.addDoubleProperty("kTolerance", () -> this.kTolerance, (value) -> {
             this.kTolerance = value;
-            rotationPID.setTolerance(this.kTolerance);
+            applyGains();
         });
     }
 
