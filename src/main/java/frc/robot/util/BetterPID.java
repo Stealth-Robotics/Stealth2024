@@ -2,6 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+//THIS PID CONTROLLER IS A MODIFIED VERSION OF THE WPILIB PID CONTROLLER
+//https://github.com/wpilibsuite/allwpilib/blob/6cc7e52de74abce2b01de4f94cb58a3047a81f5c/wpimath/src/main/java/edu/wpi/first/math/controller/PIDController.java#L15
+
+//THE MODIFICATIONS ARE:
+//The PID utilizes coonditional statements to prevent integral windup
+
 package frc.robot.util;
 
 import edu.wpi.first.math.MathSharedStore;
@@ -427,6 +433,8 @@ public class BetterPID implements Sendable, AutoCloseable {
                     m_maximumIntegral / m_ki);
         }
 
+        //checks if the input is saturated, and if the integral buildup is going the wrong way
+        //if this is the case, we return the calculated output without the integral term
         if (calc > 0.9 && (Math.signum(calc) != Math.signum(m_positionError))) {
             return m_kp * m_positionError + m_kd * m_velocityError;
         }
