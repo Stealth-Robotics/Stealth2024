@@ -28,13 +28,6 @@ public class AutoAlignCommand extends Command {
         throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
     }
 
-    private void applyGains() {
-        rotationPID.setP(kP);
-        rotationPID.setI(kI);
-        rotationPID.setD(kD);
-        rotationPID.setTolerance(kTolerance);
-    }
-
     @Override
     public void initialize() {
         rotationPID.setSetpoint(swerve.getAngleDegreesToGoal());
@@ -60,22 +53,10 @@ public class AutoAlignCommand extends Command {
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
         builder.setSmartDashboardType("AutoAlign PID Gains");
-        builder.addDoubleProperty("kP", () -> this.kP, (value) -> {
-            this.kP = value;
-            applyGains();
-        });
-        builder.addDoubleProperty("kI", () -> this.kI, (value) -> {
-            this.kI = value;
-            applyGains();
-        });
-        builder.addDoubleProperty("kD", () -> this.kD, (value) -> {
-            this.kD = value;
-            applyGains();
-        });
-        builder.addDoubleProperty("kTolerance", () -> this.kTolerance, (value) -> {
-            this.kTolerance = value;
-            applyGains();
-        });
+        builder.addDoubleProperty("kP", rotationPID::getP, rotationPID::setP);
+        builder.addDoubleProperty("kI", rotationPID::getI, rotationPID::setI);
+        builder.addDoubleProperty("kD", rotationPID::getD, rotationPID::setD);
+        builder.addDoubleProperty("kTolerance", rotationPID::getPositionTolerance, rotationPID::setTolerance);
     }
 
 }
