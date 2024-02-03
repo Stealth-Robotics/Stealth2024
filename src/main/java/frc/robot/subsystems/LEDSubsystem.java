@@ -1,12 +1,16 @@
 package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
+import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -18,23 +22,37 @@ public class LEDSubsystem extends SubsystemBase {
 
     private final CANdle candle = new CANdle(0);
 
-    private LEDState currentState = LEDState.CoastMode;
+    private LEDState currentState = LEDState.CoastMode_NotHomed;
+
+    private Animation currentAnimation = null;
+
+    private int currentRed = 0;
+    private int currentGreen = 0;
+    private int currentBlue = 0;
 
     private final BooleanSupplier beamBreak;
+    private final BooleanSupplier isHomed;
+    private final Supplier<NeutralModeValue> neutralMode;
 
     public enum LEDState {
-        CoastMode,
-        BrakeMode,
-        Homed,
+        CoastMode_NotHomed,
+        BrakeMode_NotHomed,
+
+        CoastMode_Homed,
+        BrakeMode_Homed,
+
         Idle,
-        HasRing
+        HasRing,
+        WaitingForWantedState
     }
 
-    
-
-    public LEDSubsystem(BooleanSupplier beamBreak) {
+    public LEDSubsystem(BooleanSupplier beamBreak, BooleanSupplier isHomed, Supplier<NeutralModeValue> neutralMode) {
         this.beamBreak = beamBreak;
+        this.isHomed = isHomed;
+        this.neutralMode = neutralMode;
+
         blinkTimer = new Timer();
+        blinkTimer.reset();
 
         CANdleConfiguration config = new CANdleConfiguration();
         config.brightnessScalar = 1.0;
@@ -44,64 +62,103 @@ public class LEDSubsystem extends SubsystemBase {
         config.statusLedOffWhenActive = false;
 
         candle.configAllSettings(config);
+
+        setWantedState(LEDState.Idle);
     }
 
-    public void setState(LEDState state)
-    {
-        currentState = state;
+    public void setWantedState(LEDState wantedState) {
+        currentState = wantedState;
     }
 
-    public void coastMode() {
-        candle.animate(new StrobeAnimation(255, 255, 0, 0, 0.3, LED_COUNT));
+    private void coastModeNotHomed() {
+        currentAnimation = new StrobeAnimation(255, 0, 0, 0, 0.3, LED_COUNT);
     }
 
-    public void homed() {
-        candle.setLEDs(0, 255, 0, 0, 0, LED_COUNT);
+    private void brakeModeNotHomed() {
+        currentAnimation = null;
+
+        currentRed = 255;
+        currentGreen = 0;
+        currentBlue = 0;
     }
 
-    public void hasRing() {
-        candle.animate(new StrobeAnimation(234, 10, 142, 0, 0.3, LED_COUNT));
+    private void coastModeHomed() {
+        currentAnimation = new StrobeAnimation(0, 255, 0, 0, 0.3, LED_COUNT);
     }
 
-    public void idle() {
-        candle.animate(new RainbowAnimation(1, 0.4, LED_COUNT));
+    private void brakeModeHomed() {
+        currentAnimation = null;
+
+        currentRed = 0;
+        currentGreen = 255;
+        currentBlue = 0;
     }
 
-    public void brakeMode() {
-        candle.animate(new StrobeAnimation(0, 255, 0, 0, 0.3, LED_COUNT));
+    private void hasRing() {
+        currentAnimation = new StrobeAnimation(234, 10, 142, 0, 0.3, LED_COUNT);
+    }
+
+    private void idle() {
+        currentAnimation = new RainbowAnimation(1, 0.4, LED_COUNT);
     }
 
     @Override
     public void periodic() {
-        if(beamBreak.getAsBoolean()){
-            setState(LEDState.HasRing);
+
+        if (DriverStation.isDisabled()) {
+            if (isHomed.getAsBoolean()) {
+                setWantedState(
+                        neutralMode.get() == NeutralModeValue.Brake ? LEDState.BrakeMode_Homed
+                                : LEDState.CoastMode_Homed);
+            } else {
+                setWantedState(neutralMode.get() == NeutralModeValue.Brake ? LEDState.BrakeMode_NotHomed
+                        : LEDState.CoastMode_NotHomed);
+            }
         }
-        
+
+        if (beamBreak.getAsBoolean()) {
+            setWantedState(LEDState.HasRing);
+        }
+
         switch (currentState) {
-            case CoastMode:
-                coastMode();
+            case CoastMode_NotHomed:
+                coastModeNotHomed();
+                currentState = LEDState.WaitingForWantedState;
                 break;
-            case BrakeMode:
-                brakeMode();
+            case BrakeMode_NotHomed:
+                brakeModeNotHomed();
+                currentState = LEDState.WaitingForWantedState;
                 break;
-            case Homed:
-                homed();
+            case CoastMode_Homed:
+                coastModeHomed();
+                currentState = LEDState.WaitingForWantedState;
+                break;
+            case BrakeMode_Homed:
+                brakeModeHomed();
+                currentState = LEDState.WaitingForWantedState;
                 break;
             case Idle:
                 idle();
+                currentState = LEDState.WaitingForWantedState;
                 break;
             case HasRing:
                 hasRing();
-                blinkTimer.reset();
                 blinkTimer.start();
-                if(blinkTimer.hasElapsed(3)){
-                    setState(LEDState.Idle);
+                currentState = LEDState.WaitingForWantedState;
+                break;
+            case WaitingForWantedState:
+                if (blinkTimer.hasElapsed(3)) {
                     blinkTimer.stop();
+                    blinkTimer.reset();
+                    currentState = LEDState.Idle;
                 }
                 break;
+        }
 
-            default:
-                idle();
+        if (currentAnimation != null) {
+            candle.animate(currentAnimation);
+        } else {
+            candle.setLEDs(currentRed, currentGreen, currentBlue, 0, 0, LED_COUNT);
         }
     }
 }
