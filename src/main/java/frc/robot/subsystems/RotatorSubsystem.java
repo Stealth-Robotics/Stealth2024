@@ -14,13 +14,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RotatorSubsystem extends SubsystemBase {
 
+    private enum NeutralMode {
+        COAST,
+        BRAKE;
+    }
 
     // TODO: find gear ratio once CAD does it
 
-    //Explantation: Gear ration = how many turns of the motor shaft = 1 full revolution of the arm
-    //in applyConfigs, we specify sensor to mechanism ratio as gear ratio. This makes it so the sensor returns a value between 0 and 1
-    //with 0 being with the arm straight out, and 1 being 1 full revolution of the arm
-    //this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from being 0 to 1, to instead being 0 to 2 pi radians
+    // Explantation: Gear ration = how many turns of the motor shaft = 1 full
+    // revolution of the arm
+    // in applyConfigs, we specify sensor to mechanism ratio as gear ratio. This
+    // makes it so the sensor returns a value between 0 and 1
+    // with 0 being with the arm straight out, and 1 being 1 full revolution of the
+    // arm
+    // this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from
+    // being 0 to 1, to instead being 0 to 2 pi radians
     private final double ROTATOR_GEAR_RATIO = 1;
     private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
 
@@ -35,6 +43,8 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kP = 0.0;
     private double kI = 0.0;
     private double kD = 0.0;
+
+    private NeutralMode motorMode = NeutralMode.COAST;
 
     // tolerance in radians
     // TODO: TUNE THIS
@@ -51,6 +61,8 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorOne = new TalonFX(0);
         rotatorMotorTwo = new TalonFX(0);
         rotatorMotorThree = new TalonFX(0);
+
+        setMotorsToCoast();
 
         applyConfigs();
 
@@ -101,6 +113,19 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorOne.setNeutralMode(NeutralModeValue.Brake);
         rotatorMotorTwo.setNeutralMode(NeutralModeValue.Brake);
         rotatorMotorThree.setNeutralMode(NeutralModeValue.Brake);
+    }
+
+    public Command toggleMotorMode() {
+        return this.runOnce(() -> {
+            if (motorMode == NeutralMode.COAST) {
+                setMotorsToBrake();
+                motorMode = NeutralMode.BRAKE;
+            }
+            if (motorMode == NeutralMode.BRAKE) {
+                setMotorsToCoast();
+                motorMode = NeutralMode.COAST;
+            }
+        }).ignoringDisable(true);
     }
 
     private void setMotorTargetPosition(double angRad) {
