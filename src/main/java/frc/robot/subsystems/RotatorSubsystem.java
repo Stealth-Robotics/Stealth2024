@@ -9,15 +9,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RotatorSubsystem extends SubsystemBase {
-
-    private enum NeutralMode {
-        COAST,
-        BRAKE;
-    }
 
     // TODO: find gear ratio once CAD does it
 
@@ -44,16 +42,21 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kI = 0.0;
     private double kD = 0.0;
 
-    private NeutralMode motorMode = NeutralMode.COAST;
+    private DigitalInput homeButton = new DigitalInput(0);
+    private DigitalInput toggleMotorModeButton = new DigitalInput(1);
+
+    private NeutralModeValue motorMode = NeutralModeValue.Coast;
+    private boolean isHomed = false;
 
     // tolerance in radians
     // TODO: TUNE THIS
-    private final double kTolerance = 0.0;
+    private final double kTOLERANCE = 0.0;
 
+    private final double MOTION_MAGIC_JERK = 0.0;
     private double MOTION_MAGIC_ACCELERATION = 0.0;
     private double MOTION_MAGIC_VELOCITY = 0.0;
 
-    private final TalonFXConfiguration ROTATOR_CONFIG_ONE = new TalonFXConfiguration();
+    private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
@@ -62,40 +65,39 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorTwo = new TalonFX(0);
         rotatorMotorThree = new TalonFX(0);
 
-        setMotorsToCoast();
-
         applyConfigs();
 
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Test rotator code");
     }
 
     private void applyConfigs() {
-        ROTATOR_CONFIG_ONE.Slot0.kS = kS;
-        ROTATOR_CONFIG_ONE.Slot0.kV = kV;
-        ROTATOR_CONFIG_ONE.Slot0.kG = kG;
+        ROTATOR_MOTOR_CONFIG.Slot0.kS = kS;
+        ROTATOR_MOTOR_CONFIG.Slot0.kV = kV;
+        ROTATOR_MOTOR_CONFIG.Slot0.kG = kG;
 
-        ROTATOR_CONFIG_ONE.Slot0.kP = kP;
-        ROTATOR_CONFIG_ONE.Slot0.kI = kI;
-        ROTATOR_CONFIG_ONE.Slot0.kD = kD;
+        ROTATOR_MOTOR_CONFIG.Slot0.kP = kP;
+        ROTATOR_MOTOR_CONFIG.Slot0.kI = kI;
+        ROTATOR_MOTOR_CONFIG.Slot0.kD = kD;
 
-        ROTATOR_CONFIG_ONE.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
-        ROTATOR_CONFIG_ONE.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
+        ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
+        ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
+        ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
 
-        ROTATOR_CONFIG_ONE.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        ROTATOR_MOTOR_CONFIG.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
-        ROTATOR_CONFIG_ONE.Feedback.SensorToMechanismRatio = ROTATOR_GEAR_RATIO;
+        ROTATOR_MOTOR_CONFIG.Feedback.SensorToMechanismRatio = ROTATOR_GEAR_RATIO;
 
-        TalonFXConfiguration ROTATOR_CONFIG_TWO = ROTATOR_CONFIG_ONE;
-        TalonFXConfiguration ROTATOR_CONFIG_THREE = ROTATOR_CONFIG_ONE;
+         // TODO: CHECK THIS DIRECTIONS
+        ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        // TODO: CHECK THESE DIRECTIONS
-        ROTATOR_CONFIG_ONE.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        ROTATOR_CONFIG_TWO.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        ROTATOR_CONFIG_THREE.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
 
-        rotatorMotorOne.getConfigurator().apply(ROTATOR_CONFIG_ONE);
-        rotatorMotorTwo.getConfigurator().apply(ROTATOR_CONFIG_TWO);
-        rotatorMotorThree.getConfigurator().apply(ROTATOR_CONFIG_THREE);
+        // TalonFXConfiguration ROTATOR_CONFIG_TWO = ROTATOR_CONFIG_ONE;
+        // TalonFXConfiguration ROTATOR_CONFIG_THREE = ROTATOR_CONFIG_ONE;
+
+        rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
+        rotatorMotorTwo.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
+        rotatorMotorThree.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
 
         rotatorMotorTwo.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
         rotatorMotorThree.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
@@ -115,17 +117,40 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorThree.setNeutralMode(NeutralModeValue.Brake);
     }
 
-    public Command toggleMotorMode() {
-        return this.runOnce(() -> {
-            if (motorMode == NeutralMode.COAST) {
-                setMotorsToBrake();
-                motorMode = NeutralMode.BRAKE;
+    public boolean getToggleMotorModeButton() {
+        return toggleMotorModeButton.get();
+    }
+
+    public Command toggleMotorModeCommand() {
+        return new InstantCommand(
+                () -> {
+                    if (DriverStation.isDisabled()) {
+                        if (motorMode == NeutralModeValue.Coast) {
+                            setMotorsToBrake();
+                            motorMode = NeutralModeValue.Brake;
+                        } else {
+                            setMotorsToCoast();
+                            motorMode = NeutralModeValue.Coast;
+                        }
+                    }
+                }, this).ignoringDisable(true);
+    }
+
+    public boolean getHomeButton() {
+        return homeButton.get();
+    }
+
+    public boolean isHomed() {
+        return isHomed;
+    }
+
+    public Command homeArmCommand() {
+        return new InstantCommand(() -> {
+            if (DriverStation.isDisabled()) {
+                resetEncoder();
+                isHomed = true;
             }
-            if (motorMode == NeutralMode.BRAKE) {
-                setMotorsToCoast();
-                motorMode = NeutralMode.COAST;
-            }
-        }).ignoringDisable(true);
+        }, this).ignoringDisable(true);
     }
 
     private void setMotorTargetPosition(double angRad) {
@@ -137,8 +162,13 @@ public class RotatorSubsystem extends SubsystemBase {
         return rotatorMotorOne.getRotorPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
     }
 
+    public void holdCurrentPosition() {
+        setMotorTargetPosition(getMotorPosition());
+    }
+
     public void resetEncoder() {
         rotatorMotorOne.setPosition(0);
+        setMotorTargetPosition(0);
     }
 
     private double getTargetPosition() {
@@ -146,7 +176,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private boolean isMotorAtTarget() {
-        return Math.abs(getMotorPosition() - getTargetPosition()) <= kTolerance;
+        return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
     }
 
     public Command RotateToPositionCommand(double angRad) {
