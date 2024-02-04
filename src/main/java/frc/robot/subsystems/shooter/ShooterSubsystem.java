@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -49,6 +50,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private void applyConfigs() {
         // TODO: check everything
+        LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
         LEFT_TALONFX_CONFIG.Slot0.kS = kS;
         LEFT_TALONFX_CONFIG.Slot0.kV = kV;
         LEFT_TALONFX_CONFIG.Slot0.kA = kA;
