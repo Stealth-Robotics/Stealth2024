@@ -37,57 +37,6 @@ public class SwerveDrive extends SubsystemBase {
 
     private final Translation2d targetGoalPose;
 
-    public SwerveDrive(PoseEstimationSystem visionSubsystem) {
-        gyro = new Pigeon2(SwerveConstants.pigeonID);
-        gyro.getConfigurator().apply(new Pigeon2Configuration());
-        gyro.setYaw(0);
-
-        mSwerveMods = new SwerveModule[] {
-                new SwerveModule(0, SwerveConstants.Mod0.constants),
-                new SwerveModule(1, SwerveConstants.Mod1.constants),
-                new SwerveModule(2, SwerveConstants.Mod2.constants),
-                new SwerveModule(3, SwerveConstants.Mod3.constants)
-        };
-
-        Timer.delay(1.0);
-        resetModulesToAbsolute();
-
-        swerveOdometry = new SwerveDrivePoseEstimator(
-                SwerveConstants.swerveKinematics,
-                getGyroYaw(),
-                getModulePositions(),
-                new Pose2d());
-
-        AutoBuilder.configureHolonomic(
-                this::getPose,
-                this::setPose,
-                this::getRobotRelativeSpeeds,
-                this::driveRobotRelative,
-                new HolonomicPathFollowerConfig(
-                        new PIDConstants(SwerveConstants.AutoConstants.TRANSLATION_CONTROLLER_P_COEFF, 0.0, 0.0),
-                        new PIDConstants(SwerveConstants.AutoConstants.ROTATION_CONTROLLER_P_COEFF, 0.0, 0.0),
-                        SwerveConstants.maxSpeed,
-                        Math.hypot(SwerveConstants.trackWidth/2.0, SwerveConstants.wheelBase/2.0),
-                        new ReplanningConfig()),
-                () -> {
-
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                },
-                this);
-
-        this.visionSubsystem = visionSubsystem;
-
-        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-
-        targetGoalPose = isRed
-                ? RED_GOAL_POSE
-                : BLUE_GOAL_POSE;
-    }
-
     public SwerveDrive() {
         gyro = new Pigeon2(SwerveConstants.pigeonID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -136,6 +85,12 @@ public class SwerveDrive extends SubsystemBase {
                 ? RED_GOAL_POSE
                 : BLUE_GOAL_POSE;
     }
+
+    public SwerveDrive(PoseEstimationSystem visionSubsystem) {
+        this();
+        this.visionSubsystem = visionSubsystem;
+    }
+
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return SwerveConstants.swerveKinematics.toChassisSpeeds(getModuleStates());
