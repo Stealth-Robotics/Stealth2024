@@ -67,7 +67,7 @@ public class SwerveDrive extends SubsystemBase {
                         new PIDConstants(SwerveConstants.AutoConstants.TRANSLATION_CONTROLLER_P_COEFF, 0.0, 0.0),
                         new PIDConstants(SwerveConstants.AutoConstants.ROTATION_CONTROLLER_P_COEFF, 0.0, 0.0),
                         SwerveConstants.maxSpeed,
-                        0.422930975455813818,
+                        Math.hypot(SwerveConstants.trackWidth/2.0, SwerveConstants.wheelBase/2.0),
                         new ReplanningConfig()),
                 () -> {
 
@@ -118,7 +118,7 @@ public class SwerveDrive extends SubsystemBase {
                         new PIDConstants(SwerveConstants.AutoConstants.TRANSLATION_CONTROLLER_P_COEFF, 0.0, 0.0),
                         new PIDConstants(SwerveConstants.AutoConstants.ROTATION_CONTROLLER_P_COEFF, 0.0, 0.0),
                         SwerveConstants.maxSpeed,
-                        0.422930975455813818,
+                        Math.hypot(SwerveConstants.trackWidth/2.0, SwerveConstants.wheelBase/2.0),
                         new ReplanningConfig()),
                 () -> {
 
