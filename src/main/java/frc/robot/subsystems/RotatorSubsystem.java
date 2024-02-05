@@ -105,13 +105,13 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     // these methods will only be used with the buttons
-    public void setMotorsToCoast() {
+    private void setMotorsToCoast() {
         rotatorMotorOne.setNeutralMode(NeutralModeValue.Coast);
         rotatorMotorTwo.setNeutralMode(NeutralModeValue.Coast);
         rotatorMotorThree.setNeutralMode(NeutralModeValue.Coast);
     }
 
-    public void setMotorsToBrake() {
+    private void setMotorsToBrake() {
         rotatorMotorOne.setNeutralMode(NeutralModeValue.Brake);
         rotatorMotorTwo.setNeutralMode(NeutralModeValue.Brake);
         rotatorMotorThree.setNeutralMode(NeutralModeValue.Brake);
@@ -179,7 +179,7 @@ public class RotatorSubsystem extends SubsystemBase {
         return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
     }
 
-    public Command RotateToPositionCommand(double angRad) {
+    public Command rotateToPositionCommand(double angRad) {
         return this.runOnce(() -> setMotorTargetPosition(angRad)).until(() -> this.isMotorAtTarget());
     }
 
