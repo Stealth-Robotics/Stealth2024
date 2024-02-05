@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -59,6 +60,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+    private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
     public RotatorSubsystem() {
         rotatorMotorOne = new TalonFX(0);
@@ -151,6 +153,11 @@ public class RotatorSubsystem extends SubsystemBase {
                 isHomed = true;
             }
         }, this).ignoringDisable(true);
+    }
+
+    public void setDutyCycle(double dutyCycle) {
+        dutyCycleOut.Output = dutyCycle;
+        rotatorMotorOne.setControl(dutyCycleOut);
     }
 
     private void setMotorTargetPosition(double angRad) {
