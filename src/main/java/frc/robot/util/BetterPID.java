@@ -458,7 +458,7 @@ public class BetterPID implements Sendable, AutoCloseable {
         // wrong way (sign of calc is opposite of sign of position error)
         // if this is the case, we return the calculated output without the integral
         // term
-        if (calc > 0.9 && (Math.signum(calc) != Math.signum(m_positionError)) && conditionalIntegration) {
+        if (Math.abs(calc) >= 0.9 && (Math.signum(calc) != Math.signum(m_positionError)) && conditionalIntegration) {
             return m_kp * m_positionError + m_kd * m_velocityError;
         }
 
