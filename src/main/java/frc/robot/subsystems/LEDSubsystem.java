@@ -6,6 +6,7 @@ import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
@@ -64,7 +65,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void coastModeNotHomed() {
-        animate(new StrobeAnimation(255, 0, 0, 0, 0.3, LED_COUNT));
+        animate(new SingleFadeAnimation(255, 0, 0, 0, 0.7, LED_COUNT));
     }
 
     public void brakeModeNotHomed() {
@@ -72,7 +73,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void coastModeHomed() {
-        animate(new StrobeAnimation(0, 255, 0, 0, 0.3, LED_COUNT));
+        animate(new SingleFadeAnimation(0, 255, 0, 0, 0.7, LED_COUNT));
     }
 
     public void brakeModeHomed() {
@@ -80,6 +81,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void hasRing() {
+        // Change to SingleFadeAnimation if StrobeAnimation is too bright
         animate(new StrobeAnimation(234, 10, 142, 0, 0.3, LED_COUNT));
     }
 
