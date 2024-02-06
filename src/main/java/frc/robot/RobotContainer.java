@@ -83,11 +83,13 @@ public class RobotContainer {
 
   public void autonomousInit() {
     rotatorSubsystem.holdCurrentPosition();
-    ;
   }
 
   public void teleopInit() {
     rotatorSubsystem.holdCurrentPosition();
-    ;
+  }
+
+  public void testInit() {
+    rotatorSubsystem.holdCurrentPosition();
   }
 }

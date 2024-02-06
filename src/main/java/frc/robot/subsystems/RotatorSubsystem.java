@@ -213,6 +213,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
     public void resetEncoder() {
         rotatorMotorOne.setPosition(0);
+        setMotorTargetPosition(0);
     }
 
     private double getTargetPosition() {
