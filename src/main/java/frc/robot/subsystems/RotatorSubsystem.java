@@ -1,5 +1,10 @@
 package frc.robot.subsystems;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -11,7 +16,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -62,10 +66,15 @@ public class RotatorSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
+    Path tempPath = Paths.get("/tmp/rotatorHomed.txt");
+
     public RotatorSubsystem() {
         rotatorMotorOne = new TalonFX(0);
         rotatorMotorTwo = new TalonFX(0);
         rotatorMotorThree = new TalonFX(0);
+
+        isHomed = Files.exists(tempPath);
+        motorMode = isHomed ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
         applyConfigs();
 
@@ -89,7 +98,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
         ROTATOR_MOTOR_CONFIG.Feedback.SensorToMechanismRatio = ROTATOR_GEAR_RATIO;
 
-         // TODO: CHECK THIS DIRECTIONS
+        // TODO: CHECK THIS DIRECTIONS
         ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
@@ -103,7 +112,6 @@ public class RotatorSubsystem extends SubsystemBase {
 
         rotatorMotorTwo.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
         rotatorMotorThree.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
-
     }
 
     // these methods will only be used with the buttons
@@ -123,17 +131,19 @@ public class RotatorSubsystem extends SubsystemBase {
         return toggleMotorModeButton.get();
     }
 
+    public NeutralModeValue getMotorMode() {
+        return motorMode;
+    }
+
     public Command toggleMotorModeCommand() {
         return new InstantCommand(
                 () -> {
-                    if (DriverStation.isDisabled()) {
-                        if (motorMode == NeutralModeValue.Coast) {
-                            setMotorsToBrake();
-                            motorMode = NeutralModeValue.Brake;
-                        } else {
-                            setMotorsToCoast();
-                            motorMode = NeutralModeValue.Coast;
-                        }
+                    if (motorMode == NeutralModeValue.Coast) {
+                        setMotorsToBrake();
+                        motorMode = NeutralModeValue.Brake;
+                    } else {
+                        setMotorsToCoast();
+                        motorMode = NeutralModeValue.Coast;
                     }
                 }, this).ignoringDisable(true);
     }
@@ -146,12 +156,30 @@ public class RotatorSubsystem extends SubsystemBase {
         return isHomed;
     }
 
+    public void setHomed(boolean newValue) {
+        this.isHomed = newValue;
+
+        if (isHomed) {
+            try {
+                Files.createFile(tempPath);
+            } catch (IOException e) {
+                // File already exists and therefore already has been homed this power cycle, do
+                // nothing, and the encoder will be reset again in `homeArmCommand`
+                // e.printStackTrace();
+            }
+        } else {
+            try {
+                Files.delete(tempPath);
+            } catch (IOException e) {
+                // e.printStackTrace();
+            }
+        }
+    }
+
     public Command homeArmCommand() {
         return new InstantCommand(() -> {
-            if (DriverStation.isDisabled()) {
-                resetEncoder();
-                isHomed = true;
-            }
+            resetEncoder();
+            setHomed(true);
         }, this).ignoringDisable(true);
     }
 
@@ -166,7 +194,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private double getMotorPosition() {
-        return rotatorMotorOne.getRotorPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
+        return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
     }
 
     public void holdCurrentPosition() {
@@ -175,7 +203,6 @@ public class RotatorSubsystem extends SubsystemBase {
 
     public void resetEncoder() {
         rotatorMotorOne.setPosition(0);
-        setMotorTargetPosition(0);
     }
 
     private double getTargetPosition() {

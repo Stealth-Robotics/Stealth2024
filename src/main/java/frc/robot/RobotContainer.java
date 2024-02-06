@@ -6,11 +6,14 @@ package frc.robot;
 
 import frc.robot.commands.defaultCommands.RotatorDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,6 +24,9 @@ public class RobotContainer {
 
   private final SwerveDrive swerveSubsystem = new SwerveDrive();
   private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
+  private final LEDSubsystem ledSubsystem = new LEDSubsystem(
+      () -> rotatorSubsystem.isHomed(),
+      () -> rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake);
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -59,10 +65,12 @@ public class RobotContainer {
     // Onboard Robot Button Commands
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
-        rotatorSubsystem.homeArmCommand());
+        rotatorSubsystem.homeArmCommand().andThen(
+            new InstantCommand(() -> ledSubsystem.updateLEDs())));
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
-        rotatorSubsystem.toggleMotorModeCommand());
+        rotatorSubsystem.toggleMotorModeCommand().andThen(
+            new InstantCommand(() -> ledSubsystem.updateLEDs())));
   }
 
   private double adjustInput(double input) {
