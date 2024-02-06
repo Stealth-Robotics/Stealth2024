@@ -159,19 +159,29 @@ public class RotatorSubsystem extends SubsystemBase {
     public void setHomed(boolean newValue) {
         this.isHomed = newValue;
 
-        if (isHomed) {
-            try {
-                Files.createFile(tempPath);
-            } catch (IOException e) {
-                // File already exists and therefore already has been homed this power cycle, do
-                // nothing, and the encoder will be reset again in `homeArmCommand`
-                // e.printStackTrace();
+        if (newValue) {
+            if (!Files.exists(tempPath)) {
+                try {
+                    Files.createFile(tempPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Already homed, variable is not set again, but encoder is reset again by
+                // homeArmCommand
             }
+
         } else {
-            try {
-                Files.delete(tempPath);
-            } catch (IOException e) {
-                // e.printStackTrace();
+            if (Files.exists(tempPath)) {
+                try {
+                    Files.delete(tempPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            else {
+                // Already not homed, variable is not set again
             }
         }
     }
