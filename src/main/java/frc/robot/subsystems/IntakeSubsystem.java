@@ -23,8 +23,16 @@ public class IntakeSubsystem extends SubsystemBase {
         leftBeamBreak = new DigitalInput(0);
     }
 
-    public void setMotorSpeed(double speed) {
+    public void setIntakeSpeed(double speed) {
         intakeMotor.set(speed);
+    }
+
+    public void setOuttakeSpeed(double speed) {
+        intakeMotor.set(-speed);
+    }
+
+    public void stop() {
+        intakeMotor.set(0);
     }
 
     public boolean getRightBeamBreak() {

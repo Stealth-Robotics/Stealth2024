@@ -14,15 +14,18 @@ public class IntakeDefaultCommand extends Command {
         this.bumper = bumper;
         this.intake = intake;
         addRequirements(intake);
+
+        //TODO:Remove after command has been tested
+        throw new UnsupportedOperationException("IntakeDefaultCommand has not been tested on robot yet!");
     }
 
     @Override
     public void execute() {
-        intake.setMotorSpeed(bumper.getAsDouble());
+        intake.setIntakeSpeed(bumper.getAsDouble());
     }
 
     public void end() {
-        intake.setMotorSpeed(0);
+        intake.stop();
     }
     
 }
