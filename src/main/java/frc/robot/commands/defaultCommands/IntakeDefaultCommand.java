@@ -20,5 +20,9 @@ public class IntakeDefaultCommand extends Command {
     public void execute() {
         intake.setMotorSpeed(bumper.getAsDouble());
     }
+
+    public void end() {
+        intake.setMotorSpeed(0);
+    }
     
 }
