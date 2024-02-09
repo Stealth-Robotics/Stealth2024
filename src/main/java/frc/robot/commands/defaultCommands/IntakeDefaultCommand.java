@@ -8,20 +8,20 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class IntakeDefaultCommand extends Command {
 
     private final IntakeSubsystem intake;
-    private final DoubleSupplier bumper;
+    private final DoubleSupplier intakeSupplier;
 
-    public IntakeDefaultCommand(IntakeSubsystem intake, DoubleSupplier bumper) {
-        this.bumper = bumper;
+    public IntakeDefaultCommand(IntakeSubsystem intake, DoubleSupplier intakeSupplier) {
+        this.intakeSupplier = intakeSupplier;
         this.intake = intake;
         addRequirements(intake);
 
         //TODO:Remove after command has been tested
-        throw new UnsupportedOperationException("IntakeDefaultCommand has not been tested on robot yet!");
+        throw new UnsupportedOperationException("IntakeDefaultCommand has not been tested on robot yet");
     }
 
     @Override
     public void execute() {
-        intake.setIntakeSpeed(bumper.getAsDouble());
+        intake.setIntakeSpeed(intakeSupplier.getAsDouble());
     }
 
     public void end() {

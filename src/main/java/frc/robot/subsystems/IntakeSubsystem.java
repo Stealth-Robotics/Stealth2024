@@ -12,15 +12,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final TalonFX intakeMotor;
 
-    private final DigitalInput rightBeamBreak;
-    private final DigitalInput leftBeamBreak;
+    private final DigitalInput frontBeamBreak;
+    private final DigitalInput backBeamBreak;
 
     public IntakeSubsystem() {
         intakeMotor = new TalonFX(0); 
         intakeMotor.setNeutralMode(NeutralModeValue.Brake);
         //intakeMotor.setInverted(true);
-        rightBeamBreak = new DigitalInput(0);
-        leftBeamBreak = new DigitalInput(0);
+        frontBeamBreak = new DigitalInput(0);
+        backBeamBreak = new DigitalInput(0);
     }
 
     public void setIntakeSpeed(double speed) {
@@ -35,11 +35,11 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(0);
     }
 
-    public boolean getRightBeamBreak() {
-        return rightBeamBreak.get();
+    public boolean isRingAtFrontOfIntake() {
+        return frontBeamBreak.get();
     }
 
-    public boolean getLeftBeamBreak() {
-        return leftBeamBreak.get();
+    public boolean isRingFullyInsideIntake() {
+        return backBeamBreak.get();
     }
 }
