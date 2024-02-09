@@ -25,7 +25,7 @@ public class IntakeDefaultCommand extends Command {
     }
 
     public void end() {
-        intake.stop();
+        intake.setIntakeSpeed(0);
     }
     
 }
