@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.defaultCommands.RotatorDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
@@ -56,8 +55,6 @@ public class RobotContainer {
         swerveRotationSupplier,
         swerveRobotOrientedSupplier));
 
-    rotatorSubsystem.setDefaultCommand(new RotatorDefaultCommand(rotatorSubsystem, rotatorManualControlSupplier));
-
     // Gamepad Button Commands
 
     new Trigger(swerveHeadingResetBooleanSupplier).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
@@ -71,6 +68,10 @@ public class RobotContainer {
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
         rotatorSubsystem.toggleMotorModeCommand().andThen(
             new InstantCommand(() -> ledSubsystem.updateLEDs())));
+
+    new Trigger(() -> rotatorManualControlSupplier.getAsDouble() > 0.1)
+        .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier)
+            .andThen(() -> rotatorSubsystem.holdCurrentPosition()));
   }
 
   private double adjustInput(double input) {

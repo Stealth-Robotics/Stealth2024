@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -193,7 +194,12 @@ public class RotatorSubsystem extends SubsystemBase {
         }, this).ignoringDisable(true);
     }
 
-    public void setDutyCycle(double dutyCycle) {
+    public Command armManualControl(DoubleSupplier manualControlSupplier) {
+        return this.runOnce(() -> setDutyCycle(manualControlSupplier.getAsDouble()));
+                
+    }
+
+    private void setDutyCycle(double dutyCycle) {
         dutyCycleOut.Output = dutyCycle;
         rotatorMotorOne.setControl(dutyCycleOut);
     }
