@@ -195,8 +195,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public Command armManualControl(DoubleSupplier manualControlSupplier) {
-        return this.runOnce(() -> setDutyCycle(manualControlSupplier.getAsDouble()));
-                
+        return this.runOnce(() -> setDutyCycle(manualControlSupplier.getAsDouble()));  
     }
 
     private void setDutyCycle(double dutyCycle) {

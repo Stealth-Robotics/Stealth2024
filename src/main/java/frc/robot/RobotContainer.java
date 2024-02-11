@@ -70,8 +70,8 @@ public class RobotContainer {
             new InstantCommand(() -> ledSubsystem.updateLEDs())));
 
     new Trigger(() -> rotatorManualControlSupplier.getAsDouble() > 0.1)
-        .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier)
-            .andThen(() -> rotatorSubsystem.holdCurrentPosition()));
+        .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier))
+        .toggleOnFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
   }
 
   private double adjustInput(double input) {
