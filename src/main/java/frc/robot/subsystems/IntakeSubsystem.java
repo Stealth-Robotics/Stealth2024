@@ -17,8 +17,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DigitalInput frontBeamBreak;
     private final DigitalInput backBeamBreak;
 
-    TalonFXConfiguration INTAKE_MOTOR_CONFIG = new TalonFXConfiguration();
-
     public IntakeSubsystem() {
         intakeMotor = new TalonFX(0); 
         frontBeamBreak = new DigitalInput(0);
@@ -27,6 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private void applyConfigs() {
+        TalonFXConfiguration INTAKE_MOTOR_CONFIG = new TalonFXConfiguration();
         INTAKE_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         INTAKE_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; //TODO: Change if needed
         intakeMotor.getConfigurator().apply(INTAKE_MOTOR_CONFIG);
@@ -37,10 +36,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean isRingAtFrontOfIntake() {
-        return frontBeamBreak.get();
+        return !frontBeamBreak.get();
     }
 
     public boolean isRingFullyInsideIntake() {
-        return backBeamBreak.get();
+        return !backBeamBreak.get();
     }
 }

@@ -24,7 +24,8 @@ public class IntakeDefaultCommand extends Command {
         intake.setIntakeSpeed(intakeSupplier.getAsDouble());
     }
 
-    public void end() {
+    @Override
+    public void end(boolean interrupted) {
         intake.setIntakeSpeed(0);
     }
     
