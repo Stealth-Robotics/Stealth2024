@@ -22,11 +22,11 @@ public class LEDSubsystem extends SubsystemBase {
 
     private final CANdle candle = new CANdle(2);
 
-    private int currentRed = 0;
-    private int currentGreen = 0;
-    private int currentBlue = 0;
+    int currentRed = 0;
+    int currentGreen = 0;
+    int currentBlue = 0;
 
-    private Animation currentAnimation;
+    boolean isAnimating = false;
 
     BooleanSupplier isHomeBooleanSupplier;
     BooleanSupplier isBrakeModeSupplier;
@@ -53,15 +53,21 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     private void setRGB(int red, int green, int blue) {
+        isAnimating = false;
+
         candle.clearAnimation(0);
-        currentAnimation = null;
+
         currentRed = red;
         currentGreen = green;
         currentBlue = blue;
     }
 
     private void animate(Animation animation) {
-        currentAnimation = animation;
+        isAnimating = true;
+
+        candle.clearAnimation(0);
+
+        candle.animate(animation, 0);
     }
 
     public void coastModeNotHomed() {
@@ -109,12 +115,8 @@ public class LEDSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (currentAnimation == null) {
+        if (!isAnimating) {
             candle.setLEDs(currentRed, currentGreen, currentBlue, 0, 0, LED_COUNT);
-        }
-
-        else {
-            candle.animate(currentAnimation, 0);
         }
     }
 }
