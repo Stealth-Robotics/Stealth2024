@@ -69,9 +69,9 @@ public class RobotContainer {
         rotatorSubsystem.toggleMotorModeCommand().andThen(
             new InstantCommand(() -> ledSubsystem.updateLEDs())));
 
-    new Trigger(() -> rotatorManualControlSupplier.getAsDouble() > 0.1)
+    new Trigger(() -> Math.abs(rotatorManualControlSupplier.getAsDouble()) > 0.1)
         .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier))
-        .toggleOnFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
+        .onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
   }
 
   private double adjustInput(double input) {
