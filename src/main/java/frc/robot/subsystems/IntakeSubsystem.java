@@ -1,26 +1,31 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotMap;
+
 
 public class IntakeSubsystem extends SubsystemBase {
 
     private final TalonFX intakeMotor;
 
-    private final DigitalInput frontBeamBreak;
-    private final DigitalInput backBeamBreak;
+    private final TimeOfFlight frontDistanceSensor;
+    private final TimeOfFlight backDistanceSensor;
 
     public IntakeSubsystem() {
-        intakeMotor = new TalonFX(0); 
-        frontBeamBreak = new DigitalInput(0);
-        backBeamBreak = new DigitalInput(0);
+        //TODO: GET CAN IDs
+        intakeMotor = new TalonFX(-1); 
+        frontDistanceSensor = new TimeOfFlight(-1);
+        backDistanceSensor = new TimeOfFlight(-1);
+        frontDistanceSensor.setRangingMode(RangingMode.Short, 20);
+        backDistanceSensor.setRangingMode(RangingMode.Short, 20);
         applyConfigs();
     }
 
@@ -35,11 +40,13 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(speed);
     }
 
+
+    //TODO: tune these values. they are in mm.
     public boolean isRingAtFrontOfIntake() {
-        return !frontBeamBreak.get();
+        return frontDistanceSensor.getRange() < 30;
     }
 
     public boolean isRingFullyInsideIntake() {
-        return !backBeamBreak.get();
+        return backDistanceSensor.getRange() < 30;
     }
 }
