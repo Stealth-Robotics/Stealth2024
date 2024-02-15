@@ -23,8 +23,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class RotatorSubsystem extends SubsystemBase {
 
-    // TODO: find gear ratio once CAD does it
-
     // Explantation: Gear ration = how many turns of the motor shaft = 1 full
     // revolution of the arm
     // in applyConfigs, we specify sensor to mechanism ratio as gear ratio. This
@@ -33,12 +31,11 @@ public class RotatorSubsystem extends SubsystemBase {
     // arm
     // this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from
     // being 0 to 1, to instead being 0 to 2 pi radians
-    private final double ROTATOR_GEAR_RATIO = 1;
+    private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 14.0);
     private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
-    private final TalonFX rotatorMotorThree;
 
     private double kS = 0.0;
     private double kV = 0.0;
@@ -72,7 +69,6 @@ public class RotatorSubsystem extends SubsystemBase {
     public RotatorSubsystem() {
         rotatorMotorOne = new TalonFX(0);
         rotatorMotorTwo = new TalonFX(0);
-        rotatorMotorThree = new TalonFX(0);
 
         isHomed = Files.exists(tempPath);
         motorMode = isHomed ? NeutralModeValue.Brake : NeutralModeValue.Coast;
@@ -109,23 +105,21 @@ public class RotatorSubsystem extends SubsystemBase {
 
         rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
         rotatorMotorTwo.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
-        rotatorMotorThree.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
 
         rotatorMotorTwo.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
-        rotatorMotorThree.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
+
     }
 
     // these methods will only be used with the buttons
     private void setMotorsToCoast() {
         rotatorMotorOne.setNeutralMode(NeutralModeValue.Coast);
         rotatorMotorTwo.setNeutralMode(NeutralModeValue.Coast);
-        rotatorMotorThree.setNeutralMode(NeutralModeValue.Coast);
+
     }
 
     private void setMotorsToBrake() {
         rotatorMotorOne.setNeutralMode(NeutralModeValue.Brake);
         rotatorMotorTwo.setNeutralMode(NeutralModeValue.Brake);
-        rotatorMotorThree.setNeutralMode(NeutralModeValue.Brake);
     }
 
     public boolean getToggleMotorModeButton() {
@@ -195,7 +189,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public Command armManualControl(DoubleSupplier manualControlSupplier) {
-        return this.runOnce(() -> setDutyCycle(manualControlSupplier.getAsDouble()));  
+        return this.runOnce(() -> setDutyCycle(manualControlSupplier.getAsDouble()));
     }
 
     private void setDutyCycle(double dutyCycle) {
