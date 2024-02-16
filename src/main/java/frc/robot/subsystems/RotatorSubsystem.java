@@ -33,13 +33,16 @@ public class RotatorSubsystem extends SubsystemBase {
     // being 0 to 1, to instead being 0 to 2 pi radians
     private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 14.0);
     private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
+    // the offset of the home position and straight out on the arm. I.E. what should
+    // the encoder read when the arm is on the hard stop?
+    private final double ZERO_OFFSET = 0.0;
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
     private double kV = 0.0;
-    private double kG = 0.0;
+    private double kG = 0.49;
 
     private double kP = 0.0;
     private double kI = 0.0;
@@ -99,9 +102,6 @@ public class RotatorSubsystem extends SubsystemBase {
         ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
-
-        // TalonFXConfiguration ROTATOR_CONFIG_TWO = ROTATOR_CONFIG_ONE;
-        // TalonFXConfiguration ROTATOR_CONFIG_THREE = ROTATOR_CONFIG_ONE;
 
         rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
         rotatorMotorTwo.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
@@ -197,22 +197,17 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorOne.setControl(dutyCycleOut);
     }
 
-    private void setMotorTargetPosition(double angRad) {
-        motionMagicVoltage.Position = angRad / ROTATOR_POSITION_COEFFICIENT;
-        rotatorMotorOne.setControl(motionMagicVoltage);
-    }
-
-    private double getMotorPosition() {
-        return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
-    }
-
     public void holdCurrentPosition() {
         setMotorTargetPosition(getMotorPosition());
     }
 
     public void resetEncoder() {
-        rotatorMotorOne.setPosition(0);
-        setMotorTargetPosition(0);
+        rotatorMotorOne.setPosition(ZERO_OFFSET);
+        setMotorTargetPosition(ZERO_OFFSET);
+    }
+
+    private double getMotorPosition() {
+        return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
     }
 
     private double getTargetPosition() {
@@ -221,6 +216,11 @@ public class RotatorSubsystem extends SubsystemBase {
 
     private boolean isMotorAtTarget() {
         return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
+    }
+
+    private void setMotorTargetPosition(double angRad) {
+        motionMagicVoltage.Position = angRad / ROTATOR_POSITION_COEFFICIENT;
+        rotatorMotorOne.setControl(motionMagicVoltage);
     }
 
     public Command rotateToPositionCommand(double angRad) {
