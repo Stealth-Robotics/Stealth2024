@@ -41,7 +41,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 0.0;
+    private double kV = 15.35;
     private double kG = 0.49;
 
     private double kP = 0.0;
@@ -56,11 +56,12 @@ public class RotatorSubsystem extends SubsystemBase {
 
     // tolerance in radians
     // TODO: TUNE THIS
-    private final double kTOLERANCE = 0.0;
+    // this is a tolerance of 1 degree
+    private final double kTOLERANCE = Math.toRadians(1.0);
 
     private final double MOTION_MAGIC_JERK = 0.0;
-    private double MOTION_MAGIC_ACCELERATION = 0.0;
-    private double MOTION_MAGIC_VELOCITY = 0.0;
+    private double MOTION_MAGIC_ACCELERATION = 40.0;
+    private double MOTION_MAGIC_CRUISE_VELOCITY = 30.0;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
@@ -84,6 +85,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private void applyConfigs() {
         ROTATOR_MOTOR_CONFIG.Slot0.kS = kS;
         ROTATOR_MOTOR_CONFIG.Slot0.kV = kV;
+
         ROTATOR_MOTOR_CONFIG.Slot0.kG = kG;
 
         ROTATOR_MOTOR_CONFIG.Slot0.kP = kP;
@@ -92,7 +94,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
         ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
         ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
-        ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
+        ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
 
         ROTATOR_MOTOR_CONFIG.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
