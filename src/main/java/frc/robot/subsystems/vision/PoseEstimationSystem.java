@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PoseEstimationSystem extends SubsystemBase {
@@ -19,11 +20,11 @@ public class PoseEstimationSystem extends SubsystemBase {
     private final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
 
     private final Transform3d LEFT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(0, 0, 0),
+            new Translation3d(Units.inchesToMeters(-8.0), Units.inchesToMeters(-10.92), Units.inchesToMeters(12.29)),
             new Rotation3d(0, 0, 0));
 
     private final Transform3d RIGHT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(0, 0, 0),
+            new Translation3d(Units.inchesToMeters(8.01), Units.inchesToMeters(-10.99), Units.inchesToMeters(11.91)),
             new Rotation3d(0, 0, 0));
 
     private final CameraSubsystem leftCamera;
