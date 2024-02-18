@@ -20,7 +20,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     private Timer blinkTimer;
 
-    private final CANdle candle = new CANdle(2);
+    private final CANdle candle = new CANdle(21);
 
     int currentRed = 0;
     int currentGreen = 0;
@@ -71,7 +71,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void coastModeNotHomed() {
-        animate(new SingleFadeAnimation(255, 0, 0, 0, 0.7, LED_COUNT));
+        animate(new SingleFadeAnimation(255, 0, 0, 0, 0.85, LED_COUNT));
     }
 
     public void brakeModeNotHomed() {
@@ -79,7 +79,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void coastModeHomed() {
-        animate(new SingleFadeAnimation(0, 255, 0, 0, 0.7, LED_COUNT));
+        animate(new SingleFadeAnimation(0, 255, 0, 0, 0.85, LED_COUNT));
     }
 
     public void brakeModeHomed() {
