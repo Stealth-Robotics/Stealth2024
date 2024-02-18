@@ -31,20 +31,20 @@ public class RotatorSubsystem extends SubsystemBase {
     // arm
     // this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from
     // being 0 to 1, to instead being 0 to 2 pi radians
-    private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 14.0);
+    private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 15.0);
     private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
-    private final double ZERO_OFFSET = 0.0;
+    private final double ZERO_OFFSET = Math.toRadians(-2.8);
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 15.35;
-    private double kG = 0.49;
+    private double kV = 0.0;
+    private double kG = 0;
 
-    private double kP = 0.0;
+    private double kP = 10;
     private double kI = 0.0;
     private double kD = 0.0;
 
@@ -57,11 +57,11 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = Math.toRadians(1.0);
+    private final double kTOLERANCE = Math.toRadians(0.01);
 
     private final double MOTION_MAGIC_JERK = 0.0;
-    private double MOTION_MAGIC_ACCELERATION = 40.0;
-    private double MOTION_MAGIC_CRUISE_VELOCITY = 30.0;
+    private double MOTION_MAGIC_ACCELERATION = 20;
+    private double MOTION_MAGIC_CRUISE_VELOCITY = 25;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
@@ -71,15 +71,16 @@ public class RotatorSubsystem extends SubsystemBase {
     Path tempPath = Paths.get("/tmp/rotatorHomed.txt");
 
     public RotatorSubsystem() {
-        rotatorMotorOne = new TalonFX(0);
-        rotatorMotorTwo = new TalonFX(0);
+        rotatorMotorOne = new TalonFX(14);
+        rotatorMotorTwo = new TalonFX(15);
 
         isHomed = Files.exists(tempPath);
         motorMode = isHomed ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
         applyConfigs();
+        // throw new UnsupportedOperationException("Test rotator code");
 
-        throw new UnsupportedOperationException("Test rotator code");
+        
     }
 
     private void applyConfigs() {
@@ -125,7 +126,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public boolean getToggleMotorModeButton() {
-        return toggleMotorModeButton.get();
+        return !toggleMotorModeButton.get();
     }
 
     public NeutralModeValue getMotorMode() {
@@ -146,7 +147,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public boolean getHomeButton() {
-        return homeButton.get();
+        return !homeButton.get();
     }
 
     public boolean isHomed() {
@@ -204,7 +205,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public void resetEncoder() {
-        rotatorMotorOne.setPosition(ZERO_OFFSET);
+        rotatorMotorOne.setPosition(ZERO_OFFSET / ROTATOR_POSITION_COEFFICIENT);
         setMotorTargetPosition(ZERO_OFFSET);
     }
 
@@ -213,7 +214,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private double getTargetPosition() {
-        return motionMagicVoltage.Position * ROTATOR_POSITION_COEFFICIENT;
+        return motionMagicVoltage.Position;
     }
 
     private boolean isMotorAtTarget() {
@@ -263,6 +264,12 @@ public class RotatorSubsystem extends SubsystemBase {
             this.kD = value;
             applyConfigs();
         });
+    }
+    @Override
+    public void periodic() {
+        System.out.println(getMotorPosition());
+        System.out.println("sp: " + getTargetPosition());
+        
     }
 
 }

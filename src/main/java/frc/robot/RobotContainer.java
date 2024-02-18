@@ -63,15 +63,19 @@ public class RobotContainer {
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
         rotatorSubsystem.homeArmCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs())));
+            new InstantCommand(() -> ledSubsystem.updateLEDs())
+            ).ignoringDisable(true)
+        
+        );
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
         rotatorSubsystem.toggleMotorModeCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs())));
+            new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
 
     new Trigger(() -> Math.abs(rotatorManualControlSupplier.getAsDouble()) > 0.1)
         .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier))
         .onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
+    new Trigger(driverController.a()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
   }
 
   private double adjustInput(double input) {
