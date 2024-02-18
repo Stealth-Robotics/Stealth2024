@@ -19,7 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         //TODO: GET CAN IDs
-        intakeMotor = new TalonFX(-1); 
+        intakeMotor = new TalonFX(20); 
         frontDistanceSensor = new TimeOfFlight(-1);
         backDistanceSensor = new TimeOfFlight(-1);
         frontDistanceSensor.setRangingMode(RangingMode.Short, 20);
