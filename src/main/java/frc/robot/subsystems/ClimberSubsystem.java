@@ -1,4 +1,4 @@
-package frc.robot.subsystems.climbersubsystem;
+package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
@@ -7,9 +7,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class ClimberSubsystem {
-    private final TalonFX leftCimber;
+    private final TalonFX leftClimber;
     private final TalonFX rightClimber;
     
-    public ClimberSubsystem(){        
+    public ClimberSubsystem(){ //TODO: Get CAN IDs
+        leftClimber = new TalonFX(0);
+        rightClimber = new TalonFX(0);
     }
 }
