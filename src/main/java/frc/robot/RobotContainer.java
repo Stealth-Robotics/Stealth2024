@@ -10,6 +10,12 @@ import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,6 +24,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final SwerveDrive swerveSubsystem = new SwerveDrive();
+  private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
+  private final LEDSubsystem ledSubsystem = new LEDSubsystem(
+      () -> rotatorSubsystem.isHomed(),
+      () -> rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake);
+  IntakeSubsystem intake = new IntakeSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final ShooterSubsystem shooter = new ShooterSubsystem();
@@ -26,7 +37,24 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    configureBindings();
+    // Command Suppliers
+    DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
+    DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
+    DoubleSupplier swerveRotationSupplier = () -> adjustInput(driverController.getRightX());
+    BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
+    BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
+
+    DoubleSupplier rotatorManualControlSupplier = () -> operatorController.getLeftY();
+    BooleanSupplier rotatorHomeButtonSupplier = () -> rotatorSubsystem.getHomeButton();
+    BooleanSupplier rotatorToggleMotorModeButtonSupplier = () -> rotatorSubsystem.getToggleMotorModeButton();
+
+    DoubleSupplier intakeManualControlSupplier = () -> driverController.getRightTriggerAxis()
+        - driverController.getLeftTriggerAxis();
+
+    
+
+    // Default Commands
+
     swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
         swerveSubsystem,
         () -> -adjustInput(driverController.getLeftY()),
@@ -49,11 +77,19 @@ public class RobotContainer {
     return Math.copySign(Math.pow(Math.abs(input), 1.75), input);
   }
 
-  private void configureBindings() {
-    driverController.povDown().onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-  }
-
   public Command getAutonomousCommand() {
     return swerveSubsystem.followPathCommand("testPath", true);
+  }
+
+  public void autonomousInit() {
+    rotatorSubsystem.holdCurrentPosition();
+  }
+
+  public void teleopInit() {
+    rotatorSubsystem.holdCurrentPosition();
+  }
+
+  public void testInit() {
+    rotatorSubsystem.holdCurrentPosition();
   }
 }

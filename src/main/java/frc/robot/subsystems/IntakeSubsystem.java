@@ -47,9 +47,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean isRingFullyInsideIntake() {
         return backDistanceSensor.getRange() < 230;
     }
+
     
-    @Override
-    public void periodic() {
-        System.out.println("intake? " + frontDistanceSensor.getRange());
-    }
 }
