@@ -16,7 +16,7 @@ public class IntakeDefaultCommand extends Command {
         addRequirements(intake);
 
         //TODO:Remove after command has been tested
-        throw new UnsupportedOperationException("IntakeDefaultCommand has not been tested on robot yet");
+        // throw new UnsupportedOperationException("IntakeDefaultCommand has not been tested on robot yet");
     }
 
     @Override

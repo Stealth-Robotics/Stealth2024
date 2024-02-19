@@ -47,4 +47,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean isRingFullyInsideIntake() {
         return backDistanceSensor.getRange() < 30;
     }
+
+    
 }

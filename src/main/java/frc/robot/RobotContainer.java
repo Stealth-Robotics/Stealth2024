@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
@@ -26,6 +28,7 @@ public class RobotContainer {
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(
       () -> rotatorSubsystem.isHomed(),
       () -> rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake);
+  IntakeSubsystem intake = new IntakeSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -46,6 +49,8 @@ public class RobotContainer {
     DoubleSupplier intakeManualControlSupplier = () -> driverController.getRightTriggerAxis()
         - driverController.getLeftTriggerAxis();
 
+    
+
     // Default Commands
 
     swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
@@ -54,6 +59,8 @@ public class RobotContainer {
         swerveTranslationXSupplier,
         swerveRotationSupplier,
         swerveRobotOrientedSupplier));
+
+    intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
 
     // Gamepad Button Commands
 
@@ -75,7 +82,8 @@ public class RobotContainer {
     new Trigger(() -> Math.abs(rotatorManualControlSupplier.getAsDouble()) > 0.1)
         .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier))
         .onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
-    new Trigger(driverController.a()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
+    
+        new Trigger(driverController.a()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
   }
 
   private double adjustInput(double input) {

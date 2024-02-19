@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -35,7 +36,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
-    private final double ZERO_OFFSET = Math.toRadians(-2.8);
+    private final double ZERO_OFFSET = Math.toRadians(-0.79);
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
@@ -44,7 +45,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kV = 0.0;
     private double kG = 0;
 
-    private double kP = 10;
+    private double kP = 60;
     private double kI = 0.0;
     private double kD = 0.0;
 
@@ -57,11 +58,11 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = Math.toRadians(0.01);
+    private final double kTOLERANCE = Math.toRadians(1);
 
     private final double MOTION_MAGIC_JERK = 0.0;
-    private double MOTION_MAGIC_ACCELERATION = 20;
-    private double MOTION_MAGIC_CRUISE_VELOCITY = 25;
+    private double MOTION_MAGIC_ACCELERATION = 50;
+    private double MOTION_MAGIC_CRUISE_VELOCITY = 30;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
@@ -103,6 +104,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
         // TODO: CHECK THIS DIRECTIONS
         ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        
 
         ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
 
@@ -207,6 +209,7 @@ public class RotatorSubsystem extends SubsystemBase {
     public void resetEncoder() {
         rotatorMotorOne.setPosition(ZERO_OFFSET / ROTATOR_POSITION_COEFFICIENT);
         setMotorTargetPosition(ZERO_OFFSET);
+        // applyConfigs();
     }
 
     private double getMotorPosition() {
@@ -233,7 +236,7 @@ public class RotatorSubsystem extends SubsystemBase {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        builder.setSmartDashboardType("rotator gains");
+        
 
         builder.addDoubleProperty("ks", () -> this.kS, (value) -> {
             this.kS = value;
@@ -267,9 +270,8 @@ public class RotatorSubsystem extends SubsystemBase {
     }
     @Override
     public void periodic() {
-        System.out.println(getMotorPosition());
-        System.out.println("sp: " + getTargetPosition());
-        
+        System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
+        System.out.println("pos: " + Math.toDegrees(getMotorPosition()));
     }
 
 }
