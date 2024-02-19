@@ -66,7 +66,8 @@ public class RobotContainer {
       new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.setMax()));
       new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
 
-      new Trigger(driverController.rightBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, shooter, intake));
+      new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, shooter, intake));
+      // new Trigger(driverController.y()).onTrue()
       
 
   }

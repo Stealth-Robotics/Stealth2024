@@ -35,7 +35,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setIntakeSpeed(double speed) {
-        intakeMotor.set(speed);
+        intakeMotor.setVoltage(12 * speed);
     }
 
 
@@ -45,7 +45,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean isRingFullyInsideIntake() {
-        return backDistanceSensor.getRange() < 230;
+        return backDistanceSensor.getRange() < 180;
     }
 
     

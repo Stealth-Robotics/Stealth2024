@@ -25,7 +25,7 @@ public class AutoAlignCommand extends Command {
         addRequirements(swerve);
 
         // will remove once tested
-        throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
+        // throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
     }
 
     @Override

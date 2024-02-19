@@ -129,7 +129,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void setMax(){
         leftMotor.set(-1);
-        rightMotor.set(-1);
+        rightMotor.set(-0.75);
     }
 
     @Override
