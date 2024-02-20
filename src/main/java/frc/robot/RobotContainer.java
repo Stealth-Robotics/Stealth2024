@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -11,7 +12,6 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -37,6 +37,8 @@ public class RobotContainer {
 
       new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.setMax()));
       new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
+
+      new Trigger(driverController.rightBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, shooter, intake));
       
 
   }
