@@ -1,175 +1,91 @@
 package frc.robot.subsystems.shooter;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.CoastOut;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import static frc.robot.subsystems.shooter.ShooterConstants.gains;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.util.Alert;
+import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.Alert.AlertType;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private final TalonFX leftMotor;
-    private final TalonFX rightMotor;
 
-    private double kS = 0.0;
-    private double kV = 0.0;
-    private double kA = 0.0;
+    private static LoggedTunableNumber kP = new LoggedTunableNumber("Shooter/kP", gains.kP());
+    private static LoggedTunableNumber kI = new LoggedTunableNumber("Shooter/kI", gains.kI());
+    private static LoggedTunableNumber kD = new LoggedTunableNumber("Shooter/kD", gains.kD());
 
-    private double kP = 0.0;
-    private double kI = 0.0;
-    private double kD = 0.0;
+    private static LoggedTunableNumber kS = new LoggedTunableNumber("Shooter/kS", gains.kS());
+    private static LoggedTunableNumber kV = new LoggedTunableNumber("Shooter/kV", gains.kV());
+    private static LoggedTunableNumber kA = new LoggedTunableNumber("Shooter/kA", gains.kA());
 
-    private double MOTION_MAGIC_ACCELERATION = 0.0;
-    private double MOTION_MAGIC_JERK = 0.0;
+    private static LoggedTunableNumber MOTION_MAGIC_ACCELERATION = new LoggedTunableNumber("Shooter/MOTION_MAGIC_ACCELERATION", gains.MOTION_MAGIC_ACCELERATION());
+    private static LoggedTunableNumber MOTION_MAGIC_JERK = new LoggedTunableNumber("Shooter/MOTION_MAGIC_JERK", gains.MOTION_MAGIC_JERK());
 
-    private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
-            false, 0, 0, false, false, false);
+    private static LoggedDashboardNumber leftShooterVelocity = new LoggedDashboardNumber("Shooter/LeftShooterVelocity", 0.0);
+    private static LoggedDashboardNumber rightShooterVelocity = new LoggedDashboardNumber("Shooter/RightShooterVelocity", 0.0);
 
-    private final MotionMagicVelocityVoltage rightMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
-            false, 0, 0, false, false, false);
+    private final Alert leftMotorDisconnectedAlert = new Alert("Left Shooter Motor Disconnected", AlertType.WARNING);
+    private final Alert rightMotorDisconnectedAlert = new Alert("Right Shooter Motor Disconnected", AlertType.WARNING);
 
-    // value is in rotations per second
-    // TODO: TUNE THIS TO A REASONABLE VALUE
-    private final double VEOLOCITY_TOLERANCE = 0;
+    ShooterIO shooterIO;
+    ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-    TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
-    TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
+    public ShooterSubsystem(ShooterIO shooterIO) {
+        this.shooterIO = shooterIO;
 
-    public ShooterSubsystem() {
-        // TODO: find can ids
-        leftMotor = new TalonFX(0);
-        rightMotor = new TalonFX(0);
-
-        applyConfigs();
-        // will remove when shooter is tested
-        throw new UnsupportedOperationException();
-    }
-
-    private void applyConfigs() {
-        // TODO: check everything
-        LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
-        LEFT_TALONFX_CONFIG.Slot0.kS = kS;
-        LEFT_TALONFX_CONFIG.Slot0.kV = kV;
-        LEFT_TALONFX_CONFIG.Slot0.kA = kA;
-
-        LEFT_TALONFX_CONFIG.Slot0.kP = kP;
-        LEFT_TALONFX_CONFIG.Slot0.kI = kI;
-        LEFT_TALONFX_CONFIG.Slot0.kD = kD;
-
-        LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
-        LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
-
-        RIGHT_TALONFX_CONFIG = LEFT_TALONFX_CONFIG;
-
-        LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        RIGHT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-        leftMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
-        rightMotor.getConfigurator().apply(RIGHT_TALONFX_CONFIG);
-    }
-
-    /**
-     * sets the target velocity for the left motor in rotations per second
-     * 
-     * @param velocity in rotations per second
-     */
-    public void setLeftVelocity(double velocity) {
-        leftMotionMagicVelocityVoltage.Velocity = velocity;
-        leftMotor.setControl(leftMotionMagicVelocityVoltage);
-    }
-
-    /**
-     * sets the target velocity for the right motor in rotations per second
-     * 
-     * @param velocity in rotations per second
-     */
-    public void setRightVelocity(double velocity) {
-        rightMotionMagicVelocityVoltage.Velocity = velocity;
-        rightMotor.setControl(rightMotionMagicVelocityVoltage);
-    }
-
-    /**
-     * returns the difference between the left motor's current velocity and the
-     * target velocity
-     * 
-     * @return velocity error in rotations per second
-     */
-    private double getLeftVelocityError() {
-        return leftMotor.getVelocity().getValueAsDouble() - leftMotionMagicVelocityVoltage.Velocity;
-    }
-
-    /**
-     * returns the difference between the right motor's current velocity and the
-     * target velocity
-     * 
-     * @return velocity error in rotations per second
-     */
-    private double getRightVelocityError() {
-        return rightMotor.getVelocity().getValueAsDouble() - rightMotionMagicVelocityVoltage.Velocity;
-    }
-
-    public void stopShooterMotors() {
-        rightMotor.setControl(new CoastOut());
-        leftMotor.setControl(new CoastOut());
-    }
-
-    /**
-     * returns if both motors are within the velocity tolerance
-     * 
-     * @return true if both motors are within the velocity tolerance
-     */
-    public boolean motorsAtTargetVelocity() {
-        return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
-                && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
+        switch (Constants.currentMode) {
+            case REAL:
+                break;
+            case SIM:
+                shooterIO.setPID(0, 0, 0);
+            default:
+                break;
+        }
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
+    public void periodic() {
+        shooterIO.updateInputs(inputs);
+        Logger.processInputs("Shooter", inputs);
+    }
 
-        builder.addDoubleProperty("current motion magic acceleration", () -> this.MOTION_MAGIC_ACCELERATION,
-                (value) -> {
-                    this.MOTION_MAGIC_ACCELERATION = value;
-                    applyConfigs();
-                });
+    public void setLeftVolts(double volts) {
+        shooterIO.setLeftShooterVolts(volts);
+    }
 
-        builder.addDoubleProperty("current motion magic jerk", () -> this.MOTION_MAGIC_JERK, (value) -> {
-            this.MOTION_MAGIC_JERK = value;
-            applyConfigs();
-        });
+    public void setRightVolts(double volts) {
+        shooterIO.setRightShooterVolts(volts);
+    }
 
-        builder.addDoubleProperty("current kS", () -> this.kS, (value) -> {
-            this.kS = value;
-            applyConfigs();
-        });
+    public void setLeftVelocity(double velocity) {
+        shooterIO.setLeftShooterVelocity(velocity);
 
-        builder.addDoubleProperty("current kV", () -> this.kV, (value) -> {
-            this.kV = value;
-            applyConfigs();
-        });
+        Logger.recordOutput("Shooter/LeftShooterVelocitySetpoint", velocity);
+    }
 
-        builder.addDoubleProperty("current kA", () -> this.kA, (value) -> {
-            this.kA = value;
-            applyConfigs();
-        });
+    public void setRightVelocity(double velocity) {
+        shooterIO.setRightShooterVelocity(velocity);
 
-        builder.addDoubleProperty("current kP", () -> this.kP, (value) -> {
-            this.kP = value;
-            applyConfigs();
-        });
+        Logger.recordOutput("Shooter/RightShooterVelocitySetpoint", velocity);
+    }
 
-        builder.addDoubleProperty("current kI", () -> this.kI, (value) -> {
-            this.kI = value;
-            applyConfigs();
-        });
+    public void stop() {
+        shooterIO.stopShooter();
+    }
 
-        builder.addDoubleProperty("current kD", () -> this.kD, (value) -> {
-            this.kD = value;
-            applyConfigs();
-        });
+    @AutoLogOutput
+    public double getLeftVelocity() {
+        return inputs.leftShooterVelocity / 60.0;
+    }
+
+    @AutoLogOutput
+    public double getRightVelocity() {
+        return inputs.rightShooterVelocity / 60.0;
     }
 }
