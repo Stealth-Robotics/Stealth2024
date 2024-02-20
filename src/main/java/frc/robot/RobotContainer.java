@@ -8,6 +8,8 @@ import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.RotatorSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
@@ -33,23 +35,7 @@ public class RobotContainer {
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final ShooterSubsystem shooter = new ShooterSubsystem();
 
-  IntakeSubsystem intake = new IntakeSubsystem();
-
   public RobotContainer() {
-
-    // Command Suppliers
-    DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
-    DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
-    DoubleSupplier swerveRotationSupplier = () -> adjustInput(driverController.getRightX());
-    BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
-    BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
-
-    DoubleSupplier rotatorManualControlSupplier = () -> operatorController.getLeftY();
-    BooleanSupplier rotatorHomeButtonSupplier = () -> rotatorSubsystem.getHomeButton();
-    BooleanSupplier rotatorToggleMotorModeButtonSupplier = () -> rotatorSubsystem.getToggleMotorModeButton();
-
-    DoubleSupplier intakeManualControlSupplier = () -> driverController.getRightTriggerAxis()
-        - driverController.getLeftTriggerAxis();
 
     
 
@@ -67,7 +53,7 @@ public class RobotContainer {
       new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
 
       new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, shooter, intake));
-      // new Trigger(driverController.y()).onTrue()
+      new Trigger(driverController.y()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
       
 
   }

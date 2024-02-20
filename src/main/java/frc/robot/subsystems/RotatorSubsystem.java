@@ -234,7 +234,7 @@ public class RotatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
-        System.out.println("pos: " + Math.toDegrees(getMotorPosition()));
+        System.out.println("pos: " + rotatorMotorOne.getPosition().getValueAsDouble());
     }
 
 }

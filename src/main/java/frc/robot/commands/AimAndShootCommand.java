@@ -8,19 +8,18 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
-public class AimAndShootCommand extends SequentialCommandGroup{
+public class AimAndShootCommand extends SequentialCommandGroup {
 
-    public AimAndShootCommand(SwerveDrive drive, ShooterSubsystem shooter, IntakeSubsystem intake){
+    public AimAndShootCommand(SwerveDrive drive, ShooterSubsystem shooter, IntakeSubsystem intake) {
         addRequirements(drive, intake, shooter);
 
         addCommands(
-            // new ParallelCommandGroup(
-            //     // new AutoAlignCommand(drive),
-            //     new ReadyShooterCommand(shooter, drive)
-            // ),
-            new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).until(() -> !intake.isRingFullyInsideIntake()),
-            new WaitCommand(1)
-        );
+                // new ParallelCommandGroup(
+                // // new AutoAlignCommand(drive),
+                // new ReadyShooterCommand(shooter, drive)
+                // ),
+                new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).until(() -> !intake.isRingFullyInsideIntake()),
+                new WaitCommand(1));
     }
-    
+
 }
