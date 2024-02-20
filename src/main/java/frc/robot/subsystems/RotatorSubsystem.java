@@ -1,11 +1,14 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -30,7 +33,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
-    private final double ZERO_OFFSET = Math.toRadians(-0.79);
+    private final double ZERO_OFFSET = Math.toRadians(0);
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
@@ -64,8 +67,8 @@ public class RotatorSubsystem extends SubsystemBase {
     private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
     public RotatorSubsystem() {
-        rotatorMotorOne = new TalonFX(14);
-        rotatorMotorTwo = new TalonFX(15);
+        rotatorMotorOne = new TalonFX(15);
+        rotatorMotorTwo = new TalonFX(14);
 
         motorMode = isHomed ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
@@ -91,6 +94,7 @@ public class RotatorSubsystem extends SubsystemBase {
         ROTATOR_MOTOR_CONFIG.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
 
         ROTATOR_MOTOR_CONFIG.Feedback.SensorToMechanismRatio = ROTATOR_GEAR_RATIO;
+        ROTATOR_MOTOR_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
         // TODO: CHECK THIS DIRECTIONS
         ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -176,7 +180,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private double getMotorPosition() {
-        return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
+        return rotatorMotorOne.getPosition().getValue() * ROTATOR_POSITION_COEFFICIENT;
     }
 
     private double getTargetPosition() {
@@ -233,8 +237,8 @@ public class RotatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
-        System.out.println("pos: " + rotatorMotorOne.getPosition().getValueAsDouble());
+        // System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
+        // System.out.println("pos: " + rotatorMotorOne.getPosition().getValueAsDouble() + "non-coeff-pos: " + rotatorMotorOne.getPosition() + "rotatorPos: " + rotatorMotorOne.getRotorPosition());
     }
 
 }

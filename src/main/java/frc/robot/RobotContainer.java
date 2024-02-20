@@ -37,8 +37,6 @@ public class RobotContainer {
 
   public RobotContainer() {
 
-    
-
     // Default Commands
 
     swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
@@ -47,18 +45,29 @@ public class RobotContainer {
         () -> -adjustInput(driverController.getLeftX()),
         () -> adjustInput(driverController.getRightX()),
         () -> false));
-      intake.setDefaultCommand(new IntakeDefaultCommand(intake, () -> (driverController.getRightTriggerAxis() - driverController.getLeftTriggerAxis())));
+    intake.setDefaultCommand(new IntakeDefaultCommand(intake,
+        () -> (driverController.getRightTriggerAxis() - driverController.getLeftTriggerAxis())));
 
-      new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.setMax()));
-      new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
+    new Trigger(() -> rotatorSubsystem.getHomeButton()).onTrue(
+        rotatorSubsystem.homeArmCommand().andThen(
+            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true)
 
-      new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, shooter, intake));
-      new Trigger(driverController.y()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
-      
+    );
+
+    new Trigger(() -> rotatorSubsystem.getToggleMotorModeButton()).onTrue(
+        rotatorSubsystem.toggleMotorModeCommand().andThen(
+            new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
+
+    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.setMax()));
+    new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
+
+    new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, shooter, intake));
+    new Trigger(driverController.y()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
+
+    new Trigger(driverController.povDown()).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+    new Trigger(driverController.povUp()).onTrue(rotatorSubsystem.rotateToPositionCommand(0));
 
   }
-
-  
 
   private double adjustInput(double input) {
     return Math.copySign(Math.pow(Math.abs(input), 1.75), input);
