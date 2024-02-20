@@ -1,9 +1,5 @@
 package frc.robot.subsystems;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -67,19 +63,15 @@ public class RotatorSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
-    Path tempPath = Paths.get("/tmp/rotatorHomed.txt");
-
     public RotatorSubsystem() {
         rotatorMotorOne = new TalonFX(14);
         rotatorMotorTwo = new TalonFX(15);
 
-        isHomed = Files.exists(tempPath);
         motorMode = isHomed ? NeutralModeValue.Brake : NeutralModeValue.Coast;
 
         applyConfigs();
         // throw new UnsupportedOperationException("Test rotator code");
 
-        
     }
 
     private void applyConfigs() {
@@ -102,7 +94,6 @@ public class RotatorSubsystem extends SubsystemBase {
 
         // TODO: CHECK THIS DIRECTIONS
         ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        
 
         ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
 
@@ -156,32 +147,6 @@ public class RotatorSubsystem extends SubsystemBase {
 
     public void setHomed(boolean newValue) {
         this.isHomed = newValue;
-
-        if (newValue) {
-            if (!Files.exists(tempPath)) {
-                try {
-                    Files.createFile(tempPath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Already homed, variable is not set again, but encoder is reset again by
-                // homeArmCommand
-            }
-
-        } else {
-            if (Files.exists(tempPath)) {
-                try {
-                    Files.delete(tempPath);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            else {
-                // Already not homed, variable is not set again
-            }
-        }
     }
 
     public Command homeArmCommand() {
@@ -234,7 +199,6 @@ public class RotatorSubsystem extends SubsystemBase {
     @Override
     public void initSendable(SendableBuilder builder) {
         super.initSendable(builder);
-        
 
         builder.addDoubleProperty("ks", () -> this.kS, (value) -> {
             this.kS = value;
@@ -266,6 +230,7 @@ public class RotatorSubsystem extends SubsystemBase {
             applyConfigs();
         });
     }
+
     @Override
     public void periodic() {
         System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
