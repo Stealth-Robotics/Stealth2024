@@ -21,6 +21,18 @@ public class IntakeDefaultCommand extends Command {
 
     @Override
     public void execute() {
+        if(intakeSupplier.getAsDouble() < 0){
+            intake.setIntakeSpeed(intakeSupplier.getAsDouble());
+            return;
+        }
+        if(intake.isRingFullyInsideIntake()){
+            intake.setIntakeSpeed(0);
+            return;
+        }
+        if(intake.isRingAtFrontOfIntake()){
+            intake.setIntakeSpeed(0.3);
+            return;
+        }
         intake.setIntakeSpeed(intakeSupplier.getAsDouble());
     }
 

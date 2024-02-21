@@ -40,12 +40,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem() {
         // TODO: find can ids
-        leftMotor = new TalonFX(0);
-        rightMotor = new TalonFX(0);
+        leftMotor = new TalonFX(16);
+        rightMotor = new TalonFX(17);
 
         applyConfigs();
         // will remove when shooter is tested
-        throw new UnsupportedOperationException();
+        // throw new UnsupportedOperationException();
     }
 
     private void applyConfigs() {
@@ -125,6 +125,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean motorsAtTargetVelocity() {
         return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
+    }
+
+    public void setMax(){
+        leftMotor.set(-1);
+        rightMotor.set(-0.6);
     }
 
     @Override

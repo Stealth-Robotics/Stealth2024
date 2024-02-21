@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 import java.util.function.BooleanSupplier;
@@ -32,6 +34,7 @@ public class RobotContainer {
   IntakeSubsystem intake = new IntakeSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
   // private final CommandXboxController operatorController = new
   // CommandXboxController(1);
 
@@ -56,18 +59,25 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
         swerveSubsystem,
-        swerveTranslationYSupplier,
-        swerveTranslationXSupplier,
-        swerveRotationSupplier,
-        swerveRobotOrientedSupplier));
+        () -> -adjustInput(driverController.getLeftY()),
+        () -> -adjustInput(driverController.getLeftX()),
+        () -> adjustInput(driverController.getRightX()),
+        () -> false));
+    intake.setDefaultCommand(new IntakeDefaultCommand(intake,
+        () -> (driverController.getRightTriggerAxis() - driverController.getLeftTriggerAxis())));
 
-    intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
+    new Trigger(() -> rotatorSubsystem.getHomeButton()).onTrue(
+        rotatorSubsystem.homeArmCommand().andThen(
+            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true)
 
-    // Gamepad Button Commands
+    );
 
-    new Trigger(swerveHeadingResetBooleanSupplier).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+    new Trigger(() -> rotatorSubsystem.getToggleMotorModeButton()).onTrue(
+        rotatorSubsystem.toggleMotorModeCommand().andThen(
+            new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
 
-    // Onboard Robot Button Commands
+    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.setMax()));
+    new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
         rotatorSubsystem.homeArmCommand().andThen(

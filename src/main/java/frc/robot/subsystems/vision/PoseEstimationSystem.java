@@ -5,6 +5,7 @@ import org.photonvision.EstimatedRobotPose;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -39,6 +40,7 @@ public class PoseEstimationSystem extends SubsystemBase {
 
         try {
             APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+            APRIL_TAG_FIELD_LAYOUT.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load AprilTag field layout");
         }
