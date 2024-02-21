@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.IntakeSubsystem;
