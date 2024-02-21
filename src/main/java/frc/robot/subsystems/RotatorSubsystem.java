@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -28,8 +27,6 @@ public class RotatorSubsystem extends SubsystemBase {
     // makes it so the sensor returns a value between 0 and 1
     // with 0 being with the arm straight out, and 1 being 1 full revolution of the
     // arm
-    // this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from
-    // being 0 to 1, to instead being 0 to 2 pi radians
     private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 15.0);
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
@@ -96,10 +93,13 @@ public class RotatorSubsystem extends SubsystemBase {
         ROTATOR_MOTOR_CONFIG.Feedback.SensorToMechanismRatio = ROTATOR_GEAR_RATIO;
         ROTATOR_MOTOR_CONFIG.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
 
-        // TODO: CHECK THIS DIRECTIONS
-        ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        ROTATOR_MOTOR_CONFIG.ClosedLoopGeneral.ContinuousWrap = false;
 
+        ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
+
+        ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
+        ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
         rotatorMotorTwo.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
@@ -189,35 +189,29 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public void resetEncoder() {
-        rotatorMotorOne.setPosition(ZERO_OFFSET);// / ROTATOR_POSITION_COEFFICIENT);
+        rotatorMotorOne.setPosition(ZERO_OFFSET);
         setMotorTargetPosition(ZERO_OFFSET);
-        // applyConfigs();
     }
 
     private double getMotorPosition() {
-        return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
+        return rotatorMotorOne.getPosition().getValueAsDouble();
     }
 
     private double getTargetPosition() {
-        return motionMagicVoltage.Position;// * ROTATOR_POSITION_COEFFICIENT;
+        return motionMagicVoltage.Position;
     }
 
     private boolean isMotorAtTarget() {
         return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
     }
 
-    private void setMotorTargetPosition(double angRad) {
-        motionMagicVoltage.Position = angRad;// / ROTATOR_POSITION_COEFFICIENT;
+    private void setMotorTargetPosition(double rotations) {
+        motionMagicVoltage.Position = rotations;
         rotatorMotorOne.setControl(motionMagicVoltage);
     }
 
     public Command rotateToPositionCommand(double rotations) {
         return this.runOnce(() -> setMotorTargetPosition(rotations)).until(() -> this.isMotorAtTarget());
-    }
-
-    @Override
-    public void periodic() {
-        // System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
     }
 
 }
