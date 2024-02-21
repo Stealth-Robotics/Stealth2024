@@ -30,10 +30,9 @@ public class RotatorSubsystem extends SubsystemBase {
     // this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from
     // being 0 to 1, to instead being 0 to 2 pi radians
     private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 15.0);
-    private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
-    private final double ZERO_OFFSET = Math.toRadians(0);
+    private final double ZERO_OFFSET = 0;
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
@@ -55,10 +54,10 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = Math.toRadians(1);
+    private final double kTOLERANCE = 0;
 
     private final double MOTION_MAGIC_JERK = 0.0;
-    private double MOTION_MAGIC_ACCELERATION = 50;
+    private double MOTION_MAGIC_ACCELERATION = 80;
     private double MOTION_MAGIC_CRUISE_VELOCITY = 30;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -174,13 +173,13 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public void resetEncoder() {
-        rotatorMotorOne.setPosition(ZERO_OFFSET / ROTATOR_POSITION_COEFFICIENT);
+        rotatorMotorOne.setPosition(ZERO_OFFSET);
         setMotorTargetPosition(ZERO_OFFSET);
         // applyConfigs();
     }
 
     private double getMotorPosition() {
-        return rotatorMotorOne.getPosition().getValue() * ROTATOR_POSITION_COEFFICIENT;
+        return rotatorMotorOne.getPosition().getValue();
     }
 
     private double getTargetPosition() {
@@ -191,53 +190,19 @@ public class RotatorSubsystem extends SubsystemBase {
         return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
     }
 
-    private void setMotorTargetPosition(double angRad) {
-        motionMagicVoltage.Position = angRad / ROTATOR_POSITION_COEFFICIENT;
+    private void setMotorTargetPosition(double rotations) {
+        motionMagicVoltage.Position = rotations;
         rotatorMotorOne.setControl(motionMagicVoltage);
     }
 
-    public Command rotateToPositionCommand(double angRad) {
-        return this.runOnce(() -> setMotorTargetPosition(angRad)).until(() -> this.isMotorAtTarget());
-    }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-
-        builder.addDoubleProperty("ks", () -> this.kS, (value) -> {
-            this.kS = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kv", () -> this.kV, (value) -> {
-            this.kV = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kg", () -> this.kG, (value) -> {
-            this.kG = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kp", () -> this.kP, (value) -> {
-            this.kP = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("ki", () -> this.kI, (value) -> {
-            this.kI = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kd", () -> this.kD, (value) -> {
-            this.kD = value;
-            applyConfigs();
-        });
+    public Command rotateToPositionCommand(double rotations) {
+        return this.runOnce(() -> setMotorTargetPosition(rotations)).until(() -> this.isMotorAtTarget());
     }
 
     @Override
     public void periodic() {
-        // System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
+        System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
+        System.out.println("pos: " + Math.toDegrees(getMotorPosition()));
         // System.out.println("pos: " + rotatorMotorOne.getPosition().getValueAsDouble() + "non-coeff-pos: " + rotatorMotorOne.getPosition() + "rotatorPos: " + rotatorMotorOne.getRotorPosition());
     }
 

@@ -62,7 +62,7 @@ public class RobotContainer {
     new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
 
     new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, shooter, intake));
-    new Trigger(driverController.y()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
+    new Trigger(driverController.y()).onTrue(rotatorSubsystem.rotateToPositionCommand(0.25));
 
     new Trigger(driverController.povDown()).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
     new Trigger(driverController.povUp()).onTrue(rotatorSubsystem.rotateToPositionCommand(0));
