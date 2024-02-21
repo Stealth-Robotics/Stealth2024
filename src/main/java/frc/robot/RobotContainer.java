@@ -32,23 +32,22 @@ public class RobotContainer {
       () -> rotatorSubsystem.isHomed(),
       () -> rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake);
   IntakeSubsystem intake = new IntakeSubsystem();
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
-  private final ShooterSubsystem shooter = new ShooterSubsystem();
   // private final CommandXboxController operatorController = new
   // CommandXboxController(1);
 
   public RobotContainer() {
 
     // Command Suppliers
+
     DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
     DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
     DoubleSupplier swerveRotationSupplier = () -> adjustInput(driverController.getRightX());
     BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
     BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
 
-    // DoubleSupplier rotatorManualControlSupplier = () ->
-    // operatorController.getLeftY();
     BooleanSupplier rotatorHomeButtonSupplier = () -> rotatorSubsystem.getHomeButton();
     BooleanSupplier rotatorToggleMotorModeButtonSupplier = () -> rotatorSubsystem.getToggleMotorModeButton();
 
@@ -59,43 +58,33 @@ public class RobotContainer {
 
     swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
         swerveSubsystem,
-        () -> -adjustInput(driverController.getLeftY()),
-        () -> -adjustInput(driverController.getLeftX()),
-        () -> adjustInput(driverController.getRightX()),
-        () -> false));
-    intake.setDefaultCommand(new IntakeDefaultCommand(intake,
-        () -> (driverController.getRightTriggerAxis() - driverController.getLeftTriggerAxis())));
+        swerveTranslationYSupplier,
+        swerveTranslationXSupplier,
+        swerveRotationSupplier,
+        swerveRobotOrientedSupplier));
 
-    new Trigger(() -> rotatorSubsystem.getHomeButton()).onTrue(
-        rotatorSubsystem.homeArmCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true)
+    intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
 
-    );
+    // Driver Button Commands
 
-    new Trigger(() -> rotatorSubsystem.getToggleMotorModeButton()).onTrue(
-        rotatorSubsystem.toggleMotorModeCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
+    new Trigger(swerveHeadingResetBooleanSupplier).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
-    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.setMax()));
-    new Trigger(driverController.b()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
+    new Trigger(driverController.a())
+        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(45))));
+    new Trigger(driverController.b())
+        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(90))));
+    new Trigger(driverController.x())
+        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(0))));
+
+    // Onboard Button Commands
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
         rotatorSubsystem.homeArmCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true)
-
-    );
+            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true));
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
         rotatorSubsystem.toggleMotorModeCommand().andThen(
             new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
-
-    // new Trigger(() -> Math.abs(rotatorManualControlSupplier.getAsDouble()) > 0.1)
-    // .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier))
-    // .onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
-
-    new Trigger(driverController.a()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(45))));
-    new Trigger(driverController.b()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(90))));
-    new Trigger(driverController.x()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(0))));
   }
 
   private double adjustInput(double input) {
