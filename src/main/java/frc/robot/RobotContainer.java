@@ -16,6 +16,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -31,7 +32,8 @@ public class RobotContainer {
   IntakeSubsystem intake = new IntakeSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  // private final CommandXboxController operatorController = new
+  // CommandXboxController(1);
 
   public RobotContainer() {
 
@@ -42,14 +44,13 @@ public class RobotContainer {
     BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
     BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
 
-    DoubleSupplier rotatorManualControlSupplier = () -> operatorController.getLeftY();
+    // DoubleSupplier rotatorManualControlSupplier = () ->
+    // operatorController.getLeftY();
     BooleanSupplier rotatorHomeButtonSupplier = () -> rotatorSubsystem.getHomeButton();
     BooleanSupplier rotatorToggleMotorModeButtonSupplier = () -> rotatorSubsystem.getToggleMotorModeButton();
 
     DoubleSupplier intakeManualControlSupplier = () -> driverController.getRightTriggerAxis()
         - driverController.getLeftTriggerAxis();
-
-    
 
     // Default Commands
 
@@ -70,20 +71,21 @@ public class RobotContainer {
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
         rotatorSubsystem.homeArmCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs())
-            ).ignoringDisable(true)
-        
-        );
+            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true)
+
+    );
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
         rotatorSubsystem.toggleMotorModeCommand().andThen(
             new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
 
-    new Trigger(() -> Math.abs(rotatorManualControlSupplier.getAsDouble()) > 0.1)
-        .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier))
-        .onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
-    
-        new Trigger(driverController.a()).onTrue(rotatorSubsystem.rotateToPositionCommand(Math.toRadians(45)));
+    // new Trigger(() -> Math.abs(rotatorManualControlSupplier.getAsDouble()) > 0.1)
+    // .onTrue(rotatorSubsystem.armManualControl(rotatorManualControlSupplier))
+    // .onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
+
+    new Trigger(driverController.a()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(45))));
+    new Trigger(driverController.b()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(90))));
+    new Trigger(driverController.x()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(0))));
   }
 
   private double adjustInput(double input) {

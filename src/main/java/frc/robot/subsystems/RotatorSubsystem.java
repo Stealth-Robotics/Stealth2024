@@ -10,8 +10,8 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,10 +27,9 @@ public class RotatorSubsystem extends SubsystemBase {
     // this means that with ROTATOR_POSITION_COEFFICIENT, we convert this ouput from
     // being 0 to 1, to instead being 0 to 2 pi radians
     private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 15.0);
-    private final double ROTATOR_POSITION_COEFFICIENT = 2 * Math.PI;
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
-    private final double ZERO_OFFSET = Math.toRadians(-0.79);
+    private final double ZERO_OFFSET = 0.0;
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
@@ -39,7 +38,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kV = 0.0;
     private double kG = 0;
 
-    private double kP = 60;
+    private double kP = 75;
     private double kI = 0.0;
     private double kD = 0.0;
 
@@ -52,11 +51,11 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = Math.toRadians(1);
+    private final double kTOLERANCE = 0.05;
 
-    private final double MOTION_MAGIC_JERK = 0.0;
-    private double MOTION_MAGIC_ACCELERATION = 50;
-    private double MOTION_MAGIC_CRUISE_VELOCITY = 30;
+    private final double MOTION_MAGIC_JERK = 2;
+    private double MOTION_MAGIC_ACCELERATION = 1;
+    private double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
@@ -127,12 +126,14 @@ public class RotatorSubsystem extends SubsystemBase {
     public Command toggleMotorModeCommand() {
         return new InstantCommand(
                 () -> {
-                    if (motorMode == NeutralModeValue.Coast) {
-                        setMotorsToBrake();
-                        motorMode = NeutralModeValue.Brake;
-                    } else {
-                        setMotorsToCoast();
-                        motorMode = NeutralModeValue.Coast;
+                    if (DriverStation.isDisabled()) {
+                        if (motorMode == NeutralModeValue.Coast) {
+                            setMotorsToBrake();
+                            motorMode = NeutralModeValue.Brake;
+                        } else {
+                            setMotorsToCoast();
+                            motorMode = NeutralModeValue.Coast;
+                        }
                     }
                 }, this).ignoringDisable(true);
     }
@@ -151,8 +152,10 @@ public class RotatorSubsystem extends SubsystemBase {
 
     public Command homeArmCommand() {
         return new InstantCommand(() -> {
-            resetEncoder();
-            setHomed(true);
+            if (DriverStation.isDisabled()) {
+                resetEncoder();
+                setHomed(true);
+            }
         }, this).ignoringDisable(true);
     }
 
@@ -170,17 +173,17 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public void resetEncoder() {
-        rotatorMotorOne.setPosition(ZERO_OFFSET / ROTATOR_POSITION_COEFFICIENT);
+        rotatorMotorOne.setPosition(ZERO_OFFSET);// / ROTATOR_POSITION_COEFFICIENT);
         setMotorTargetPosition(ZERO_OFFSET);
         // applyConfigs();
     }
 
     private double getMotorPosition() {
-        return rotatorMotorOne.getPosition().getValueAsDouble() * ROTATOR_POSITION_COEFFICIENT;
+        return rotatorMotorOne.getPosition().getValueAsDouble();// * ROTATOR_POSITION_COEFFICIENT;
     }
 
     private double getTargetPosition() {
-        return motionMagicVoltage.Position;
+        return motionMagicVoltage.Position;// * ROTATOR_POSITION_COEFFICIENT;
     }
 
     private boolean isMotorAtTarget() {
@@ -188,7 +191,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private void setMotorTargetPosition(double angRad) {
-        motionMagicVoltage.Position = angRad / ROTATOR_POSITION_COEFFICIENT;
+        motionMagicVoltage.Position = angRad;// / ROTATOR_POSITION_COEFFICIENT;
         rotatorMotorOne.setControl(motionMagicVoltage);
     }
 
@@ -197,44 +200,8 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-
-        builder.addDoubleProperty("ks", () -> this.kS, (value) -> {
-            this.kS = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kv", () -> this.kV, (value) -> {
-            this.kV = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kg", () -> this.kG, (value) -> {
-            this.kG = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kp", () -> this.kP, (value) -> {
-            this.kP = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("ki", () -> this.kI, (value) -> {
-            this.kI = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kd", () -> this.kD, (value) -> {
-            this.kD = value;
-            applyConfigs();
-        });
-    }
-
-    @Override
     public void periodic() {
-        System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
-        System.out.println("pos: " + Math.toDegrees(getMotorPosition()));
+        // System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
     }
 
 }
