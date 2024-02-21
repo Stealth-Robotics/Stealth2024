@@ -195,46 +195,4 @@ public class RotatorSubsystem extends SubsystemBase {
     public Command rotateToPositionCommand(double angRad) {
         return this.runOnce(() -> setMotorTargetPosition(angRad)).until(() -> this.isMotorAtTarget());
     }
-
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
-
-        builder.addDoubleProperty("ks", () -> this.kS, (value) -> {
-            this.kS = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kv", () -> this.kV, (value) -> {
-            this.kV = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kg", () -> this.kG, (value) -> {
-            this.kG = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kp", () -> this.kP, (value) -> {
-            this.kP = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("ki", () -> this.kI, (value) -> {
-            this.kI = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("kd", () -> this.kD, (value) -> {
-            this.kD = value;
-            applyConfigs();
-        });
-    }
-
-    @Override
-    public void periodic() {
-        System.out.println("sp: " + Math.toDegrees(getTargetPosition()));
-        System.out.println("pos: " + Math.toDegrees(getMotorPosition()));
-    }
-
 }
