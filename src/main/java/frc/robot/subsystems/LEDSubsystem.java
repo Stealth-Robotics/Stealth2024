@@ -11,7 +11,6 @@ import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -21,8 +20,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 public class LEDSubsystem extends SubsystemBase {
 
     private final int LED_COUNT = 8;
-
-    private Timer blinkTimer;
 
     private final CANdle candle = new CANdle(21);
 
@@ -42,9 +39,6 @@ public class LEDSubsystem extends SubsystemBase {
         this.isHomeBooleanSupplier = isHomedSupplier;
         this.isBrakeModeSupplier = isBrakeModeSupplier;
         this.hasRingSupplier = hasRingSupplier;
-
-        blinkTimer = new Timer();
-        blinkTimer.reset();
 
         CANdleConfiguration config = new CANdleConfiguration();
         config.brightnessScalar = 1.0;
