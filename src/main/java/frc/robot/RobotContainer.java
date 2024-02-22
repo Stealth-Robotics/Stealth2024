@@ -94,18 +94,12 @@ public class RobotContainer {
     return swerveSubsystem.followPathCommand("testPath", true);
   }
 
-  public void autonomousInit() {
+  public void onInit() {
     swerveSubsystem.setTargetGoal();
     rotatorSubsystem.holdCurrentPosition();
   }
 
-  public void teleopInit() {
-    swerveSubsystem.setTargetGoal();
-    rotatorSubsystem.holdCurrentPosition();
-  }
-
-  public void testInit() {
-    swerveSubsystem.setTargetGoal();
-    rotatorSubsystem.holdCurrentPosition();
+  public void disabledExit() {
+    onInit();
   }
 }
