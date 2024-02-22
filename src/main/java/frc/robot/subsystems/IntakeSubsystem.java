@@ -38,15 +38,12 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.setVoltage(12 * speed);
     }
 
-
     //TODO: tune these values. they are in mm.
     public boolean isRingAtFrontOfIntake() {
-        return frontDistanceSensor.getRange() < 230;
+        return frontDistanceSensor.getRange() < 200;
     }
 
     public boolean isRingFullyInsideIntake() {
-        return backDistanceSensor.getRange() < 180;
+        return backDistanceSensor.getRange() < 150;
     }
-
-    
 }

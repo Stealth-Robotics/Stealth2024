@@ -93,9 +93,13 @@ public class LEDSubsystem extends SubsystemBase {
         setRGB(0, 255, 0);
     }
 
-    private void hasRing() {
+    private void gainedRing() {
         // Change to SingleFadeAnimation if StrobeAnimation is too bright
-        animate(new StrobeAnimation(234, 10, 142, 0, 0.2, LED_COUNT));
+        animate(new StrobeAnimation(0, 255, 0, 0, 0.2, LED_COUNT));
+    }
+
+    private void hasRing() {
+        setRGB(0, 255, 0);
     }
 
     public void idle() {
@@ -130,14 +134,19 @@ public class LEDSubsystem extends SubsystemBase {
     public Command blinkForRingCommand() {
         return new SequentialCommandGroup(
             new InstantCommand(
-                () -> hasRing(), 
+                () -> gainedRing(), 
                 this
             ),
             new WaitCommand(1.5),
             new InstantCommand(
-                () -> idle(), 
+                () -> hasRing(), 
                 this
             ));
+    }
+
+    public Command idleCommand()
+    {
+        return new InstantCommand(() -> idle(), this);
     }
 
     @Override

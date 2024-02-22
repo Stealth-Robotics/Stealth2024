@@ -87,7 +87,8 @@ public class RobotContainer {
         rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
 
     // Other Triggers
-    new Trigger(intake::isRingFullyInsideIntake).onTrue(ledSubsystem.blinkForRingCommand());
+    new Trigger(() -> intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.blinkForRingCommand());
+    new Trigger(() -> !intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.idleCommand());
   }
 
   private double adjustInput(double input) {
