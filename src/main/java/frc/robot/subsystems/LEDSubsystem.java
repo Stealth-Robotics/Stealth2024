@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class LEDSubsystem extends SubsystemBase {
 
@@ -33,10 +35,13 @@ public class LEDSubsystem extends SubsystemBase {
     BooleanSupplier isHomeBooleanSupplier;
     BooleanSupplier isBrakeModeSupplier;
 
-    public LEDSubsystem(BooleanSupplier isHomedSupplier, BooleanSupplier isBrakeModeSupplier) {
+    BooleanSupplier hasRingSupplier;
+
+    public LEDSubsystem(BooleanSupplier isHomedSupplier, BooleanSupplier isBrakeModeSupplier, BooleanSupplier hasRingSupplier) {
 
         this.isHomeBooleanSupplier = isHomedSupplier;
         this.isBrakeModeSupplier = isBrakeModeSupplier;
+        this.hasRingSupplier = hasRingSupplier;
 
         blinkTimer = new Timer();
         blinkTimer.reset();
@@ -90,11 +95,11 @@ public class LEDSubsystem extends SubsystemBase {
 
     private void hasRing() {
         // Change to SingleFadeAnimation if StrobeAnimation is too bright
-        animate(new StrobeAnimation(234, 10, 142, 0, 0.3, LED_COUNT));
+        animate(new StrobeAnimation(234, 10, 142, 0, 0.2, LED_COUNT));
     }
 
     public void idle() {
-        animate(new RainbowAnimation(1, 0.4, LED_COUNT));
+        animate(new RainbowAnimation(1, 0.6, LED_COUNT));
     }
 
     public void updateDisabledLEDs() {
@@ -120,6 +125,19 @@ public class LEDSubsystem extends SubsystemBase {
             () -> updateDisabledLEDs(), 
             this
         ).ignoringDisable(true);
+    }
+
+    public Command blinkForRingCommand() {
+        return new SequentialCommandGroup(
+            new InstantCommand(
+                () -> hasRing(), 
+                this
+            ),
+            new WaitCommand(1.5),
+            new InstantCommand(
+                () -> idle(), 
+                this
+            ));
     }
 
     @Override

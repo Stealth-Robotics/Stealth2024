@@ -25,14 +25,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
-
   private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
   private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
   private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(
       () -> rotatorSubsystem.isHomed(),
-      () -> rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake);
-  IntakeSubsystem intake = new IntakeSubsystem();
+      () -> (rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake),
+      () -> intake.isRingFullyInsideIntake());
+
   private final ShooterSubsystem shooter = new ShooterSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -84,6 +85,9 @@ public class RobotContainer {
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
         rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
+
+    // Other Triggers
+    new Trigger(intake::isRingFullyInsideIntake).onTrue(ledSubsystem.blinkForRingCommand());
   }
 
   private double adjustInput(double input) {
