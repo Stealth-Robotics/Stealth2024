@@ -80,10 +80,10 @@ public class RobotContainer {
     // Onboard Button Commands
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
-        rotatorSubsystem.homeArmCommand().andThen(ledSubsystem.updateLEDsCommand()));
+        rotatorSubsystem.homeArmCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
-        rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateLEDsCommand()));
+        rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
   }
 
   private double adjustInput(double input) {
@@ -97,9 +97,14 @@ public class RobotContainer {
   public void onInit() {
     swerveSubsystem.setTargetGoal();
     rotatorSubsystem.holdCurrentPosition();
+    ledSubsystem.idle();
   }
 
   public void disabledExit() {
     onInit();
+  }
+
+  public void disabledInit() {
+    ledSubsystem.updateDisabledLEDs();
   }
 }

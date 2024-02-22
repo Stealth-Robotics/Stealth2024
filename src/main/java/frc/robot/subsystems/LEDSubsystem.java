@@ -51,7 +51,7 @@ public class LEDSubsystem extends SubsystemBase {
 
         candle.configAllSettings(config);
 
-        updateLEDs();
+        updateDisabledLEDs();
     }
 
     private void setRGB(int red, int green, int blue) {
@@ -93,11 +93,11 @@ public class LEDSubsystem extends SubsystemBase {
         animate(new StrobeAnimation(234, 10, 142, 0, 0.3, LED_COUNT));
     }
 
-    private void idle() {
+    public void idle() {
         animate(new RainbowAnimation(1, 0.4, LED_COUNT));
     }
 
-    private void updateLEDs() {
+    public void updateDisabledLEDs() {
         if (DriverStation.isDisabled()) {
             if (isHomeBooleanSupplier.getAsBoolean()) {
                 if (isBrakeModeSupplier.getAsBoolean()) {
@@ -115,9 +115,9 @@ public class LEDSubsystem extends SubsystemBase {
         }
     }
 
-    public Command updateLEDsCommand() {
+    public Command updateDisabledLEDsCommand() {
         return new InstantCommand(
-            () -> updateLEDs(), 
+            () -> updateDisabledLEDs(), 
             this
         ).ignoringDisable(true);
     }
