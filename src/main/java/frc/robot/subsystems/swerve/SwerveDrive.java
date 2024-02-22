@@ -19,6 +19,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,9 +36,15 @@ public class SwerveDrive extends SubsystemBase {
     private final Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
     private final Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
 
-    private final Translation2d targetGoalPose;
+    private Translation2d targetGoalPose;
+
+    Field2d field2d;
 
     public SwerveDrive() {
+
+        field2d = new Field2d();
+        SmartDashboard.putData(field2d);
+
         gyro = new Pigeon2(SwerveConstants.pigeonID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
@@ -78,6 +86,10 @@ public class SwerveDrive extends SubsystemBase {
                 },
                 this);
 
+        setTargetGoal();
+    }
+
+    public void setTargetGoal() {
         boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
         targetGoalPose = isRed
@@ -214,5 +226,7 @@ public class SwerveDrive extends SubsystemBase {
                         visionSubsystem.getRightVisionEstimateTimestamp());
             }
         }
+
+        field2d.setRobotPose(getPose());
     }
 }

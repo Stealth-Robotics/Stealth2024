@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PoseEstimationSystem extends SubsystemBase {
 
-    private final String LEFT_CAMERA_NAME = "camera0";
-    private final String RIGHT_CAMERA_NAME = "rightCam";
+    private final String LEFT_CAMERA_NAME = "leftCamera";
+    private final String RIGHT_CAMERA_NAME = "rightCamera";
 
     private final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
 

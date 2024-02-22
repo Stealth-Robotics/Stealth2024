@@ -213,5 +213,4 @@ public class RotatorSubsystem extends SubsystemBase {
     public Command rotateToPositionCommand(double rotations) {
         return this.runOnce(() -> setMotorTargetPosition(rotations)).until(() -> this.isMotorAtTarget());
     }
-
 }

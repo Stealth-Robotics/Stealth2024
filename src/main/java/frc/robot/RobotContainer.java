@@ -11,6 +11,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.vision.PoseEstimationSystem;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -25,7 +26,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
 
-  private final SwerveDrive swerveSubsystem = new SwerveDrive();
+  private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
+  private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
   private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(
       () -> rotatorSubsystem.isHomed(),
@@ -95,14 +97,17 @@ public class RobotContainer {
   }
 
   public void autonomousInit() {
+    swerveSubsystem.setTargetGoal();
     rotatorSubsystem.holdCurrentPosition();
   }
 
   public void teleopInit() {
+    swerveSubsystem.setTargetGoal();
     rotatorSubsystem.holdCurrentPosition();
   }
 
   public void testInit() {
+    swerveSubsystem.setTargetGoal();
     rotatorSubsystem.holdCurrentPosition();
   }
 }
