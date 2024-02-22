@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -12,9 +14,11 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,7 +34,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 15.0);
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
-    private final double ZERO_OFFSET = 0.0;
+    private final double ZERO_OFFSET = -0.0009765;
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
@@ -52,7 +56,7 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = 0.05;
+    private final double kTOLERANCE = 0.025;
 
     private final double MOTION_MAGIC_JERK = 2;
     private double MOTION_MAGIC_ACCELERATION = 1;
@@ -63,6 +67,8 @@ public class RotatorSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
+    StatusSignal<Double> rotatorPosition;
+
     public RotatorSubsystem() {
         rotatorMotorOne = new TalonFX(15);
         rotatorMotorTwo = new TalonFX(14);
@@ -71,6 +77,9 @@ public class RotatorSubsystem extends SubsystemBase {
 
         applyConfigs();
         // throw new UnsupportedOperationException("Test rotator code");
+
+        rotatorPosition = rotatorMotorOne.getPosition();
+        rotatorPosition.setUpdateFrequency(1000);
 
     }
 
@@ -110,14 +119,14 @@ public class RotatorSubsystem extends SubsystemBase {
 
     // these methods will only be used with the buttons
     private void setMotorsToCoast() {
-        rotatorMotorOne.setNeutralMode(NeutralModeValue.Coast);
-        rotatorMotorTwo.setNeutralMode(NeutralModeValue.Coast);
+        motorMode = NeutralModeValue.Coast;
+        applyConfigs();
 
     }
 
     private void setMotorsToBrake() {
-        rotatorMotorOne.setNeutralMode(NeutralModeValue.Brake);
-        rotatorMotorTwo.setNeutralMode(NeutralModeValue.Brake);
+        motorMode = NeutralModeValue.Brake;
+        applyConfigs();
     }
 
     public boolean getToggleMotorModeButton() {
@@ -129,23 +138,20 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public Command toggleMotorModeCommand() {
-        if (DriverStation.isDisabled()) {
-            return new InstantCommand(
-                    () -> {
-                        if (motorMode == NeutralModeValue.Coast) {
-                            setMotorsToBrake();
-                            motorMode = NeutralModeValue.Brake;
-                        } else {
-                            setMotorsToCoast();
-                            motorMode = NeutralModeValue.Coast;
-                        }
+        return new ConditionalCommand(new InstantCommand(
+                () -> {
+                    if (motorMode == NeutralModeValue.Coast) {
+                        setMotorsToBrake();
+                        motorMode = NeutralModeValue.Brake;
+                    } else {
+                        setMotorsToCoast();
+                        motorMode = NeutralModeValue.Coast;
+                    }
 
-                    }, this).ignoringDisable(true);
-        }
+                }, this).ignoringDisable(true),
+                new PrintCommand("driver station is enabled").ignoringDisable(true),
+                () -> DriverStation.isDisabled());
 
-        else {
-            return new PrintCommand("Cannot toggle motor mode while enabled");
-        }
     }
 
     public boolean getHomeButton() {
@@ -161,18 +167,16 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public Command homeArmCommand() {
-        if (DriverStation.isDisabled()) {
-            return new InstantCommand(() -> {
+        return new ConditionalCommand(
+                new InstantCommand(() -> {
 
-                resetEncoder();
-                setHomed(true);
+                    resetEncoder();
+                    setHomed(true);
 
-            }, this).ignoringDisable(true);
-        }
+                }, this).ignoringDisable(true),
+                new PrintCommand("driver station is enabled").ignoringDisable(true),
+                () -> DriverStation.isDisabled());
 
-        else {
-            return new PrintCommand("Cannot home arm while enabled");
-        }
     }
 
     public Command armManualControl(DoubleSupplier manualControlSupplier) {
@@ -194,7 +198,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private double getMotorPosition() {
-        return rotatorMotorOne.getPosition().getValueAsDouble();
+        return rotatorPosition.getValue();
     }
 
     private double getTargetPosition() {
@@ -212,5 +216,10 @@ public class RotatorSubsystem extends SubsystemBase {
 
     public Command rotateToPositionCommand(double rotations) {
         return this.runOnce(() -> setMotorTargetPosition(rotations)).until(() -> this.isMotorAtTarget());
+    }
+
+    @Override
+    public void periodic() {
+        BaseStatusSignal.refreshAll(rotatorPosition);
     }
 }

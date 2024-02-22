@@ -76,7 +76,7 @@ public class RobotContainer {
     new Trigger(driverController.b())
         .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(90))));
     new Trigger(driverController.x())
-        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(0))));
+        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(2))));
 
     // Onboard Button Commands
 
