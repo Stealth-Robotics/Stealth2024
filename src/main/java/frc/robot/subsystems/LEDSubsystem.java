@@ -12,6 +12,8 @@ import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -70,32 +72,32 @@ public class LEDSubsystem extends SubsystemBase {
         candle.animate(animation, 0);
     }
 
-    public void coastModeNotHomed() {
+    private void coastModeNotHomed() {
         animate(new SingleFadeAnimation(255, 0, 0, 0, 0.85, LED_COUNT));
     }
 
-    public void brakeModeNotHomed() {
+    private void brakeModeNotHomed() {
         setRGB(255, 0, 0);
     }
 
-    public void coastModeHomed() {
+    private void coastModeHomed() {
         animate(new SingleFadeAnimation(0, 255, 0, 0, 0.85, LED_COUNT));
     }
 
-    public void brakeModeHomed() {
+    private void brakeModeHomed() {
         setRGB(0, 255, 0);
     }
 
-    public void hasRing() {
+    private void hasRing() {
         // Change to SingleFadeAnimation if StrobeAnimation is too bright
         animate(new StrobeAnimation(234, 10, 142, 0, 0.3, LED_COUNT));
     }
 
-    public void idle() {
+    private void idle() {
         animate(new RainbowAnimation(1, 0.4, LED_COUNT));
     }
 
-    public void updateLEDs() {
+    private void updateLEDs() {
         if (DriverStation.isDisabled()) {
             if (isHomeBooleanSupplier.getAsBoolean()) {
                 if (isBrakeModeSupplier.getAsBoolean()) {
@@ -111,6 +113,13 @@ public class LEDSubsystem extends SubsystemBase {
                 }
             }
         }
+    }
+
+    public Command updateLEDsCommand() {
+        return new InstantCommand(
+            () -> updateLEDs(), 
+            this
+        ).ignoringDisable(true);
     }
 
     @Override

@@ -80,12 +80,10 @@ public class RobotContainer {
     // Onboard Button Commands
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
-        rotatorSubsystem.homeArmCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true));
+        rotatorSubsystem.homeArmCommand().andThen(ledSubsystem.updateLEDsCommand()));
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
-        rotatorSubsystem.toggleMotorModeCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
+        rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateLEDsCommand()));
   }
 
   private double adjustInput(double input) {
