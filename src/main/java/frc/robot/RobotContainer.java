@@ -46,7 +46,7 @@ public class RobotContainer {
 
     DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
     DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
-    DoubleSupplier swerveRotationSupplier = () -> adjustInput(driverController.getRightX());
+    DoubleSupplier swerveRotationSupplier = () -> -adjustInput(driverController.getRightX());
     BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
     BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
 
@@ -72,11 +72,9 @@ public class RobotContainer {
     new Trigger(swerveHeadingResetBooleanSupplier).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
     new Trigger(driverController.a())
-        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(45))));
+        .onTrue(new InstantCommand(() -> shooter.setLeftVelocity(100)));
     new Trigger(driverController.b())
-        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(90))));
-    new Trigger(driverController.x())
-        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(2))));
+        .onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
 
     // Onboard Button Commands
 

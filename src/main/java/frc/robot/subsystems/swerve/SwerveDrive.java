@@ -228,5 +228,6 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         field2d.setRobotPose(getPose());
+        System.out.println(getPose());
     }
 }

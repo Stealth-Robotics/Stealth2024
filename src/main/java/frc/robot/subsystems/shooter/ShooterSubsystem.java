@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
@@ -7,22 +9,25 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
     private final TalonFX rightMotor;
 
-    private double kS = 0.0;
+    private double kS = 0.195;
     private double kV = 0.0;
     private double kA = 0.0;
 
-    private double kP = 0.0;
-    private double kI = 0.0;
+    private double kP = 0.6;
+    private double kI = 2.5;
     private double kD = 0.0;
 
-    private double MOTION_MAGIC_ACCELERATION = 0.0;
+    private double MOTION_MAGIC_ACCELERATION = 200;
     private double MOTION_MAGIC_JERK = 0.0;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
@@ -33,7 +38,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // value is in rotations per second
     // TODO: TUNE THIS TO A REASONABLE VALUE
-    private final double VEOLOCITY_TOLERANCE = 0;
+    private final double VEOLOCITY_TOLERANCE = 1;
 
     TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
     TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
@@ -127,54 +132,13 @@ public class ShooterSubsystem extends SubsystemBase {
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
     }
 
-    public void setMax(){
-        leftMotor.set(-1);
-        rightMotor.set(-0.6);
-    }
-
     @Override
-    public void initSendable(SendableBuilder builder) {
-        super.initSendable(builder);
+    public void periodic() {
+        // System.out.println("setpont: " + leftMotionMagicVelocityVoltage.Velocity + "
+        // current velo: " + leftMotor.getVelocity().getValueAsDouble() + " velo errror:
+        // " + getLeftVelocityError());
 
-        builder.addDoubleProperty("current motion magic acceleration", () -> this.MOTION_MAGIC_ACCELERATION,
-                (value) -> {
-                    this.MOTION_MAGIC_ACCELERATION = value;
-                    applyConfigs();
-                });
-
-        builder.addDoubleProperty("current motion magic jerk", () -> this.MOTION_MAGIC_JERK, (value) -> {
-            this.MOTION_MAGIC_JERK = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("current kS", () -> this.kS, (value) -> {
-            this.kS = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("current kV", () -> this.kV, (value) -> {
-            this.kV = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("current kA", () -> this.kA, (value) -> {
-            this.kA = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("current kP", () -> this.kP, (value) -> {
-            this.kP = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("current kI", () -> this.kI, (value) -> {
-            this.kI = value;
-            applyConfigs();
-        });
-
-        builder.addDoubleProperty("current kD", () -> this.kD, (value) -> {
-            this.kD = value;
-            applyConfigs();
-        });
+        SmartDashboard.putNumberArray("shooter values",
+                new Double[] { leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity });
     }
 }
