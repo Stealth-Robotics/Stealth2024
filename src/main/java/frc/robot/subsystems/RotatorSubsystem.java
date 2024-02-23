@@ -40,10 +40,10 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 0.0;
+    private double kV = 15.16;
     private double kG = 0;
 
-    private double kP = 75;
+    private double kP = 0.0;
     private double kI = 0.0;
     private double kD = 0.0;
 
