@@ -3,6 +3,7 @@ package frc.robot.commands.defaultCommands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeDefaultCommand extends Command {
@@ -17,27 +18,13 @@ public class IntakeDefaultCommand extends Command {
         this.intake = intake;
 
         addRequirements(intake);
-
-        // TODO:Remove after command has been tested
-        // throw new UnsupportedOperationException("IntakeDefaultCommand has not been
-        // tested on robot yet");
     }
 
     @Override
     public void execute() {
-        if (intakeSupplier.getAsDouble() < 0) {
-            intake.setIntakeSpeed(intakeSupplier.getAsDouble());
-            return;
-        }
-        if (intake.isRingFullyInsideIntake()) {
-            intake.setIntakeSpeed(0);
-            return;
-        }
         if (intake.isRingAtFrontOfIntake()) {
-            intake.setIntakeSpeed(0.3);
-            return;
+            CommandScheduler.getInstance().schedule(intake.conveyIntoReadyPosition());
         }
-
         intake.setIntakeSpeed(intakeSupplier.getAsDouble());
     }
 
