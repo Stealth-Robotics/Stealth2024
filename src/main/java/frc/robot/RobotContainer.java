@@ -71,11 +71,6 @@ public class RobotContainer {
 
     new Trigger(swerveHeadingResetBooleanSupplier).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
-    new Trigger(driverController.a())
-        .onTrue(new InstantCommand(() -> shooter.setLeftVelocity(100)));
-    new Trigger(driverController.b())
-        .onTrue(new InstantCommand(() -> shooter.stopShooterMotors()));
-
     // Onboard Button Commands
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(

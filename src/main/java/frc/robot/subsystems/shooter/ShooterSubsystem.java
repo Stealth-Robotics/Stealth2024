@@ -20,7 +20,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX rightMotor;
 
     private double kS = 0.195;
-    private double kV = 0.0;
+    private double kV = 0.11;
     private double kA = 0.0;
 
     private double kP = 0.6;
@@ -29,6 +29,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private double MOTION_MAGIC_ACCELERATION = 200;
     private double MOTION_MAGIC_JERK = 0.0;
+
+    private final double SPIN_CONSTANT = 0.9;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
@@ -49,8 +51,6 @@ public class ShooterSubsystem extends SubsystemBase {
         rightMotor = new TalonFX(17);
 
         applyConfigs();
-        // will remove when shooter is tested
-        // throw new UnsupportedOperationException();
     }
 
     private void applyConfigs() {
@@ -82,7 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @param velocity in rotations per second
      */
-    public void setLeftVelocity(double velocity) {
+    private void setLeftVelocity(double velocity) {
         leftMotionMagicVelocityVoltage.Velocity = velocity;
         leftMotor.setControl(leftMotionMagicVelocityVoltage);
     }
@@ -92,7 +92,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @param velocity in rotations per second
      */
-    public void setRightVelocity(double velocity) {
+    private void setRightVelocity(double velocity) {
         rightMotionMagicVelocityVoltage.Velocity = velocity;
         rightMotor.setControl(rightMotionMagicVelocityVoltage);
     }
@@ -127,17 +127,30 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @return true if both motors are within the velocity tolerance
      */
-    public boolean motorsAtTargetVelocity() {
+    private boolean motorsAtTargetVelocity() {
         return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
     }
 
+    /**
+     * returns a command that spins up the shooter to the target velocity based on
+     * distance from goal
+     * 
+     * @param distance in feet from goal
+     * @return command that spins up the shooter to the target velocity based on
+     *         distance from interpolation map
+     */
+    public Command spinUpFromDistance(double distance) {
+        double targetVelocity = DistanceToShotValuesMap.getInterpolatedShooterSpeed(distance);
+        return this.runOnce(
+                () -> {
+                    setLeftVelocity(targetVelocity);
+                    setRightVelocity(targetVelocity * SPIN_CONSTANT);
+                }).until(() -> this.motorsAtTargetVelocity());
+    }
+
     @Override
     public void periodic() {
-        // System.out.println("setpont: " + leftMotionMagicVelocityVoltage.Velocity + "
-        // current velo: " + leftMotor.getVelocity().getValueAsDouble() + " velo errror:
-        // " + getLeftVelocityError());
-
         SmartDashboard.putNumberArray("shooter values",
                 new Double[] { leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity });
     }
