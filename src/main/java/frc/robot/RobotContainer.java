@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -12,6 +11,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.vision.PoseEstimationSystem;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -25,13 +25,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
-
-  private final SwerveDrive swerveSubsystem = new SwerveDrive();
+  private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
+  private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
   private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(
       () -> rotatorSubsystem.isHomed(),
-      () -> rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake);
-  IntakeSubsystem intake = new IntakeSubsystem();
+      () -> (rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake),
+      () -> intake.isRingFullyInsideIntake());
+
   private final ShooterSubsystem shooter = new ShooterSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -44,7 +46,7 @@ public class RobotContainer {
 
     DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
     DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
-    DoubleSupplier swerveRotationSupplier = () -> adjustInput(driverController.getRightX());
+    DoubleSupplier swerveRotationSupplier = () -> -adjustInput(driverController.getRightX());
     BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
     BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
 
@@ -69,22 +71,17 @@ public class RobotContainer {
 
     new Trigger(swerveHeadingResetBooleanSupplier).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
-    new Trigger(driverController.a())
-        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(45))));
-    new Trigger(driverController.b())
-        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(90))));
-    new Trigger(driverController.x())
-        .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.radiansToRotations(Math.toRadians(0))));
-
     // Onboard Button Commands
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
-        rotatorSubsystem.homeArmCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs())).ignoringDisable(true));
+        rotatorSubsystem.homeArmCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
 
     new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
-        rotatorSubsystem.toggleMotorModeCommand().andThen(
-            new InstantCommand(() -> ledSubsystem.updateLEDs()).ignoringDisable(true)));
+        rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
+
+    // Other Triggers
+    new Trigger(() -> intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.blinkForRingCommand());
+    new Trigger(() -> !intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.idleCommand());
   }
 
   private double adjustInput(double input) {
@@ -95,15 +92,17 @@ public class RobotContainer {
     return swerveSubsystem.followPathCommand("testPath", true);
   }
 
-  public void autonomousInit() {
+  public void onInit() {
+    swerveSubsystem.setTargetGoal();
     rotatorSubsystem.holdCurrentPosition();
+    ledSubsystem.idle();
   }
 
-  public void teleopInit() {
-    rotatorSubsystem.holdCurrentPosition();
+  public void disabledExit() {
+    onInit();
   }
 
-  public void testInit() {
-    rotatorSubsystem.holdCurrentPosition();
+  public void disabledInit() {
+    ledSubsystem.updateDisabledLEDs();
   }
 }
