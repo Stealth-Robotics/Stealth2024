@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.ReadyShooter;
+import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -79,7 +80,7 @@ public class RobotContainer {
         swerveRobotOrientedSupplier));
 
     intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
-    climber.setDefaultCommand(new RunCommand(() -> climber.setPowerCommand(climberManuaControlSupplier.getAsDouble()), climber));
+    climber.setDefaultCommand(new ClimberDefault(climberManuaControlSupplier, climber));
 
     // Driver Button Commands
 
