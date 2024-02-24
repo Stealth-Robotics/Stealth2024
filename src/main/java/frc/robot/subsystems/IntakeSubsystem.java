@@ -40,16 +40,20 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // TODO: tune these values. they are in mm.
     public boolean isRingAtFrontOfIntake() {
-        return frontDistanceSensor.getRange() < 200;
+        return frontDistanceSensor.getRange() < 400;
     }
 
     public boolean isRingFullyInsideIntake() {
-        return backDistanceSensor.getRange() < 150;
+        return backDistanceSensor.getRange() < 400;
     }
 
     public Command conveyIntoReadyPosition() {
-        return this.run(() -> this.setIntakeSpeed(0.8)).until(() -> isRingFullyInsideIntake())
-                .andThen(this.run(() -> this.setIntakeSpeed(0.3)).withTimeout(0.25))
-                .andThen(this.runOnce(() -> this.setIntakeSpeed(0)));
+        return this.run(() -> this.setIntakeSpeed(0.8)).until(() -> isRingFullyInsideIntake());
+    }
+
+
+    @Override
+    public void periodic() {
+        // System.out.println(frontDistanceSensor.getRange());
     }
 }

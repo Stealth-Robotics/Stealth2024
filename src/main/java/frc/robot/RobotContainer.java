@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import frc.robot.commands.AimAndShootCommand;
+import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
+import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.vision.PoseEstimationSystem;
@@ -19,12 +22,16 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class RobotContainer {
+
+  DistanceToShotValuesMap distanceToShotValuesMap = new DistanceToShotValuesMap();
+
   private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
   private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
   private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
@@ -33,7 +40,6 @@ public class RobotContainer {
       () -> rotatorSubsystem.isHomed(),
       () -> (rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake),
       () -> intake.isRingFullyInsideIntake());
-
   private final ShooterSubsystem shooter = new ShooterSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -41,6 +47,7 @@ public class RobotContainer {
   // CommandXboxController(1);
 
   public RobotContainer() {
+    
 
     // Command Suppliers
 
@@ -82,6 +89,9 @@ public class RobotContainer {
     // Other Triggers
     new Trigger(() -> intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.blinkForRingCommand());
     new Trigger(() -> !intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.idleCommand());
+
+    new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake, distanceToShotValuesMap));
+    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()).alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(2))));
   }
 
   private double adjustInput(double input) {

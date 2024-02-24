@@ -40,10 +40,10 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 15.16;
+    private double kV = 0;
     private double kG = 0;
 
-    private double kP = 0.0;
+    private double kP = 75;
     private double kI = 0.0;
     private double kD = 0.0;
 
@@ -221,5 +221,7 @@ public class RotatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         BaseStatusSignal.refreshAll(rotatorPosition);
+        System.out.println("pos: " + getMotorPosition());
+        System.out.println("sp " + getTargetPosition());
     }
 }

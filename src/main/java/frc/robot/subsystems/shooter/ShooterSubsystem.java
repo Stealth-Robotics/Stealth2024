@@ -30,7 +30,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double MOTION_MAGIC_ACCELERATION = 200;
     private double MOTION_MAGIC_JERK = 0.0;
 
-    private final double SPIN_CONSTANT = 0.9;
+    private final double SPIN_CONSTANT = 0.4;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
@@ -70,8 +70,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
         RIGHT_TALONFX_CONFIG = LEFT_TALONFX_CONFIG;
 
-        LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        RIGHT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        RIGHT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         leftMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
         rightMotor.getConfigurator().apply(RIGHT_TALONFX_CONFIG);
@@ -118,6 +118,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void stopShooterMotors() {
+        leftMotionMagicVelocityVoltage.Velocity = 0;
+        rightMotionMagicVelocityVoltage.Velocity = 0;
         rightMotor.setControl(new CoastOut());
         leftMotor.setControl(new CoastOut());
     }
@@ -140,12 +142,12 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return command that spins up the shooter to the target velocity based on
      *         distance from interpolation map
      */
-    public Command spinUpFromDistance(double distance) {
-        double targetVelocity = DistanceToShotValuesMap.getInterpolatedShooterSpeed(distance);
+    public Command spinToRps(double rps) {
+
         return this.runOnce(
                 () -> {
-                    setLeftVelocity(targetVelocity);
-                    setRightVelocity(targetVelocity * SPIN_CONSTANT);
+                    setLeftVelocity(rps);
+                    setRightVelocity(rps * SPIN_CONSTANT);
                 }).until(() -> this.motorsAtTargetVelocity());
     }
 

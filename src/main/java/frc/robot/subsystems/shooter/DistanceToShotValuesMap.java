@@ -1,22 +1,29 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.util.Units;
 
 public class DistanceToShotValuesMap {
-    private static final InterpolatingDoubleTreeMap SHOOTER_INTERPOLATION_MAP = new InterpolatingDoubleTreeMap();
-    private static final InterpolatingDoubleTreeMap ROTATION_INTERPOLATION_MAP = new InterpolatingDoubleTreeMap();
+    private final InterpolatingDoubleTreeMap SHOOTER_INTERPOLATION_MAP = new InterpolatingDoubleTreeMap();
+    private final InterpolatingDoubleTreeMap ROTATION_INTERPOLATION_MAP = new InterpolatingDoubleTreeMap();
 
     public DistanceToShotValuesMap()
     {
         // TODO: Add values
-        SHOOTER_INTERPOLATION_MAP.put(0.0, 0.0);
+        SHOOTER_INTERPOLATION_MAP.put(0.0, 100.0);
+
+        SHOOTER_INTERPOLATION_MAP.put(4.0, 100.0);
+        SHOOTER_INTERPOLATION_MAP.put(5.0, 100.0);
+
 
         // TODO: Add values
-        //values should be in degrees
-        ROTATION_INTERPOLATION_MAP.put(0.0, 0.0);
+        //values should be in rotations
+        ROTATION_INTERPOLATION_MAP.put(0.0, Units.degreesToRotations(52));
+        ROTATION_INTERPOLATION_MAP.put(4.0, Units.degreesToRotations(52));
+        ROTATION_INTERPOLATION_MAP.put(5.0, Units.degreesToRotations(52));
     }
 
-    public static double getInterpolatedShooterSpeed(double distance) {
+    public double getInterpolatedShooterSpeed(double distance) {
         return SHOOTER_INTERPOLATION_MAP.get(distance);
     }
 
@@ -26,7 +33,7 @@ public class DistanceToShotValuesMap {
      * returns interpolated rotation angle in degrees
      * @return interpolated rotation angle in degrees
      */
-    public static double getInterpolatedRotationAngle(double distance) {
+    public double getInterpolatedRotationAngle(double distance) {
         return ROTATION_INTERPOLATION_MAP.get(distance);
     }
     

@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PoseEstimationSystem extends SubsystemBase {
@@ -20,12 +21,12 @@ public class PoseEstimationSystem extends SubsystemBase {
     private final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
 
     private final Transform3d LEFT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(0, 0, 0),
-            new Rotation3d(0, 0, 0));
+            new Translation3d(Units.inchesToMeters(-8.0), Units.inchesToMeters(-10.92), Units.inchesToMeters(12.29)),
+            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-6.4), Units.degreesToRadians(40.03)));
 
     private final Transform3d RIGHT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(0, 0, 0),
-            new Rotation3d(0, 0, 0));
+            new Translation3d(Units.inchesToMeters(8.0), Units.inchesToMeters(-10.99), Units.inchesToMeters(11.91)),
+            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-9), Units.degreesToRadians(-40.03)));
 
     private final CameraSubsystem leftCamera;
     private final CameraSubsystem rightCamera;
@@ -40,7 +41,7 @@ public class PoseEstimationSystem extends SubsystemBase {
 
         try {
             APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
-            APRIL_TAG_FIELD_LAYOUT.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
+            APRIL_TAG_FIELD_LAYOUT.setOrigin(OriginPosition.kRedAllianceWallRightSide);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load AprilTag field layout");
         }
