@@ -8,6 +8,7 @@ import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
@@ -25,6 +26,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -41,10 +43,11 @@ public class RobotContainer {
       () -> (rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake),
       () -> intake.isRingFullyInsideIntake());
   private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final ClimberSubsystem climber = new ClimberSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
-  // private final CommandXboxController operatorController = new
-  // CommandXboxController(1);
+  private final CommandXboxController operatorController = new
+  CommandXboxController(1);
 
   public RobotContainer() {
     
@@ -63,6 +66,9 @@ public class RobotContainer {
     DoubleSupplier intakeManualControlSupplier = () -> driverController.getRightTriggerAxis()
         - driverController.getLeftTriggerAxis();
 
+    DoubleSupplier climberManuaControlSupplier = () -> operatorController.getRightTriggerAxis()
+        - operatorController.getLeftTriggerAxis();
+
     // Default Commands
 
     swerveSubsystem.setDefaultCommand(new SwerveDriveTeleop(
@@ -73,6 +79,7 @@ public class RobotContainer {
         swerveRobotOrientedSupplier));
 
     intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
+    climber.setDefaultCommand(new RunCommand(() -> climber.setPowerCommand(climberManuaControlSupplier.getAsDouble()), climber));
 
     // Driver Button Commands
 
