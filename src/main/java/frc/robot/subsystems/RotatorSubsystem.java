@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.BetterInstantCommand;
 
 public class RotatorSubsystem extends SubsystemBase {
 
@@ -40,11 +41,11 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 0;
-    private double kG = 0;
+    private double kV = 14.1;
+    private double kG = 0.3;
 
-    private double kP = 75;
-    private double kI = 0.0;
+    private double kP = 70;
+    private double kI = 0;
     private double kD = 0.0;
 
     private DigitalInput homeButton = new DigitalInput(0);
@@ -56,7 +57,7 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = 0.025;
+    private final double kTOLERANCE = Units.degreesToRotations(0.5);
 
     private final double MOTION_MAGIC_JERK = 2;
     private double MOTION_MAGIC_ACCELERATION = 1;
@@ -79,8 +80,8 @@ public class RotatorSubsystem extends SubsystemBase {
         // throw new UnsupportedOperationException("Test rotator code");
 
         rotatorPosition = rotatorMotorOne.getPosition();
-        rotatorPosition.setUpdateFrequency(1000);
-
+        rotatorPosition.setUpdateFrequency(500);
+        rotatorMotorTwo.getPosition().setUpdateFrequency(4);
     }
 
     private void applyConfigs() {
@@ -215,13 +216,11 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public Command rotateToPositionCommand(double rotations) {
-        return this.runOnce(() -> setMotorTargetPosition(rotations)).until(() -> this.isMotorAtTarget());
+        return new BetterInstantCommand(() -> setMotorTargetPosition(rotations), this).until(() -> this.isMotorAtTarget()).andThen(new PrintCommand("attarget"));
     }
 
     @Override
     public void periodic() {
         BaseStatusSignal.refreshAll(rotatorPosition);
-        System.out.println("pos: " + getMotorPosition());
-        System.out.println("sp " + getTargetPosition());
     }
 }

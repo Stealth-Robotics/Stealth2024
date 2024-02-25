@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -24,6 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
         backDistanceSensor = new TimeOfFlight(51);
         frontDistanceSensor.setRangingMode(RangingMode.Short, 20);
         backDistanceSensor.setRangingMode(RangingMode.Short, 20);
+        intakeMotor.getPosition().setUpdateFrequency(4);
         applyConfigs();
     }
 
@@ -44,7 +46,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean isRingFullyInsideIntake() {
-        return backDistanceSensor.getRange() < 400;
+        return backDistanceSensor.getRange() < 300;
     }
 
     public Command conveyIntoReadyPosition() {
@@ -54,6 +56,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // System.out.println(frontDistanceSensor.getRange());
+        // System.out.println(backDistanceSensor.getRange());
     }
 }

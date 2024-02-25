@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -28,6 +29,10 @@ public class ClimberSubsystem extends SubsystemBase {
         CLIMBER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         CLIMBER_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        StatusSignal<Double> climbr = leftClimber.getPosition();
+        climbr.setUpdateFrequency(0);
+        climbr = rightClimber.getPosition();
+        climbr.setUpdateFrequency(0);
 
         leftClimber.getConfigurator().apply(CLIMBER_CONFIG);
         rightClimber.getConfigurator().apply(CLIMBER_CONFIG);
