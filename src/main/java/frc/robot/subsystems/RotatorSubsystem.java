@@ -68,7 +68,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
-    private final StatusSignal<Double> rotatorPosition;
+    StatusSignal<Double> rotatorPosition;
 
     public RotatorSubsystem() {
         rotatorMotorOne = new TalonFX(15);

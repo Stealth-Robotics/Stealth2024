@@ -1,7 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -28,11 +26,6 @@ public class SwerveModule {
     /* angle motor control requests */
     private final PositionVoltage anglePosition = new PositionVoltage(0);
 
-    StatusSignal<Double> anglePositionSignal;
-    StatusSignal<Double> absoluteEncoderPositionSignal;
-    StatusSignal<Double> drivePosition;
-    StatusSignal<Double> driveVelocity;
-
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants) {
         this.moduleNumber = moduleNumber;
         this.angleOffset = moduleConstants.angleOffset;
@@ -50,22 +43,6 @@ public class SwerveModule {
         mDriveMotor = new TalonFX(moduleConstants.driveMotorID);
         mDriveMotor.getConfigurator().apply(Robot.ctreConfigs.swerveDriveFXConfig);
         mDriveMotor.getConfigurator().setPosition(0.0);
-
-        anglePositionSignal = mAngleMotor.getPosition();
-        anglePositionSignal.setUpdateFrequency(500);
-
-        absoluteEncoderPositionSignal = angleEncoder.getAbsolutePosition();
-        absoluteEncoderPositionSignal.setUpdateFrequency(250);
-
-        drivePosition = mDriveMotor.getPosition();
-        drivePosition.setUpdateFrequency(500);
-
-        driveVelocity = mDriveMotor.getVelocity();
-        driveVelocity.setUpdateFrequency(1000);
-
-        mDriveMotor.optimizeBusUtilization();
-        mAngleMotor.optimizeBusUtilization();
-        angleEncoder.optimizeBusUtilization();
     }
 
     public void setDesiredState(SwerveModuleState desiredState) {
@@ -99,13 +76,5 @@ public class SwerveModule {
                 Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(),
                         SwerveConstants.wheelCircumference),
                 Rotation2d.fromRotations(mAngleMotor.getPosition().getValue()));
-    }
-
-    public void updateStatusSignals() {
-        BaseStatusSignal.refreshAll(
-                anglePositionSignal,
-                absoluteEncoderPositionSignal,
-                drivePosition,
-                driveVelocity);
     }
 }

@@ -4,8 +4,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -42,8 +40,6 @@ public class SwerveDrive extends SubsystemBase {
 
     Field2d field2d;
 
-    StatusSignal<Double> gyroYawStatusSignal;
-
     public SwerveDrive() {
 
         field2d = new Field2d();
@@ -52,11 +48,7 @@ public class SwerveDrive extends SubsystemBase {
 
         gyro = new Pigeon2(SwerveConstants.pigeonID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
-
-        gyroYawStatusSignal = gyro.getYaw();
-        gyroYawStatusSignal.setUpdateFrequency(750);
         gyro.setYaw(0);
-        gyro.optimizeBusUtilization();
 
         mSwerveMods = new SwerveModule[] {
                 new SwerveModule(0, SwerveConstants.Mod0.constants),
@@ -229,11 +221,6 @@ public class SwerveDrive extends SubsystemBase {
 
     @Override
     public void periodic() {
-        for (SwerveModule swerveModule : mSwerveMods) {
-            swerveModule.updateStatusSignals();
-        }
-        BaseStatusSignal.refreshAll(gyroYawStatusSignal);
-
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         if (visionSubsystem != null) {
