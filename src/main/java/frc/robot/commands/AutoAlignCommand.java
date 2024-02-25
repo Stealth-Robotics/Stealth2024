@@ -22,6 +22,7 @@ public class AutoAlignCommand extends Command {
         this.swerve = swerve;
         rotationPID = new BetterPID(kP, kI, kD, true);
         rotationPID.setTolerance(kTolerance);
+        rotationPID.enableContinuousInput(0, 360);
         addRequirements(swerve);
 
         // will remove once tested
@@ -35,7 +36,7 @@ public class AutoAlignCommand extends Command {
 
     @Override
     public void execute() {
-        double rotationOutput = rotationPID.calculate(swerve.getPose().getRotation().getDegrees());
+        double rotationOutput = rotationPID.calculate(swerve.getHeadingDegrees());
         swerve.drive(new Translation2d(), rotationOutput, false);
     }
 
