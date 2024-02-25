@@ -80,7 +80,7 @@ public class RotatorSubsystem extends SubsystemBase {
         // throw new UnsupportedOperationException("Test rotator code");
 
         rotatorPosition = rotatorMotorOne.getPosition();
-        rotatorPosition.setUpdateFrequency(1000);
+        rotatorPosition.setUpdateFrequency(500);
 
         rotatorMotorOne.optimizeBusUtilization();
         rotatorMotorTwo.optimizeBusUtilization();

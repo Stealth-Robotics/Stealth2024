@@ -55,10 +55,10 @@ public class ShooterSubsystem extends SubsystemBase {
         applyConfigs();
 
         leftShooterVelocity = leftMotor.getVelocity();
-        leftShooterVelocity.setUpdateFrequency(1000);
+        leftShooterVelocity.setUpdateFrequency(500);
 
         rightShooterVelocity = rightMotor.getVelocity();
-        rightShooterVelocity.setUpdateFrequency(1000);
+        rightShooterVelocity.setUpdateFrequency(500);
 
         leftMotor.optimizeBusUtilization();
         rightMotor.optimizeBusUtilization();
