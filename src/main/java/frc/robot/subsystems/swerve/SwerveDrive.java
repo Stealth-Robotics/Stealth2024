@@ -44,6 +44,7 @@ public class SwerveDrive extends SubsystemBase {
 
         field2d = new Field2d();
         SmartDashboard.putData(field2d);
+        field2d.setRobotPose(new Pose2d(RED_GOAL_POSE, new Rotation2d()));
 
         gyro = new Pigeon2(SwerveConstants.pigeonID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -74,7 +75,7 @@ public class SwerveDrive extends SubsystemBase {
                         new PIDConstants(SwerveConstants.AutoConstants.TRANSLATION_CONTROLLER_P_COEFF, 0.0, 0.0),
                         new PIDConstants(SwerveConstants.AutoConstants.ROTATION_CONTROLLER_P_COEFF, 0.0, 0.0),
                         SwerveConstants.maxSpeed,
-                        Math.hypot(SwerveConstants.trackWidth/2.0, SwerveConstants.wheelBase/2.0),
+                        Math.hypot(SwerveConstants.trackWidth / 2.0, SwerveConstants.wheelBase / 2.0),
                         new ReplanningConfig()),
                 () -> {
 
@@ -101,7 +102,6 @@ public class SwerveDrive extends SubsystemBase {
         this();
         this.visionSubsystem = visionSubsystem;
     }
-
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return SwerveConstants.swerveKinematics.toChassisSpeeds(getModuleStates());
@@ -196,12 +196,14 @@ public class SwerveDrive extends SubsystemBase {
         return targetGoalPose;
     }
 
-    //returns the distance, in meters, from the center of the robot to the target goal
+    // returns the distance, in meters, from the center of the robot to the target
+    // goal
     public double getDistanceMetersToGoal() {
         return getTargetGoalPose().getDistance(swerveOdometry.getEstimatedPosition().getTranslation());
     }
 
-    //returns the angle, in degrees, that the robot needs to be pointing in order to be pointing at the target goal
+    // returns the angle, in degrees, that the robot needs to be pointing in order
+    // to be pointing at the target goal
     public double getAngleDegreesToGoal() {
         Translation2d goalPose = getTargetGoalPose();
         Translation2d robotPose = swerveOdometry.getEstimatedPosition().getTranslation();
@@ -226,7 +228,6 @@ public class SwerveDrive extends SubsystemBase {
                         visionSubsystem.getRightVisionEstimateTimestamp());
             }
         }
-
         field2d.setRobotPose(getPose());
         // System.out.println(getPose());
     }

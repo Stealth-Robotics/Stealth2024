@@ -22,11 +22,11 @@ public class PoseEstimationSystem extends SubsystemBase {
 
     private final Transform3d LEFT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
             new Translation3d(Units.inchesToMeters(-8.0), Units.inchesToMeters(-10.92), Units.inchesToMeters(12.29)),
-            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-6.4), Units.degreesToRadians(40.03)));
+            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-6.4), Units.degreesToRadians(40.03 + 90)));
 
     private final Transform3d RIGHT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
             new Translation3d(Units.inchesToMeters(8.0), Units.inchesToMeters(-10.99), Units.inchesToMeters(11.91)),
-            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-9), Units.degreesToRadians(-40.03)));
+            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-9), Units.degreesToRadians(-40.03 + 90)));
 
     private final CameraSubsystem leftCamera;
     private final CameraSubsystem rightCamera;
@@ -41,7 +41,7 @@ public class PoseEstimationSystem extends SubsystemBase {
 
         try {
             APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
-            APRIL_TAG_FIELD_LAYOUT.setOrigin(OriginPosition.kRedAllianceWallRightSide);
+            APRIL_TAG_FIELD_LAYOUT.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load AprilTag field layout");
         }
