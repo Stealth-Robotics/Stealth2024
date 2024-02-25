@@ -30,12 +30,13 @@ public class ClimberSubsystem extends SubsystemBase {
 
         CLIMBER_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         StatusSignal<Double> climbr = leftClimber.getPosition();
-        climbr.setUpdateFrequency(0);
-        climbr = rightClimber.getPosition();
-        climbr.setUpdateFrequency(0);
+        rightClimber.getPosition().setUpdateFrequency(4);
+        leftClimber.getPosition().setUpdateFrequency(4);
+        
 
-        leftClimber.getConfigurator().apply(CLIMBER_CONFIG);
         rightClimber.getConfigurator().apply(CLIMBER_CONFIG);
+        CLIMBER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leftClimber.getConfigurator().apply(CLIMBER_CONFIG);
 
     }
 

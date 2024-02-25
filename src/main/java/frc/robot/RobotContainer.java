@@ -45,7 +45,7 @@ public class RobotContainer {
       () -> (rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake),
       () -> intake.isRingFullyInsideIntake());
   private final ShooterSubsystem shooter = new ShooterSubsystem();
-  // private final ClimberSubsystem climber = new ClimberSubsystem();
+  private final ClimberSubsystem climber = new ClimberSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new
@@ -56,8 +56,8 @@ public class RobotContainer {
 
     // Command Suppliers
 
-    DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
-    DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
+    DoubleSupplier swerveTranslationYSupplier = () -> adjustInput(driverController.getLeftY());
+    DoubleSupplier swerveTranslationXSupplier = () -> adjustInput(driverController.getLeftX());
     DoubleSupplier swerveRotationSupplier = () -> -adjustInput(driverController.getRightX());
     BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
     BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
@@ -81,7 +81,7 @@ public class RobotContainer {
         swerveRobotOrientedSupplier));
 
     intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
-    // climber.setDefaultCommand(new ClimberDefault(climberManuaControlSupplier, climber));
+    climber.setDefaultCommand(new ClimberDefault(climberManuaControlSupplier, climber));
 
     // Driver Button Commands
 

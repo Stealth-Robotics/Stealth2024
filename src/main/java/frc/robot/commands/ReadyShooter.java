@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.WPIMathJNI;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,27 +18,31 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class ReadyShooter extends SequentialCommandGroup {
 
-    ShooterSubsystem shooterSubsystem;
-    RotatorSubsystem rotatorSubsystem;
-    IntakeSubsystem intakeSubsystem;
-    SwerveDrive swerveDrive;
-    DistanceToShotValuesMap distanceToShotValuesMap;
+        ShooterSubsystem shooter;
+        RotatorSubsystem rotator;
+        IntakeSubsystem intake;
+        SwerveDrive swerveDrive;
+        DistanceToShotValuesMap distanceToShotValuesMap;
+        private double distance = 0;
+        private double angle = 0;
+        private double speed = 0;
 
-    public ReadyShooter(ShooterSubsystem shooter, RotatorSubsystem rotator, IntakeSubsystem intake, SwerveDrive drive,
-            DistanceToShotValuesMap distanceToShotValuesMap) {
-        double distance = 4.0;
+        public ReadyShooter(ShooterSubsystem shooter, RotatorSubsystem rotator, IntakeSubsystem intake,
+                        SwerveDrive drive,
+                        DistanceToShotValuesMap distanceToShotValuesMap) {
+                this.swerveDrive = drive;
 
-        double rotatorAngle = distanceToShotValuesMap.getInterpolatedRotationAngle(distance);
-        double shooterRPS = distanceToShotValuesMap.getInterpolatedShooterSpeed(distance);
+                this.intake = intake;
+                this.rotator = rotator;
+                this.shooter = shooter;
+                addCommands(
 
-        addCommands(
-                new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake).andThen(new WaitCommand(0.1))
-                        .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
-                new WaitCommand(0.5),
-                new ParallelCommandGroup(
-                        // shooter.spinToRps(shooterRPS),
-                        rotator.rotateToPositionCommand(rotatorAngle)));
-                // new RunCommand(() -> intake.setIntakeSpeed(1), intake)
-                        // .until(() -> !intake.isRingFullyInsideIntake()));
-    }
+                                new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake)
+                                                .andThen(new WaitCommand(0.1))
+                                                .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
+                                new WaitCommand(0.5),
+                                new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap),
+                                new RunCommand(() -> intake.setIntakeSpeed(1), intake)
+                                                .until(() -> !intake.isRingFullyInsideIntake()));
+        }
 }

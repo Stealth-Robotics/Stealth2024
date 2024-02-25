@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -41,10 +42,10 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 14.1;
+    private double kV = 15.5;
     private double kG = 0.3;
 
-    private double kP = 70;
+    private double kP = 80;
     private double kI = 0;
     private double kD = 0.0;
 
@@ -57,7 +58,7 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = Units.degreesToRotations(0.5);
+    private final double kTOLERANCE = Units.degreesToRotations(1);
 
     private final double MOTION_MAGIC_JERK = 2;
     private double MOTION_MAGIC_ACCELERATION = 1;
@@ -84,6 +85,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
         rotatorMotorOne.optimizeBusUtilization();
         rotatorMotorTwo.optimizeBusUtilization();
+        resetEncoder();
     }
 
     private void applyConfigs() {
@@ -208,11 +210,11 @@ public class RotatorSubsystem extends SubsystemBase {
         return motionMagicVoltage.Position;
     }
 
-    private boolean isMotorAtTarget() {
+    public boolean isMotorAtTarget() {
         return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
     }
 
-    private void setMotorTargetPosition(double rotations) {
+    public void setMotorTargetPosition(double rotations) {
         motionMagicVoltage.Position = rotations;
         rotatorMotorOne.setControl(motionMagicVoltage);
     }
@@ -224,5 +226,8 @@ public class RotatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         BaseStatusSignal.refreshAll(rotatorPosition);
+        SmartDashboard.putNumber("rotator", Units.rotationsToDegrees(getMotorPosition()));
+        // System.out.println("target " + (Units.rotationsToDegrees(getTargetPosition())));
+        // System.out.println("pos " + Units.rotationsToDegrees(rotatorMotorOne.getPosition().getValueAsDouble()));
     }
 }

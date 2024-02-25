@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double MOTION_MAGIC_ACCELERATION = 100;
     private double MOTION_MAGIC_JERK = 0.0;
 
-    private final double SPIN_CONSTANT = 0.5;
+    public final double SPIN_CONSTANT = 0.7;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
@@ -41,7 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // value is in rotations per second
     // TODO: TUNE THIS TO A REASONABLE VALUE
-    private final double VEOLOCITY_TOLERANCE = 5;
+    private final double VEOLOCITY_TOLERANCE = 1;
 
     TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
     TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
@@ -83,7 +83,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @param velocity in rotations per second
      */
-    private void setLeftVelocity(double velocity) {
+    public void setLeftVelocity(double velocity) {
         leftMotionMagicVelocityVoltage.Velocity = velocity;
         leftMotor.setControl(leftMotionMagicVelocityVoltage);
     }
@@ -93,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @param velocity in rotations per second
      */
-    private void setRightVelocity(double velocity) {
+    public void setRightVelocity(double velocity) {
         rightMotionMagicVelocityVoltage.Velocity = velocity;
         rightMotor.setControl(rightMotionMagicVelocityVoltage);
     }
@@ -130,7 +130,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @return true if both motors are within the velocity tolerance
      */
-    private boolean motorsAtTargetVelocity() {
+    public boolean motorsAtTargetVelocity() {
         return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
     }

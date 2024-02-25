@@ -12,6 +12,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -60,11 +61,16 @@ public class SwerveDrive extends SubsystemBase {
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
+        var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
+        var visionStdDevs = VecBuilder.fill(1, 1, 1);
+
         swerveOdometry = new SwerveDrivePoseEstimator(
                 SwerveConstants.swerveKinematics,
                 getGyroYaw(),
                 getModulePositions(),
-                new Pose2d());
+                new Pose2d(),
+                stateStdDevs,
+                visionStdDevs);
 
         AutoBuilder.configureHolonomic(
                 this::getPose,
@@ -177,7 +183,7 @@ public class SwerveDrive extends SubsystemBase {
 
     public void zeroHeading() {
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                new Pose2d(getPose().getTranslation(), new Rotation2d()));
+                new Pose2d(getPose().getTranslation(), new Rotation2d(Math.toRadians(180))));
     }
 
     public Rotation2d getGyroYaw() {
@@ -226,18 +232,19 @@ public class SwerveDrive extends SubsystemBase {
         if (visionSubsystem != null) {
             if (visionSubsystem.getLeftVisionEstimatePresent()) {
                 addVisionMeasurement(
-                        visionSubsystem.getLeftVisionEstimatePose2d(),
+                        new Pose2d(visionSubsystem.getLeftVisionEstimatePose2d().getTranslation(), getHeading()),
                         visionSubsystem.getLeftVisionEstimateTimestamp());
             }
 
             if (visionSubsystem.getRightVisionEstimatePresent()) {
                 addVisionMeasurement(
-                        visionSubsystem.getRightVisionEstimatePose2d(),
+                        new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
                         visionSubsystem.getRightVisionEstimateTimestamp());
             }
         }
         field2d.setRobotPose(getPose());
         // System.out.println(getPose());
-        System.out.println("distance from target: " + getDistanceMetersToGoal() + " angle to target: " + (getAngleDegreesToGoal()) + " robot heading: " + getHeadingDegrees());
+        // System.out.println("distance from target meters: " + getDistanceMetersToGoal());
+        // System.out.println("distance from target: " + getDistanceMetersToGoal() + " angle to target: " + (getAngleDegreesToGoal()) + " robot heading: " + getHeadingDegrees());
     }
 }
