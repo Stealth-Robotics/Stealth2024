@@ -68,7 +68,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
-    StatusSignal<Double> rotatorPosition;
+    private final StatusSignal<Double> rotatorPosition;
 
     public RotatorSubsystem() {
         rotatorMotorOne = new TalonFX(15);
@@ -80,8 +80,10 @@ public class RotatorSubsystem extends SubsystemBase {
         // throw new UnsupportedOperationException("Test rotator code");
 
         rotatorPosition = rotatorMotorOne.getPosition();
-        rotatorPosition.setUpdateFrequency(500);
-        rotatorMotorTwo.getPosition().setUpdateFrequency(4);
+        rotatorPosition.setUpdateFrequency(1000);
+
+        rotatorMotorOne.optimizeBusUtilization();
+        rotatorMotorTwo.optimizeBusUtilization();
     }
 
     private void applyConfigs() {
