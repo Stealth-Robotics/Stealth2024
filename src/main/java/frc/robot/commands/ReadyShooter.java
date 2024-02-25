@@ -22,17 +22,21 @@ public class ReadyShooter extends SequentialCommandGroup {
     SwerveDrive swerveDrive;
     DistanceToShotValuesMap distanceToShotValuesMap;
 
-    public ReadyShooter(ShooterSubsystem shooter, RotatorSubsystem rotator, IntakeSubsystem intake, SwerveDrive drive, DistanceToShotValuesMap distanceToShotValuesMap) {
+    public ReadyShooter(ShooterSubsystem shooter, RotatorSubsystem rotator, IntakeSubsystem intake, SwerveDrive drive,
+            DistanceToShotValuesMap distanceToShotValuesMap) {
         double distance = 4.0;
 
         double rotatorAngle = distanceToShotValuesMap.getInterpolatedRotationAngle(distance);
         double shooterRPS = distanceToShotValuesMap.getInterpolatedShooterSpeed(distance);
 
         addCommands(
-            new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake).andThen(new WaitCommand(0.1)).andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
-            new WaitCommand(0.5),
+                new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake).andThen(new WaitCommand(0.1))
+                        .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
+                new WaitCommand(0.5),
                 new ParallelCommandGroup(
-                        shooter.spinToRps(shooterRPS),
+                        // shooter.spinToRps(shooterRPS),
                         rotator.rotateToPositionCommand(rotatorAngle)));
+                // new RunCommand(() -> intake.setIntakeSpeed(1), intake)
+                        // .until(() -> !intake.isRingFullyInsideIntake()));
     }
 }

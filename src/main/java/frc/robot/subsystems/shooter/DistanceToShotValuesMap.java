@@ -10,17 +10,17 @@ public class DistanceToShotValuesMap {
     public DistanceToShotValuesMap()
     {
         // TODO: Add values
-        SHOOTER_INTERPOLATION_MAP.put(0.0, 100.0);
+        SHOOTER_INTERPOLATION_MAP.put(0.0, 10.0);
 
-        SHOOTER_INTERPOLATION_MAP.put(4.0, 100.0);
-        SHOOTER_INTERPOLATION_MAP.put(5.0, 100.0);
+        SHOOTER_INTERPOLATION_MAP.put(4.0, 93.0);
+        SHOOTER_INTERPOLATION_MAP.put(5.0, 10.0);
 
 
         // TODO: Add values
         //values should be in rotations
-        ROTATION_INTERPOLATION_MAP.put(0.0, Units.degreesToRotations(52));
-        ROTATION_INTERPOLATION_MAP.put(4.0, Units.degreesToRotations(52));
-        ROTATION_INTERPOLATION_MAP.put(5.0, Units.degreesToRotations(52));
+        ROTATION_INTERPOLATION_MAP.put(0.0, Units.degreesToRotations(50));
+        ROTATION_INTERPOLATION_MAP.put(4.0, Units.degreesToRotations(60));
+        ROTATION_INTERPOLATION_MAP.put(5.0, Units.degreesToRotations(50));
     }
 
     public double getInterpolatedShooterSpeed(double distance) {

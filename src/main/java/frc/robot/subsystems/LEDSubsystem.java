@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class LEDSubsystem extends SubsystemBase {
 
-    private final int LED_COUNT = 8;
+    private final int LED_COUNT = 75;
 
     private final CANdle candle = new CANdle(21);
 
@@ -89,7 +89,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     private void gainedRing() {
         // Change to SingleFadeAnimation if StrobeAnimation is too bright
-        animate(new StrobeAnimation(0, 255, 0, 0, 0.2, LED_COUNT));
+        animate(new StrobeAnimation(255, 0, 100, 0, 0.2, LED_COUNT));
     }
 
     private void hasRing() {

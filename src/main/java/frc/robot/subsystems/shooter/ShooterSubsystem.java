@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.BetterInstantCommand;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
@@ -24,13 +25,13 @@ public class ShooterSubsystem extends SubsystemBase {
     private double kA = 0.0;
 
     private double kP = 0.6;
-    private double kI = 2.5;
+    private double kI = 0;
     private double kD = 0.0;
 
-    private double MOTION_MAGIC_ACCELERATION = 200;
+    private double MOTION_MAGIC_ACCELERATION = 100;
     private double MOTION_MAGIC_JERK = 0.0;
 
-    private final double SPIN_CONSTANT = 0.4;
+    private final double SPIN_CONSTANT = 0.5;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
@@ -40,7 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // value is in rotations per second
     // TODO: TUNE THIS TO A REASONABLE VALUE
-    private final double VEOLOCITY_TOLERANCE = 1;
+    private final double VEOLOCITY_TOLERANCE = 5;
 
     TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
     TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
@@ -144,16 +145,18 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public Command spinToRps(double rps) {
 
-        return this.runOnce(
-                () -> {
-                    setLeftVelocity(rps);
-                    setRightVelocity(rps * SPIN_CONSTANT);
-                }).until(() -> this.motorsAtTargetVelocity());
+        return new BetterInstantCommand(
+            () -> {
+                setLeftVelocity(rps);
+                setRightVelocity(rps * SPIN_CONSTANT);
+            }, this
+        ).until(() -> this.motorsAtTargetVelocity());
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumberArray("shooter values",
                 new Double[] { leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity });
+
     }
 }

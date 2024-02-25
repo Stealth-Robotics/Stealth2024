@@ -27,6 +27,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -44,7 +45,7 @@ public class RobotContainer {
       () -> (rotatorSubsystem.getMotorMode() == NeutralModeValue.Brake),
       () -> intake.isRingFullyInsideIntake());
   private final ShooterSubsystem shooter = new ShooterSubsystem();
-  private final ClimberSubsystem climber = new ClimberSubsystem();
+  // private final ClimberSubsystem climber = new ClimberSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new
@@ -80,7 +81,7 @@ public class RobotContainer {
         swerveRobotOrientedSupplier));
 
     intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
-    climber.setDefaultCommand(new ClimberDefault(climberManuaControlSupplier, climber));
+    // climber.setDefaultCommand(new ClimberDefault(climberManuaControlSupplier, climber));
 
     // Driver Button Commands
 
@@ -95,11 +96,11 @@ public class RobotContainer {
         rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
 
     // Other Triggers
-    new Trigger(() -> intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.blinkForRingCommand());
+    new Trigger(() -> intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.blinkForRingCommand().andThen(new PrintCommand("ring")));
     new Trigger(() -> !intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.idleCommand());
 
     new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake, distanceToShotValuesMap));
-    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()).alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(2))));
+    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()).alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
   }
 
   private double adjustInput(double input) {
