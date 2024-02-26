@@ -12,8 +12,8 @@ public class AutoAlignCommand extends Command {
     private final BetterPID rotationPID;
 
     // TODO: TUNE CONSTANTS
-    private double kP = 0.1;
-    private double kI = 0;
+    private double kP = 0.15;
+    private double kI = 0.5;
     private double kD = 0;
 
     private double kTolerance = 0.1;
@@ -31,7 +31,15 @@ public class AutoAlignCommand extends Command {
 
     @Override
     public void initialize() {
-        rotationPID.setSetpoint(swerve.getAngleDegreesToGoal());
+        double setpoint;
+        if(swerve.getAngleDegreesToGoal() > 180){
+            setpoint = swerve.getAngleDegreesToGoal() - 5;
+        }
+        else if(swerve.getAngleDegreesToGoal() < 180){
+            setpoint = swerve.getAngleDegreesToGoal() + 5;
+        }
+        else{setpoint = swerve.getAngleDegreesToGoal();}
+        rotationPID.setSetpoint(setpoint);
     }
 
     @Override

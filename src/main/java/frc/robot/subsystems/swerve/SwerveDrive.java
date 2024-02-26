@@ -243,6 +243,9 @@ public class SwerveDrive extends SubsystemBase {
             }
         }
         field2d.setRobotPose(getPose());
+        SmartDashboard.putNumber("distance", getDistanceMetersToGoal());
+        SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
+        SmartDashboard.putNumber("heading", getHeadingDegrees());
         // System.out.println(getPose());
         // System.out.println("distance from target meters: " + getDistanceMetersToGoal());
         // System.out.println("distance from target: " + getDistanceMetersToGoal() + " angle to target: " + (getAngleDegreesToGoal()) + " robot heading: " + getHeadingDegrees());

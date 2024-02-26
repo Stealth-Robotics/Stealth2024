@@ -41,8 +41,7 @@ public class ReadyShooter extends SequentialCommandGroup {
                                                 .andThen(new WaitCommand(0.1))
                                                 .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
                                 new WaitCommand(0.5),
-                                new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap),
-                                new RunCommand(() -> intake.setIntakeSpeed(1), intake)
-                                                .until(() -> !intake.isRingFullyInsideIntake()));
+                                new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap));
+                                
         }
 }
