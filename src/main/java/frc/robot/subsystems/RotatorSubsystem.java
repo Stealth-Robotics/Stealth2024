@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.BetterInstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class RotatorSubsystem extends SubsystemBase {
 
@@ -220,14 +220,17 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public Command rotateToPositionCommand(double rotations) {
-        return new BetterInstantCommand(() -> setMotorTargetPosition(rotations), this).until(() -> this.isMotorAtTarget()).andThen(new PrintCommand("attarget"));
+        return new InstantCommand(() -> setMotorTargetPosition(rotations), this)
+                .andThen(new WaitUntilCommand(this::isMotorAtTarget));
     }
 
     @Override
     public void periodic() {
         BaseStatusSignal.refreshAll(rotatorPosition);
         SmartDashboard.putNumber("rotator", Units.rotationsToDegrees(getMotorPosition()));
-        // System.out.println("target " + (Units.rotationsToDegrees(getTargetPosition())));
-        // System.out.println("pos " + Units.rotationsToDegrees(rotatorMotorOne.getPosition().getValueAsDouble()));
+        // System.out.println("target " +
+        // (Units.rotationsToDegrees(getTargetPosition())));
+        // System.out.println("pos " +
+        // Units.rotationsToDegrees(rotatorMotorOne.getPosition().getValueAsDouble()));
     }
 }
