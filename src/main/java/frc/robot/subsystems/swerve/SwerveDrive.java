@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -36,8 +37,12 @@ public class SwerveDrive extends SubsystemBase {
 
     private final Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
     private final Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
+    
+    private final Translation2d RED_GOAL_POSE_ROTATION_TARGET = new Translation2d(16.579342 - Units.inchesToMeters(9.1), 5.547867999999999);
+    private final Translation2d BLUE_GOAL_POSE_ROTATION_TARGET = new Translation2d(-0.038099999999999995 + Units.inchesToMeters(9.1), 5.547867999999999);
 
     private Translation2d targetGoalPose;
+    private Translation2d targetGoalPoseRotationTarget;
 
     Field2d field2d;
 
@@ -102,6 +107,12 @@ public class SwerveDrive extends SubsystemBase {
         targetGoalPose = isRed
                 ? RED_GOAL_POSE
                 : BLUE_GOAL_POSE;
+
+        targetGoalPoseRotationTarget = isRed
+                ? RED_GOAL_POSE_ROTATION_TARGET
+                : BLUE_GOAL_POSE_ROTATION_TARGET;
+
+
     }
 
     public SwerveDrive(PoseEstimationSystem visionSubsystem) {
@@ -210,6 +221,10 @@ public class SwerveDrive extends SubsystemBase {
         return targetGoalPose;
     }
 
+    private Translation2d getTargetGoalPoseRotationTarget() {
+        return targetGoalPoseRotationTarget;
+    }
+
     // returns the distance, in meters, from the center of the robot to the target
     // goal
     public double getDistanceMetersToGoal() {
@@ -219,8 +234,8 @@ public class SwerveDrive extends SubsystemBase {
     // returns the angle, in degrees, that the robot needs to be pointing in order
     // to be pointing at the target goal
     public double getAngleDegreesToGoal() {
-        Translation2d goalPose = getTargetGoalPose();
-        Translation2d robotPose = swerveOdometry.getEstimatedPosition().getTranslation();
+        Translation2d goalPose = getTargetGoalPoseRotationTarget();
+        Translation2d robotPose = getPose().getTranslation();
         Translation2d robotToGoal = goalPose.minus(robotPose);
         return Math.toDegrees(Math.atan2(robotToGoal.getY(), robotToGoal.getX())) + 180;
     }
