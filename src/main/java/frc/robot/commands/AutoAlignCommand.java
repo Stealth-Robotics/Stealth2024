@@ -44,7 +44,7 @@ public class AutoAlignCommand extends Command {
 
     @Override
     public void execute() {
-        double rotationOutput = rotationPID.calculate(swerve.getHeadingDegrees());
+        double rotationOutput = rotationPID.calculate(swerve.getGyroYaw().getDegrees());
         swerve.drive(new Translation2d(), rotationOutput, false);
     }
 

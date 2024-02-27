@@ -5,14 +5,13 @@ import org.photonvision.EstimatedRobotPose;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PoseEstimationSystem extends SubsystemBase {
@@ -23,14 +22,11 @@ public class PoseEstimationSystem extends SubsystemBase {
     private final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
 
     private final Transform3d LEFT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(Units.inchesToMeters(-10.92), Units.inchesToMeters(8.0), Units.inchesToMeters(12.29)),
-            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-6.4),
-                    Units.degreesToRadians(40.03 + 90)));
-
+            new Translation3d(Units.inchesToMeters(-10.0), Units.inchesToMeters(8.0), Units.inchesToMeters(12.0)),
+            new Rotation3d(Units.inchesToMeters(6.0), 0, Units.degreesToRadians(90 + 45)));
     private final Transform3d RIGHT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(Units.inchesToMeters(-10.99), Units.inchesToMeters(-8.0), Units.inchesToMeters(11.91)),
-            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-9),
-                    Units.degreesToRadians(40.03 + 180)));
+            new Translation3d(Units.inchesToMeters(-10.0), Units.inchesToMeters(-8.0), Units.inchesToMeters(12.5)),
+            new Rotation3d(Units.degreesToRadians(-6.0), 0, Units.degreesToRadians(-90 - 45)));
 
     private final CameraSubsystem leftCamera;
     private final CameraSubsystem rightCamera;
@@ -44,7 +40,7 @@ public class PoseEstimationSystem extends SubsystemBase {
     public PoseEstimationSystem() {
 
         try {
-            APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+            APRIL_TAG_FIELD_LAYOUT = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
         } catch (Exception e) {
             throw new RuntimeException("Failed to load AprilTag field layout");
         }
