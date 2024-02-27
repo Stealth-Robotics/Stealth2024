@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PoseEstimationSystem extends SubsystemBase {
@@ -21,12 +23,14 @@ public class PoseEstimationSystem extends SubsystemBase {
     private final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
 
     private final Transform3d LEFT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(Units.inchesToMeters(-10.92), Units.inchesToMeters(-8.0), Units.inchesToMeters(12.29)),
-            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-6.4), Units.degreesToRadians(40.03 + 270)));
+            new Translation3d(Units.inchesToMeters(-10.92), Units.inchesToMeters(8.0), Units.inchesToMeters(12.29)),
+            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-6.4),
+                    Units.degreesToRadians(40.03 + 90)));
 
     private final Transform3d RIGHT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS = new Transform3d(
-            new Translation3d(Units.inchesToMeters(-10.99), Units.inchesToMeters(8.0), Units.inchesToMeters(11.91)),
-            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-9), Units.degreesToRadians(-40.03 + 270)));
+            new Translation3d(Units.inchesToMeters(-10.99), Units.inchesToMeters(-8.0), Units.inchesToMeters(11.91)),
+            new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-9),
+                    Units.degreesToRadians(40.03 + 180)));
 
     private final CameraSubsystem leftCamera;
     private final CameraSubsystem rightCamera;
@@ -41,7 +45,6 @@ public class PoseEstimationSystem extends SubsystemBase {
 
         try {
             APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
-            APRIL_TAG_FIELD_LAYOUT.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load AprilTag field layout");
         }
@@ -50,8 +53,6 @@ public class PoseEstimationSystem extends SubsystemBase {
                 LEFT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS);
         rightCamera = new CameraSubsystem(RIGHT_CAMERA_NAME, APRIL_TAG_FIELD_LAYOUT,
                 RIGHT_CAMERA_ROBOT_TO_CAM_TRANSFORM_METERS);
-
-        
 
     }
 
@@ -95,18 +96,20 @@ public class PoseEstimationSystem extends SubsystemBase {
         if (getLeftVisionEstimatePresent()) {
             leftCameraTimestamp = leftCameraPose.get().timestampSeconds;
 
-            // System.out.println("left present:" + getLeftVisionEstimatePresent() + ", timestamp: "
-            //         + getLeftVisionEstimateTimestamp() + ", pose2d:" +
-            //         getLeftVisionEstimatePose2d());
+            // System.out.println("left present:" + getLeftVisionEstimatePresent() + ",
+            // timestamp: "
+            // + getLeftVisionEstimateTimestamp() + ", pose2d:" +
+            // getLeftVisionEstimatePose2d());
 
         }
 
         if (getRightVisionEstimatePresent()) {
             rightCameraTimestamp = rightCameraPose.get().timestampSeconds;
 
-            // System.out.println("right present:" + getRightVisionEstimatePresent() + ", timestamp: "
-            //         + getRightVisionEstimateTimestamp() + ", pose2d:" +
-            //         getRightVisionEstimatePose2d());
+            // System.out.println("right present:" + getRightVisionEstimatePresent() + ",
+            // timestamp: "
+            // + getRightVisionEstimateTimestamp() + ", pose2d:" +
+            // getRightVisionEstimatePose2d());
 
         }
     }

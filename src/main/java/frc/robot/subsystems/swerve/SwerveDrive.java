@@ -4,6 +4,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.sql.Driver;
+
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -37,7 +40,13 @@ public class SwerveDrive extends SubsystemBase {
     private final Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
     private final Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
 
+    private final Translation2d RED_GOAL_POSE_ROTATION_TARGET = new Translation2d(16.579342 - Units.inchesToMeters(9.1),
+            5.547867999999999);
+    private final Translation2d BLUE_GOAL_POSE_ROTATION_TARGET = new Translation2d(
+            -0.038099999999999995 + Units.inchesToMeters(9.1), 5.547867999999999);
+
     private Translation2d targetGoalPose;
+    private Translation2d targetGoalPoseRotationTarget;
 
     Field2d field2d;
 
@@ -102,6 +111,11 @@ public class SwerveDrive extends SubsystemBase {
         targetGoalPose = isRed
                 ? RED_GOAL_POSE
                 : BLUE_GOAL_POSE;
+
+        targetGoalPoseRotationTarget = isRed
+                ? RED_GOAL_POSE_ROTATION_TARGET
+                : BLUE_GOAL_POSE_ROTATION_TARGET;
+
     }
 
     public SwerveDrive(PoseEstimationSystem visionSubsystem) {
@@ -168,9 +182,9 @@ public class SwerveDrive extends SubsystemBase {
         return getPose().getRotation();
     }
 
-    public double getHeadingDegrees(){
+    public double getHeadingDegrees() {
         double heading = getHeading().getDegrees();
-        if(heading < 0){
+        if (heading < 0) {
             heading += 360;
         }
         return heading;
@@ -182,8 +196,13 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void zeroHeading() {
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                new Pose2d(getPose().getTranslation(), new Rotation2d(Math.toRadians(180))));
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
+            swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
+                    new Pose2d(getPose().getTranslation(), new Rotation2d(Math.toRadians(180))));
+        } else {
+            swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
+                    new Pose2d(getPose().getTranslation(), new Rotation2d(Math.toRadians(0))));
+        }
     }
 
     public Rotation2d getGyroYaw() {
@@ -210,6 +229,10 @@ public class SwerveDrive extends SubsystemBase {
         return targetGoalPose;
     }
 
+    private Translation2d getTargetGoalPoseRotationTarget() {
+        return targetGoalPoseRotationTarget;
+    }
+
     // returns the distance, in meters, from the center of the robot to the target
     // goal
     public double getDistanceMetersToGoal() {
@@ -219,8 +242,8 @@ public class SwerveDrive extends SubsystemBase {
     // returns the angle, in degrees, that the robot needs to be pointing in order
     // to be pointing at the target goal
     public double getAngleDegreesToGoal() {
-        Translation2d goalPose = getTargetGoalPose();
-        Translation2d robotPose = swerveOdometry.getEstimatedPosition().getTranslation();
+        Translation2d goalPose = getTargetGoalPoseRotationTarget();
+        Translation2d robotPose = getPose().getTranslation();
         Translation2d robotToGoal = goalPose.minus(robotPose);
         return Math.toDegrees(Math.atan2(robotToGoal.getY(), robotToGoal.getX())) + 180;
     }
@@ -242,12 +265,16 @@ public class SwerveDrive extends SubsystemBase {
                         visionSubsystem.getRightVisionEstimateTimestamp());
             }
         }
-        field2d.setRobotPose(getPose());
+        field2d.setRobotPose(new Pose2d(new Translation2d(13.4, 6.6), new Rotation2d()));
+        setPose(new Pose2d(new Translation2d(13.4, 6.6), new Rotation2d()));
         SmartDashboard.putNumber("distance", getDistanceMetersToGoal());
         SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
         SmartDashboard.putNumber("heading", getHeadingDegrees());
         // System.out.println(getPose());
-        // System.out.println("distance from target meters: " + getDistanceMetersToGoal());
-        // System.out.println("distance from target: " + getDistanceMetersToGoal() + " angle to target: " + (getAngleDegreesToGoal()) + " robot heading: " + getHeadingDegrees());
+        // System.out.println("distance from target meters: " +
+        // getDistanceMetersToGoal());
+        // System.out.println("distance from target: " + getDistanceMetersToGoal() + "
+        // angle to target: " + (getAngleDegreesToGoal()) + " robot heading: " +
+        // getHeadingDegrees());
     }
 }

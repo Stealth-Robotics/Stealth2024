@@ -46,7 +46,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kG = 0.3;
 
     private double kP = 80;
-    private double kI = 0;
+    private double kI = 15;
     private double kD = 0.0;
 
     private DigitalInput homeButton = new DigitalInput(0);
@@ -58,7 +58,7 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = Units.degreesToRotations(1);
+    private final double kTOLERANCE = Units.degreesToRotations(0.5);
 
     private final double MOTION_MAGIC_JERK = 2;
     private double MOTION_MAGIC_ACCELERATION = 1;
