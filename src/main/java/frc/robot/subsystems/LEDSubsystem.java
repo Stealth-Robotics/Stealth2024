@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class LEDSubsystem extends SubsystemBase {
 
-    private final int LED_COUNT = 75;
+    private final int LED_COUNT = 74;
 
     private final CANdle candle = new CANdle(21);
 
@@ -97,7 +97,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void idle() {
-        animate(new RainbowAnimation(1, 0.6, LED_COUNT));
+        animate(new RainbowAnimation(1, 0.6, LED_COUNT, true, 0));
     }
 
     public void updateDisabledLEDs() {
