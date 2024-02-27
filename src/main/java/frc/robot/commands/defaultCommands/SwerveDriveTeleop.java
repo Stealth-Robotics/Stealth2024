@@ -8,6 +8,8 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class SwerveDriveTeleop extends Command {
@@ -33,6 +35,11 @@ public class SwerveDriveTeleop extends Command {
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), SwerveConstants.stickDeadband);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), SwerveConstants.stickDeadband);
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), SwerveConstants.stickDeadband);
+
+        if(DriverStation.getAlliance().get() == Alliance.Blue){
+            translationVal *= -1;
+            strafeVal *= -1;
+        }
 
         /* Drive */
         swerveSubsystem.drive(

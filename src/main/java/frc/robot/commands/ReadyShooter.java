@@ -7,6 +7,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -36,12 +37,12 @@ public class ReadyShooter extends SequentialCommandGroup {
                 this.rotator = rotator;
                 this.shooter = shooter;
                 addCommands(
-
+                                new InstantCommand(() -> {double meters = drive.getDistanceMetersToGoal(); System.out.println(meters);}),
                                 new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake)
                                                 .andThen(new WaitCommand(0.1))
                                                 .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
                                 new WaitCommand(0.5),
                                 new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap));
-                                
+
         }
 }
