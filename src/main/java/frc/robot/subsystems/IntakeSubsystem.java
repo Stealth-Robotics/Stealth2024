@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -15,17 +16,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final TalonFX intakeMotor;
 
-    private final TimeOfFlight frontDistanceSensor;
-    private final TimeOfFlight backDistanceSensor;
+    private final DigitalInput frontBeamBreak;
+    private final DigitalInput backBeamBreak;
 
     public IntakeSubsystem() {
         // TODO: GET CAN IDs
         intakeMotor = new TalonFX(20);
-        frontDistanceSensor = new TimeOfFlight(50);
-        backDistanceSensor = new TimeOfFlight(51);
-        frontDistanceSensor.setRangingMode(RangingMode.Short, 20);
-        backDistanceSensor.setRangingMode(RangingMode.Short, 20);
+        frontBeamBreak = new DigitalInput(2);
+        backBeamBreak = new DigitalInput(3);
+
         intakeMotor.getPosition().setUpdateFrequency(4);
+
         applyConfigs();
     }
 
@@ -37,25 +38,19 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setIntakeSpeed(double speed) {
-        intakeMotor.setVoltage(12 * speed);
+        intakeMotor.set(speed);
     }
 
     // TODO: tune these values. they are in mm.
     public boolean isRingAtFrontOfIntake() {
-        return frontDistanceSensor.getRange() < 400;
+        return !frontBeamBreak.get();
     }
 
     public boolean isRingFullyInsideIntake() {
-        return backDistanceSensor.getRange() < 500;
+        return !backBeamBreak.get();
     }
 
     public Command conveyIntoReadyPosition() {
         return this.run(() -> this.setIntakeSpeed(0.8)).until(() -> isRingFullyInsideIntake());
-    }
-
-
-    @Override
-    public void periodic() {
-        // System.out.println(backDistanceSensor.getRange());
     }
 }
