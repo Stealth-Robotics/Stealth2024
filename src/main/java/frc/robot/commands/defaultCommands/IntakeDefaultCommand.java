@@ -22,13 +22,17 @@ public class IntakeDefaultCommand extends Command {
 
     @Override
     public void execute() {
-        // if(intakeSupplier.getAsDouble() < 0){
-        //     intake.setIntakeSpeed(intakeSupplier.getAsDouble());
-        //     return;
-        // }
-        // if (intake.isRingAtFrontOfIntake()) {
-        //     CommandScheduler.getInstance().schedule(intake.conveyIntoReadyPosition());
-        // }
+        if(intakeSupplier.getAsDouble() < 0){
+            intake.setIntakeSpeed(intakeSupplier.getAsDouble());
+            return;
+        }
+        if (intake.isRingAtFrontOfIntake()) {
+            intake.setIntakeSpeed(0.7);
+        }
+        if(intake.isRingFullyInsideIntake()){
+            intake.setIntakeSpeed(0);
+            return;
+        }
         intake.setIntakeSpeed(intakeSupplier.getAsDouble());
     }
 

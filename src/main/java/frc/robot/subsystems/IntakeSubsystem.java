@@ -22,8 +22,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         // TODO: GET CAN IDs
         intakeMotor = new TalonFX(20);
-        frontBeamBreak = new DigitalInput(2);
-        backBeamBreak = new DigitalInput(3);
+        frontBeamBreak = new DigitalInput(3);
+        backBeamBreak = new DigitalInput(2);
 
         intakeMotor.getPosition().setUpdateFrequency(4);
 
