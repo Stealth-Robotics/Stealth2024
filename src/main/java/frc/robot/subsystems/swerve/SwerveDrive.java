@@ -26,14 +26,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.vision.PoseEstimationSystem;
+import frc.robot.subsystems.vision.LimelightHelpers;
 
 public class SwerveDrive extends SubsystemBase {
     public SwerveDrivePoseEstimator swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
-
-    private PoseEstimationSystem visionSubsystem = null;
 
     private final Pose2d RED_GOAL_POSE = new Pose2d(new Translation2d(16.58, 5.55), Rotation2d.fromDegrees(180));
     private final Pose2d BLUE_GOAL_POSE = new Pose2d(new Translation2d(-0.04, 5.55), Rotation2d.fromDegrees(0));
@@ -113,11 +111,6 @@ public class SwerveDrive extends SubsystemBase {
                 ? RED_GOAL_POSE_ROTATION_TARGET
                 : BLUE_GOAL_POSE_ROTATION_TARGET;
 
-    }
-
-    public SwerveDrive(PoseEstimationSystem visionSubsystem) {
-        this();
-        this.visionSubsystem = visionSubsystem;
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -236,19 +229,12 @@ public class SwerveDrive extends SubsystemBase {
     @Override
     public void periodic() {
 
-        if (visionSubsystem != null) {
-            if (visionSubsystem.getLeftVisionEstimatePresent()) {
-                addVisionMeasurement(
-                    new Pose2d(visionSubsystem.getLeftVisionEstimatePose2d().getTranslation(), getHeading()),
-                        
-                        visionSubsystem.getLeftVisionEstimateTimestamp());
-            }
-
-            // if (visionSubsystem.getRightVisionEstimatePresent()) {
-            //     addVisionMeasurement(
-            //             new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
-            //             visionSubsystem.getRightVisionEstimateTimestamp());
-            // }
+        LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        if (limelightMeasurement.tagCount >= 1) {//if (limelightMeasurement.tagCount >= 2) {
+            //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+            swerveOdometry.addVisionMeasurement(
+                    limelightMeasurement.pose,
+                    limelightMeasurement.timestampSeconds);
         }
 
         swerveOdometry.update(getGyroYaw(), getModulePositions());
@@ -256,19 +242,6 @@ public class SwerveDrive extends SubsystemBase {
         field2d.setRobotPose(getPose());
         SmartDashboard.putString("Allian", DriverStation.getAlliance().toString());
         SmartDashboard.putNumber("distance", getDistanceMetersToGoal());
-        //SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
         SmartDashboard.putString("Pose", getPose().toString());
-        // System.out.println(getPose());
-        // System.out.println("distance from target meters: " +
-        // getDistanceMetersToGoal());
-        // System.out.println("distance from target: " + getDistanceMetersToGoal() + "
-        // angle to target: " + (getAngleDegreesToGoal()) + " robot heading: " +
-        // getHeadingDegrees());
-
-        // for(SwerveModule mod : mSwerveMods){
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
-        // }
     }
 }

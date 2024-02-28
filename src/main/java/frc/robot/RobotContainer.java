@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.commands.AimAndShootCommand;
-import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
@@ -16,7 +15,6 @@ import frc.robot.subsystems.RotatorSubsystem;
 import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.vision.PoseEstimationSystem;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -24,11 +22,9 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -36,8 +32,7 @@ public class RobotContainer {
 
   DistanceToShotValuesMap distanceToShotValuesMap = new DistanceToShotValuesMap();
 
-  private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
-  private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
+  private final SwerveDrive swerveSubsystem = new SwerveDrive();
   private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(
