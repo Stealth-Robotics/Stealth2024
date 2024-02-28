@@ -21,7 +21,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double kV = 0.11;
     private double kA = 0.0;
 
-    private double kP = 0.6;
+    private double kP = 0.5;
     private double kI = 0;
     private double kD = 0.0;
 
@@ -118,8 +118,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void stopShooterMotors() {
         leftMotionMagicVelocityVoltage.Velocity = 0;
         rightMotionMagicVelocityVoltage.Velocity = 0;
-        rightMotor.setControl(new CoastOut());
-        leftMotor.setControl(new CoastOut());
+        rightMotor.setControl(rightMotionMagicVelocityVoltage);
+        leftMotor.setControl(leftMotionMagicVelocityVoltage);
     }
 
     /**
@@ -145,6 +145,14 @@ public class ShooterSubsystem extends SubsystemBase {
         return new InstantCommand(() -> {
             setLeftVelocity(rps);
             setRightVelocity(rps * SPIN_CONSTANT);
+        }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
+    }
+
+    public Command spinToRps(double rps, double spinConstant) {
+
+        return new InstantCommand(() -> {
+            setLeftVelocity(rps);
+            setRightVelocity(rps * spinConstant);
         }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
     }
 
