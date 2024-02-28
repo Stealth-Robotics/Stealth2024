@@ -19,7 +19,7 @@ public class CameraSubsystem {
 
     public CameraSubsystem(String cameraName, AprilTagFieldLayout fieldLayout, Transform3d robotTocamera) {
         camera = new PhotonCamera(cameraName);
-        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, robotTocamera);
+        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.LOWEST_AMBIGUITY, camera, robotTocamera);
         poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 

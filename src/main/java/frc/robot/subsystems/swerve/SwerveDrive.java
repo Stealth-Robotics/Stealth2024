@@ -239,22 +239,23 @@ public class SwerveDrive extends SubsystemBase {
         if (visionSubsystem != null) {
             if (visionSubsystem.getLeftVisionEstimatePresent()) {
                 addVisionMeasurement(
-                        visionSubsystem.getLeftVisionEstimatePose2d(),
+                    new Pose2d(visionSubsystem.getLeftVisionEstimatePose2d().getTranslation(), getHeading()),
+                        
                         visionSubsystem.getLeftVisionEstimateTimestamp());
             }
 
-            if (visionSubsystem.getRightVisionEstimatePresent()) {
-                addVisionMeasurement(
-                        visionSubsystem.getRightVisionEstimatePose2d(),
-                        visionSubsystem.getRightVisionEstimateTimestamp());
-            }
+            // if (visionSubsystem.getRightVisionEstimatePresent()) {
+            //     addVisionMeasurement(
+            //             new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
+            //             visionSubsystem.getRightVisionEstimateTimestamp());
+            // }
         }
 
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         field2d.setRobotPose(getPose());
         SmartDashboard.putString("Allian", DriverStation.getAlliance().toString());
-        SmartDashboard.putNumber("distance", Units.metersToFeet(getDistanceMetersToGoal()));
+        SmartDashboard.putNumber("distance", getDistanceMetersToGoal());
         //SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
         SmartDashboard.putString("Pose", getPose().toString());
         // System.out.println(getPose());

@@ -45,8 +45,8 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kV = 15.5;
     private double kG = 0.3;
 
-    private double kP = 80;
-    private double kI = 15;
+    private double kP = 100;
+    private double kI = 50;
     private double kD = 0.0;
 
     private DigitalInput homeButton = new DigitalInput(0);
@@ -61,7 +61,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double kTOLERANCE = Units.degreesToRotations(0.5);
 
     private final double MOTION_MAGIC_JERK = 2;
-    private double MOTION_MAGIC_ACCELERATION = 1;
+    private double MOTION_MAGIC_ACCELERATION = 1.2;
     private double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -228,6 +228,7 @@ public class RotatorSubsystem extends SubsystemBase {
     public void periodic() {
         BaseStatusSignal.refreshAll(rotatorPosition);
         SmartDashboard.putNumber("rotator", Units.rotationsToDegrees(getMotorPosition()));
+        SmartDashboard.putNumber("rotator target", Units.rotationsToDegrees(getTargetPosition()));
         // System.out.println("target " +
         // (Units.rotationsToDegrees(getTargetPosition())));
         // System.out.println("pos " +

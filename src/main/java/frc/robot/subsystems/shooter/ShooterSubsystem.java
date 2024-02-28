@@ -28,7 +28,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double MOTION_MAGIC_ACCELERATION = 100;
     private double MOTION_MAGIC_JERK = 0.0;
 
-    public final double SPIN_CONSTANT = 0.7;
+    public final double SPIN_CONSTANT = 0.8;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);

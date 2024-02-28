@@ -56,8 +56,8 @@ public class RobotContainer {
 
     // Command Suppliers
 
-    DoubleSupplier swerveTranslationYSupplier = () -> adjustInput(driverController.getLeftY());
-    DoubleSupplier swerveTranslationXSupplier = () -> adjustInput(driverController.getLeftX());
+    DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
+    DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
     DoubleSupplier swerveRotationSupplier = () -> -adjustInput(driverController.getRightX());
     BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
     BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
