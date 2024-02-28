@@ -68,7 +68,7 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double kTOLERANCE = Units.degreesToRotations(0.75);
 
     private final double MOTION_MAGIC_JERK = 2;
-    private double MOTION_MAGIC_ACCELERATION = 1.2;
+    private double MOTION_MAGIC_ACCELERATION = 1.5;
     private double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
