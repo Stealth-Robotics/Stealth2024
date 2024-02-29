@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.AmpPresetCommand;
-import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
@@ -25,11 +24,9 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -106,8 +103,8 @@ public class RobotContainer {
     new Trigger(driverController.rightBumper()).onTrue(
             new AmpPresetCommand(rotatorSubsystem, shooter));
 
-    new Trigger(() -> operatorController.getLeftY() > 0.1).onTrue(
-      rotatorSubsystem.armManualControl(() -> operatorController.getLeftY(), rotatorSubsystem.getRotatorState())
+    new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
+      rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(), rotatorSubsystem.getRotatorState())
     ).onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
 
   }
