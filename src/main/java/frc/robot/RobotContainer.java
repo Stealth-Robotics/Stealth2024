@@ -74,7 +74,8 @@ public class RobotContainer {
         swerveTranslationYSupplier,
         swerveTranslationXSupplier,
         swerveRotationSupplier,
-        swerveRobotOrientedSupplier));
+        swerveRobotOrientedSupplier, 
+        swerveSubsystem.isRed()));
 
     intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
     climber.setDefaultCommand(new ClimberDefault(climberManuaControlSupplier, climber));
@@ -118,7 +119,7 @@ public class RobotContainer {
   }
 
   public void onInit() {
-    swerveSubsystem.setTargetGoal();
+    swerveSubsystem.setCurrentAlliance();
     rotatorSubsystem.holdCurrentPosition();
     ledSubsystem.idle();
   }

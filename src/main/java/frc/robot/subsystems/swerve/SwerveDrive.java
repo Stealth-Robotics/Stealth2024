@@ -49,7 +49,7 @@ public class SwerveDrive extends SubsystemBase {
 
     Field2d field2d;
 
-    BooleanSupplier flipPath;
+    boolean isRed = false;
 
     public SwerveDrive() {
 
@@ -81,15 +81,6 @@ public class SwerveDrive extends SubsystemBase {
                 stateStdDevs,
                 visionStdDevs);
 
-        flipPath = () -> {
-
-            var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-            }
-            return false;
-        };
-
         AutoBuilder.configureHolonomic(
                 this::getPose,
                 this::setPose,
@@ -101,15 +92,31 @@ public class SwerveDrive extends SubsystemBase {
                         SwerveConstants.maxSpeed,
                         Math.hypot(SwerveConstants.trackWidth / 2.0, SwerveConstants.wheelBase / 2.0),
                         new ReplanningConfig()),
-                flipPath,
+                () -> {
+
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
                 this);
+
+                setCurrentAlliance();
+    }
+
+    public void setCurrentAlliance() {
+        isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
 
         setTargetGoal();
     }
 
-    public void setTargetGoal() {
-        boolean isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
+    public BooleanSupplier isRed()
+    {
+        return () -> isRed;
+    }
 
+    public void setTargetGoal() {
         targetGoalPose = isRed
                 ? RED_GOAL_POSE
                 : BLUE_GOAL_POSE;
@@ -199,8 +206,16 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void zeroHeading() {
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
-                new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        if (isRed().getAsBoolean()) {
+            new Rotation2d();
+            swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
+                    new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+        }
+
+        else {
+            swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
+                    new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        }
     }
 
     public Rotation2d getGyroYaw() {
@@ -224,7 +239,7 @@ public class SwerveDrive extends SubsystemBase {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
         if (initialPath) {
-            if (flipPath.getAsBoolean()) {
+            if (isRed().getAsBoolean()) {
                 setPose(flipPose2dToRed(path.getPreviewStartingHolonomicPose()));
             } else {
                 setPose(path.getPreviewStartingHolonomicPose());
