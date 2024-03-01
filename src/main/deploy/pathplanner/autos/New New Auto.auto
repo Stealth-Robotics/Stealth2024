@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4886461772958923,
-      "y": 4.655998645333441
+      "x": 0.7693765641272955,
+      "y": 4.408850563896284
     },
-    "rotation": -3.903615574783679e-10
+    "rotation": -59.349332043437244
   },
   "command": {
     "type": "sequential",
@@ -15,6 +15,12 @@
           "type": "path",
           "data": {
             "pathName": "right pickup first ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot right first ring"
           }
         },
         {
