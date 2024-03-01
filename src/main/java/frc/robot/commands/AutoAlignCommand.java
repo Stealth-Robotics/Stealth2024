@@ -11,7 +11,6 @@ public class AutoAlignCommand extends Command {
     private final SwerveDrive swerve;
     private final BetterPID rotationPID;
 
-    // TODO: TUNE CONSTANTS
     private double kP = 0.15;
     private double kI = 0.5;
     private double kD = 0;
@@ -26,25 +25,26 @@ public class AutoAlignCommand extends Command {
         addRequirements(swerve);
 
         // will remove once tested
-        // throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
+        // throw new UnsupportedOperationException("AutoAlignCommand is not yet
+        // implemented");
     }
 
     @Override
     public void initialize() {
         double setpoint;
-        if(swerve.getAngleDegreesToGoal() > 180){
+        if (swerve.getAngleDegreesToGoal() > 180) {
             setpoint = swerve.getAngleDegreesToGoal() - 5;
-        }
-        else if(swerve.getAngleDegreesToGoal() < 180){
+        } else if (swerve.getAngleDegreesToGoal() < 180) {
             setpoint = swerve.getAngleDegreesToGoal() + 5;
+        } else {
+            setpoint = swerve.getAngleDegreesToGoal();
         }
-        else{setpoint = swerve.getAngleDegreesToGoal();}
         rotationPID.setSetpoint(setpoint);
     }
 
     @Override
     public void execute() {
-        double rotationOutput = rotationPID.calculate(swerve.getGyroYaw().getDegrees());
+        double rotationOutput = rotationPID.calculate(swerve.getHeadingDegrees());
         swerve.drive(new Translation2d(), rotationOutput, false);
     }
 

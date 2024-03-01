@@ -131,8 +131,11 @@ public class LEDSubsystem extends SubsystemBase {
                 () -> gainedRing(), 
                 this
             ),
-            new WaitCommand(2.5),
-            idleCommand());
+            new WaitCommand(1.5),
+            new InstantCommand(
+                () -> hasRing(), 
+                this
+            ));
     }
 
     public Command idleCommand()

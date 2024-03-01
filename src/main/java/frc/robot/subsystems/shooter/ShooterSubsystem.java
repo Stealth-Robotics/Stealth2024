@@ -21,14 +21,14 @@ public class ShooterSubsystem extends SubsystemBase {
     private double kV = 0.11;
     private double kA = 0.0;
 
-    private double kP = 0.5;
+    private double kP = 0.6;
     private double kI = 0;
     private double kD = 0.0;
 
     private double MOTION_MAGIC_ACCELERATION = 100;
     private double MOTION_MAGIC_JERK = 0.0;
 
-    public final double SPIN_CONSTANT = 0.8;
+    public final double SPIN_CONSTANT = 0.7;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
@@ -37,14 +37,14 @@ public class ShooterSubsystem extends SubsystemBase {
             false, 0, 0, false, false, false);
 
     // value is in rotations per second
-    // TODO: TUNE THIS TO A REASONABLE VALUE
+
     private final double VEOLOCITY_TOLERANCE = 1;
 
     TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
     TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
 
     public ShooterSubsystem() {
-        // TODO: find can ids
+
         leftMotor = new TalonFX(16);
         rightMotor = new TalonFX(17);
 
@@ -52,7 +52,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     private void applyConfigs() {
-        // TODO: check everything
+
         LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
         LEFT_TALONFX_CONFIG.Slot0.kS = kS;
@@ -118,8 +118,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void stopShooterMotors() {
         leftMotionMagicVelocityVoltage.Velocity = 0;
         rightMotionMagicVelocityVoltage.Velocity = 0;
-        rightMotor.setControl(rightMotionMagicVelocityVoltage);
-        leftMotor.setControl(leftMotionMagicVelocityVoltage);
+        rightMotor.setControl(new CoastOut());
+        leftMotor.setControl(new CoastOut());
     }
 
     /**
@@ -145,14 +145,6 @@ public class ShooterSubsystem extends SubsystemBase {
         return new InstantCommand(() -> {
             setLeftVelocity(rps);
             setRightVelocity(rps * SPIN_CONSTANT);
-        }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
-    }
-
-    public Command spinToRps(double rps, double spinConstant) {
-
-        return new InstantCommand(() -> {
-            setLeftVelocity(rps);
-            setRightVelocity(rps * spinConstant);
         }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
     }
 
