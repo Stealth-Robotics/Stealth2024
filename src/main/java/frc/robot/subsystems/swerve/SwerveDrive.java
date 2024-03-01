@@ -35,15 +35,15 @@ public class SwerveDrive extends SubsystemBase {
 
     private PoseEstimationSystem visionSubsystem = null;
 
-    private final Translation2d RED_GOAL_POSE = new Translation2d(16.579342, 5.547867999999999);
-    private final Translation2d BLUE_GOAL_POSE = new Translation2d(-0.038099999999999995, 5.547867999999999);
+    private final Pose2d RED_GOAL_POSE = new Pose2d(new Translation2d(16.58, 5.55), Rotation2d.fromDegrees(180));
+    private final Pose2d BLUE_GOAL_POSE = new Pose2d(new Translation2d(-0.04, 5.55), Rotation2d.fromDegrees(0));
 
     private final Translation2d RED_GOAL_POSE_ROTATION_TARGET = new Translation2d(16.579342 - Units.inchesToMeters(9.1),
             5.547867999999999);
     private final Translation2d BLUE_GOAL_POSE_ROTATION_TARGET = new Translation2d(
             -0.038099999999999995 + Units.inchesToMeters(9.1), 5.547867999999999);
 
-    private Translation2d targetGoalPose;
+    private Pose2d targetGoalPose;
     private Translation2d targetGoalPoseRotationTarget;
 
     Field2d field2d;
@@ -52,7 +52,6 @@ public class SwerveDrive extends SubsystemBase {
 
         field2d = new Field2d();
         SmartDashboard.putData(field2d);
-        field2d.setRobotPose(new Pose2d(RED_GOAL_POSE, new Rotation2d()));
 
         gyro = new Pigeon2(SwerveConstants.pigeonID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -180,17 +179,10 @@ public class SwerveDrive extends SubsystemBase {
         return getPose().getRotation();
     }
 
-    public double getHeadingDegrees() {
-        double heading = getHeading().getDegrees();
-        if (heading < 0) {
-            heading += 360;
-        }
-        return heading;
-    }
-
     public void setHeading(Rotation2d heading) {
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
                 new Pose2d(getPose().getTranslation(), heading));
+
     }
 
     public void zeroHeading() {
@@ -218,7 +210,7 @@ public class SwerveDrive extends SubsystemBase {
         return AutoBuilder.followPath(path);
     }
 
-    private Translation2d getTargetGoalPose() {
+    private Pose2d getTargetGoalPose() {
         return targetGoalPose;
     }
 
@@ -229,7 +221,7 @@ public class SwerveDrive extends SubsystemBase {
     // returns the distance, in meters, from the center of the robot to the target
     // goal
     public double getDistanceMetersToGoal() {
-        return getTargetGoalPose().getDistance(swerveOdometry.getEstimatedPosition().getTranslation());
+        return getPose().getTranslation().getDistance(getTargetGoalPose().getTranslation());
     }
 
     // returns the angle, in degrees, that the robot needs to be pointing in order
@@ -243,31 +235,40 @@ public class SwerveDrive extends SubsystemBase {
 
     @Override
     public void periodic() {
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         if (visionSubsystem != null) {
             if (visionSubsystem.getLeftVisionEstimatePresent()) {
                 addVisionMeasurement(
-                        new Pose2d(visionSubsystem.getLeftVisionEstimatePose2d().getTranslation(), getHeading()),
+                    new Pose2d(visionSubsystem.getLeftVisionEstimatePose2d().getTranslation(), getHeading()),
+                        
                         visionSubsystem.getLeftVisionEstimateTimestamp());
             }
 
-            if (visionSubsystem.getRightVisionEstimatePresent()) {
-                addVisionMeasurement(
-                        new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
-                        visionSubsystem.getRightVisionEstimateTimestamp());
-            }
+            // if (visionSubsystem.getRightVisionEstimatePresent()) {
+            //     addVisionMeasurement(
+            //             new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
+            //             visionSubsystem.getRightVisionEstimateTimestamp());
+            // }
         }
-        field2d.setRobotPose(new Pose2d(new Translation2d(13.4, 6.6), new Rotation2d()));
-        setPose(new Pose2d(new Translation2d(13.4, 6.6), new Rotation2d()));
+
+        swerveOdometry.update(getGyroYaw(), getModulePositions());
+
+        field2d.setRobotPose(getPose());
+        SmartDashboard.putString("Allian", DriverStation.getAlliance().toString());
         SmartDashboard.putNumber("distance", getDistanceMetersToGoal());
-        SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
-        SmartDashboard.putNumber("heading", getHeadingDegrees());
+        //SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
+        SmartDashboard.putString("Pose", getPose().toString());
         // System.out.println(getPose());
         // System.out.println("distance from target meters: " +
         // getDistanceMetersToGoal());
         // System.out.println("distance from target: " + getDistanceMetersToGoal() + "
         // angle to target: " + (getAngleDegreesToGoal()) + " robot heading: " +
         // getHeadingDegrees());
+
+        // for(SwerveModule mod : mSwerveMods){
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+        // }
     }
 }

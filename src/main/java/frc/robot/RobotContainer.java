@@ -5,7 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.AimAndShootCommand;
-
+import frc.robot.commands.AmpPresetCommand;
 import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
@@ -24,11 +24,9 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -48,19 +46,17 @@ public class RobotContainer {
   private final ClimberSubsystem climber = new ClimberSubsystem();
 
   private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new
-  CommandXboxController(1);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   public RobotContainer() {
-    
 
     // Command Suppliers
 
-    DoubleSupplier swerveTranslationYSupplier = () -> adjustInput(driverController.getLeftY());
-    DoubleSupplier swerveTranslationXSupplier = () -> adjustInput(driverController.getLeftX());
+    DoubleSupplier swerveTranslationYSupplier = () -> -adjustInput(driverController.getLeftY());
+    DoubleSupplier swerveTranslationXSupplier = () -> -adjustInput(driverController.getLeftX());
     DoubleSupplier swerveRotationSupplier = () -> -adjustInput(driverController.getRightX());
     BooleanSupplier swerveHeadingResetBooleanSupplier = driverController.povDown();
-    BooleanSupplier swerveRobotOrientedSupplier = driverController.rightBumper();
+    BooleanSupplier swerveRobotOrientedSupplier = () -> false;
 
     BooleanSupplier rotatorHomeButtonSupplier = () -> rotatorSubsystem.getHomeButton();
     BooleanSupplier rotatorToggleMotorModeButtonSupplier = () -> rotatorSubsystem.getToggleMotorModeButton();
@@ -96,11 +92,21 @@ public class RobotContainer {
         rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
 
     // Other Triggers
-    new Trigger(() -> intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.blinkForRingCommand().andThen(new PrintCommand("ring")));
+    new Trigger(() -> intake.isRingFullyInsideIntake())
+        .onTrue(ledSubsystem.blinkForRingCommand().andThen(new PrintCommand("ring")));
     new Trigger(() -> !intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.idleCommand());
 
-    new Trigger(driverController.leftBumper()).onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake, distanceToShotValuesMap));
-    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors()).alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
+    new Trigger(driverController.leftBumper())
+        .onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake, distanceToShotValuesMap));
+    new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors())
+        .alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
+    new Trigger(driverController.rightBumper()).onTrue(
+            new AmpPresetCommand(rotatorSubsystem, shooter));
+
+    new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
+      rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(), rotatorSubsystem.getRotatorState())
+    ).onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
+
   }
 
   private double adjustInput(double input) {
