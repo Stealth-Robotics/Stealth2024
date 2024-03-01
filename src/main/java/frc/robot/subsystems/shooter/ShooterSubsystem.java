@@ -53,7 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private void applyConfigs() {
         // TODO: check everything
-        LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         LEFT_TALONFX_CONFIG.Slot0.kS = kS;
         LEFT_TALONFX_CONFIG.Slot0.kV = kV;
@@ -116,10 +116,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void stopShooterMotors() {
-        leftMotionMagicVelocityVoltage.Velocity = 0;
-        rightMotionMagicVelocityVoltage.Velocity = 0;
-        rightMotor.setControl(rightMotionMagicVelocityVoltage);
-        leftMotor.setControl(leftMotionMagicVelocityVoltage);
+        rightMotor.set(0);
+        leftMotor.set(0);
     }
 
     /**
@@ -130,6 +128,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean motorsAtTargetVelocity() {
         return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
+    }
+
+    public void setShooterDutyCycle(double dutyCycle){
+        leftMotor.set(dutyCycle);
+        rightMotor.set(dutyCycle);
+
     }
 
     /**
