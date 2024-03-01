@@ -121,8 +121,8 @@ public final class SwerveConstants {
     }
 
     public static final class AutoConstants {
-        public static final double TRANSLATION_CONTROLLER_P_COEFF = 5;
-        public static final double ROTATION_CONTROLLER_P_COEFF = 5;
+        public static final double TRANSLATION_CONTROLLER_P_COEFF = 12;
+        public static final double ROTATION_CONTROLLER_P_COEFF = 12;
 
     }
 }

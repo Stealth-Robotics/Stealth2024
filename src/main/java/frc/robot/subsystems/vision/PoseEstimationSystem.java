@@ -82,6 +82,14 @@ public class PoseEstimationSystem extends SubsystemBase {
         return rightCameraTimestamp;
     }
 
+    public double getFieldWidth() {
+        return APRIL_TAG_FIELD_LAYOUT.getFieldWidth();
+    }
+
+    public double getFieldHeight() {
+        return APRIL_TAG_FIELD_LAYOUT.getFieldLength();
+    }
+
     @Override
     public void periodic() {
         leftCameraPose = leftCamera.getEstimatedGlobalPose();

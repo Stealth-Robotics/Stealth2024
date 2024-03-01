@@ -4,8 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
-import java.sql.Driver;
-
+import java.util.function.BooleanSupplier;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -50,6 +49,8 @@ public class SwerveDrive extends SubsystemBase {
 
     Field2d field2d;
 
+    BooleanSupplier flipPath;
+
     public SwerveDrive() {
 
         field2d = new Field2d();
@@ -80,6 +81,15 @@ public class SwerveDrive extends SubsystemBase {
                 stateStdDevs,
                 visionStdDevs);
 
+        flipPath = () -> {
+
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+        };
+
         AutoBuilder.configureHolonomic(
                 this::getPose,
                 this::setPose,
@@ -91,14 +101,7 @@ public class SwerveDrive extends SubsystemBase {
                         SwerveConstants.maxSpeed,
                         Math.hypot(SwerveConstants.trackWidth / 2.0, SwerveConstants.wheelBase / 2.0),
                         new ReplanningConfig()),
-                () -> {
-
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                },
+                flipPath,
                 this);
 
         setTargetGoal();
@@ -181,9 +184,9 @@ public class SwerveDrive extends SubsystemBase {
         return getPose().getRotation();
     }
 
-    public double getHeadingDegrees(){
+    public double getHeadingDegrees() {
         double heading = getHeading().getDegrees();
-        if(heading < 0){
+        if (heading < 0) {
             heading += 360;
         }
         return heading;
@@ -210,11 +213,22 @@ public class SwerveDrive extends SubsystemBase {
         }
     }
 
+    public Pose2d flipPose2dToRed(Pose2d pose) {
+        double fieldLenght = visionSubsystem.getFieldHeight();
+
+        return new Pose2d(new Translation2d(fieldLenght - pose.getX(), pose.getY()),
+                pose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+    }
+
     public Command followPathCommand(String pathName, boolean initialPath) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
         if (initialPath) {
-            setPose(path.getPreviewStartingHolonomicPose());
+            if (flipPath.getAsBoolean()) {
+                setPose(flipPose2dToRed(path.getPreviewStartingHolonomicPose()));
+            } else {
+                setPose(path.getPreviewStartingHolonomicPose());
+            }
         }
 
         return AutoBuilder.followPath(path);
@@ -241,11 +255,10 @@ public class SwerveDrive extends SubsystemBase {
         Translation2d robotPose = getPose().getTranslation();
         Translation2d robotToGoal = goalPose.minus(robotPose);
         double target = Math.toDegrees(Math.atan2(robotToGoal.getY(), robotToGoal.getX())) + 180;
-        if(target >= 5 && target <= 40){
+        if (target >= 5 && target <= 40) {
             target -= 5;
             return target;
-        }
-        else if(target >= 325 && target <= 350){
+        } else if (target >= 325 && target <= 350) {
             target += 5;
             return target;
         }
@@ -258,8 +271,8 @@ public class SwerveDrive extends SubsystemBase {
         if (visionSubsystem != null) {
             if (visionSubsystem.getLeftVisionEstimatePresent() && DriverStation.isTeleopEnabled()) {
                 addVisionMeasurement(
-                    new Pose2d(visionSubsystem.getLeftVisionEstimatePose2d().getTranslation(), getHeading()),
-                        
+                        new Pose2d(visionSubsystem.getLeftVisionEstimatePose2d().getTranslation(), getHeading()),
+
                         visionSubsystem.getLeftVisionEstimateTimestamp());
             }
 
@@ -286,9 +299,12 @@ public class SwerveDrive extends SubsystemBase {
         // getHeadingDegrees());
 
         // for(SwerveModule mod : mSwerveMods){
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+        // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder",
+        // mod.getCANcoder().getDegrees());
+        // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle",
+        // mod.getPosition().angle.getDegrees());
+        // SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity",
+        // mod.getState().speedMetersPerSecond);
         // }
     }
 }
