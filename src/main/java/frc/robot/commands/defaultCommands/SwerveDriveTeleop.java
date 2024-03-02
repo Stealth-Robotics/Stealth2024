@@ -37,6 +37,8 @@ public class SwerveDriveTeleop extends Command {
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), SwerveConstants.stickDeadband);
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), SwerveConstants.stickDeadband);
 
+        rotationVal *= 0.7;
+
         if (isRed.getAsBoolean()) {
             translationVal *= -1;
             strafeVal *= -1;
