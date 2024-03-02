@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -27,6 +29,16 @@ public class AimAndShootCommand extends SequentialCommandGroup {
                         new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap, distance)).withTimeout(1.5),
                         new RunCommand(() -> intake.setIntakeSpeed(1), intake)
                                                 .withTimeout(1.0)
+                        );
+    }
+
+    public AimAndShootCommand(SwerveDrive drive, RotatorSubsystem rotator, ShooterSubsystem shooter, IntakeSubsystem intake, DistanceToShotValuesMap distanceToShotValuesMap, DoubleSupplier distanceOffset) {
+        addCommands(
+                new ParallelCommandGroup(
+                        new AutoAlignCommand(drive).withTimeout(2),
+                        new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap, distanceOffset)).withTimeout(2),
+                        new RunCommand(() -> intake.setIntakeSpeed(1), intake)
+                                                .until(() -> !intake.isRingFullyInsideIntake())
                         );
     }
 

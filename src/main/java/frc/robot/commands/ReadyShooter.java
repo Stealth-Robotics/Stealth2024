@@ -63,4 +63,22 @@ public class ReadyShooter extends SequentialCommandGroup {
                                 new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap, distance));
 
         }
+
+
+        public ReadyShooter(ShooterSubsystem shooter, RotatorSubsystem rotator, IntakeSubsystem intake,
+                        SwerveDrive drive,
+                        DistanceToShotValuesMap distanceToShotValuesMap, DoubleSupplier distanceOffset) {
+                this.swerveDrive = drive;
+
+                this.intake = intake;
+                this.rotator = rotator;
+                this.shooter = shooter;
+                addCommands(
+                                new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake)
+                                                .andThen(new WaitCommand(0.1))
+                                                .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
+                                new WaitCommand(0.1),
+                                new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap));
+
+        }
 }

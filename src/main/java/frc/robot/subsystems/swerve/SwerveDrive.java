@@ -5,6 +5,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -20,8 +22,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
@@ -51,7 +55,11 @@ public class SwerveDrive extends SubsystemBase {
 
     boolean isRed = false;
 
+    private GenericEntry shooterOffset;
+
     public SwerveDrive() {
+
+        shooterOffset = Shuffleboard.getTab("SmartDashboard").add("Shooter offset", 0).getEntry();
 
         field2d = new Field2d();
         SmartDashboard.putData(field2d);
@@ -102,7 +110,7 @@ public class SwerveDrive extends SubsystemBase {
                 },
                 this);
 
-                setCurrentAlliance();
+        setCurrentAlliance();
     }
 
     public void setCurrentAlliance() {
@@ -111,8 +119,7 @@ public class SwerveDrive extends SubsystemBase {
         setTargetGoal();
     }
 
-    public BooleanSupplier isRed()
-    {
+    public BooleanSupplier isRed() {
         return () -> isRed;
     }
 
@@ -284,6 +291,10 @@ public class SwerveDrive extends SubsystemBase {
         return target;
     }
 
+    public DoubleSupplier getDistanceOffsetSupplier() {
+        return () -> shooterOffset.getDouble(0);
+    }
+
     @Override
     public void periodic() {
 
@@ -296,9 +307,10 @@ public class SwerveDrive extends SubsystemBase {
             }
 
             // if (visionSubsystem.getRightVisionEstimatePresent()) {
-            //     addVisionMeasurement(
-            //             new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
-            //             visionSubsystem.getRightVisionEstimateTimestamp());
+            // addVisionMeasurement(
+            // new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(),
+            // getHeading()),
+            // visionSubsystem.getRightVisionEstimateTimestamp());
             // }
         }
 
@@ -310,6 +322,7 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
         SmartDashboard.putNumber("heading", getHeadingDegrees());
         SmartDashboard.putString("Pose", getPose().toString());
+
         // System.out.println(getPose());
         // System.out.println("distance from target meters: " +
         // getDistanceMetersToGoal());
