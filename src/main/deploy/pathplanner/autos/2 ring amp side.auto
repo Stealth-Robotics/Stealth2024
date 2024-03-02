@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7610422530489726,
+      "y": 4.3921819417242896
+    },
+    "rotation": -59.98163257239091
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "subwoofer to middle ring 4 pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "middle to shoot variation"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

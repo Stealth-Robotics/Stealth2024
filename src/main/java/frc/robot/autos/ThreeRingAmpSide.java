@@ -16,35 +16,35 @@ import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
-public class ThreeRingRightSide extends SequentialCommandGroup {
+public class ThreeRingAmpSide extends SequentialCommandGroup {
         DistanceToShotValuesMap map = new DistanceToShotValuesMap();
 
-        public ThreeRingRightSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
+        public ThreeRingAmpSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
                 addCommands(
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("right pickup first ring", true),
+                                                swerve.followPathCommand("amp side left pickup", true),
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(0.5),
-                                swerve.followPathCommand("shoot right first ring", false),
+                                swerve.followPathCommand("shoot amp ring", false),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("pickup middle ring 4", false),
+                                                swerve.followPathCommand("pickup middle ring 2", false),
                                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(1),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("middle to shoot variation", false),
+                                                swerve.followPathCommand("shoot middle ring 2", false),
                                                 new ReadyShooter(shooter, rotator, intake, swerve, map,
                                                                 swerve.getDistanceMetersToGoal(
-                                                                                new Translation2d(1.886174249505859,
-                                                                                                4.058809498329657)))),
+                                                                                new Translation2d(2.487968842604352,
+                                                                                6.02748285496571)))),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new StowPreset(rotator, shooter),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)));

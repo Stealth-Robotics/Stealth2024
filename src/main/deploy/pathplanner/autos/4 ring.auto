@@ -3,9 +3,9 @@
   "startingPose": {
     "position": {
       "x": 0.7718906104478876,
-      "y": 6.689103378206757
+      "y": 4.442350351367369
     },
-    "rotation": 59.886266849017616
+    "rotation": -58.52316065041602
   },
   "command": {
     "type": "sequential",
@@ -14,25 +14,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "amp side left pickup"
+            "pathName": "right pickup first ring"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "shoot amp ring"
+            "pathName": "shoot right first ring"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "pickup middle ring 2"
+            "pathName": "middle ring pickup"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "shoot middle ring 2"
+            "pathName": "left ring pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot left ring"
           }
         }
       ]
