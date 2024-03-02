@@ -263,6 +263,10 @@ public class SwerveDrive extends SubsystemBase {
         return getPose().getTranslation().getDistance(getTargetGoalPose().getTranslation());
     }
 
+    public double getDistanceMetersToGoal(Translation2d pose) {
+        return pose.getDistance(getTargetGoalPose().getTranslation());
+    }
+
     // returns the angle, in degrees, that the robot needs to be pointing in order
     // to be pointing at the target goal
     public double getAngleDegreesToGoal() {
@@ -291,11 +295,11 @@ public class SwerveDrive extends SubsystemBase {
                         visionSubsystem.getLeftVisionEstimateTimestamp());
             }
 
-            if (visionSubsystem.getRightVisionEstimatePresent()) {
-                addVisionMeasurement(
-                        new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
-                        visionSubsystem.getRightVisionEstimateTimestamp());
-            }
+            // if (visionSubsystem.getRightVisionEstimatePresent()) {
+            //     addVisionMeasurement(
+            //             new Pose2d(visionSubsystem.getRightVisionEstimatePose2d().getTranslation(), getHeading()),
+            //             visionSubsystem.getRightVisionEstimateTimestamp());
+            // }
         }
 
         swerveOdometry.update(getGyroYaw(), getModulePositions());

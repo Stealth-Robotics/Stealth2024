@@ -74,7 +74,7 @@ public class RobotContainer {
         swerveTranslationYSupplier,
         swerveTranslationXSupplier,
         swerveRotationSupplier,
-        swerveRobotOrientedSupplier, 
+        swerveRobotOrientedSupplier,
         swerveSubsystem.isRed()));
 
     intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
@@ -102,11 +102,18 @@ public class RobotContainer {
     new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors())
         .alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
     new Trigger(driverController.rightBumper()).onTrue(
-            new AmpPresetCommand(rotatorSubsystem, shooter));
+        new AmpPresetCommand(rotatorSubsystem, shooter));
 
     new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
-      rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(), rotatorSubsystem.getRotatorState())
-    ).onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
+        rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(), rotatorSubsystem.getRotatorState()))
+        .onFalse(new InstantCommand(() -> rotatorSubsystem.holdCurrentPosition()));
+
+    // subwoofer shot
+    new Trigger(driverController.y()).onTrue(
+        new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake, distanceToShotValuesMap, 1.4));
+
+    new Trigger(driverController.x()).onTrue(new InstantCommand(() -> shooter.setShooterDutyCycle(0.4)))
+        .onFalse(new InstantCommand(() -> shooter.setShooterDutyCycle(0)));
 
   }
 
@@ -119,6 +126,7 @@ public class RobotContainer {
   }
 
   public void onInit() {
+    // rotatorSubsystem.setMotorsToCoast();
     swerveSubsystem.setCurrentAlliance();
     rotatorSubsystem.holdCurrentPosition();
     ledSubsystem.idle();

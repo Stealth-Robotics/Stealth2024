@@ -11,6 +11,7 @@ public class SubsystemsToTarget extends Command{
     private final ShooterSubsystem shooter;
     private final SwerveDrive drive;
     DistanceToShotValuesMap map;
+    private double distance = -1;
 
     public SubsystemsToTarget(RotatorSubsystem rotator, ShooterSubsystem shooter, SwerveDrive drive, DistanceToShotValuesMap map){
 
@@ -23,11 +24,33 @@ public class SubsystemsToTarget extends Command{
 
     }
 
+    public SubsystemsToTarget(RotatorSubsystem rotator, ShooterSubsystem shooter, SwerveDrive drive, DistanceToShotValuesMap map, double distance){
+
+        this.rotator = rotator;
+        this.shooter = shooter;
+        this.drive = drive;
+        this.map = map;
+        this.distance = distance;
+        addRequirements(shooter, rotator);
+
+
+    }
+
     @Override
     public void initialize() {
-        rotator.setMotorTargetPosition(map.getInterpolatedRotationAngle(drive.getDistanceMetersToGoal()));
-        shooter.setLeftVelocity(map.getInterpolatedShooterSpeed(drive.getDistanceMetersToGoal()));
-        shooter.setRightVelocity(map.getInterpolatedShooterSpeed(drive.getDistanceMetersToGoal()) * shooter.SPIN_CONSTANT);
+        double shooterSpeed;
+        double rotationAngle;
+        if(distance == -1){
+            shooterSpeed = map.getInterpolatedShooterSpeed(drive.getDistanceMetersToGoal());
+            rotationAngle = map.getInterpolatedRotationAngle(drive.getDistanceMetersToGoal());
+        }
+        else{
+            shooterSpeed = map.getInterpolatedShooterSpeed(distance);
+            rotationAngle = map.getInterpolatedRotationAngle(distance);
+        }
+        rotator.setMotorTargetPosition(rotationAngle);
+        shooter.setLeftVelocity(shooterSpeed);
+        shooter.setRightVelocity(shooterSpeed * shooter.SPIN_CONSTANT);
         System.out.println(drive.getDistanceMetersToGoal());
 
     }

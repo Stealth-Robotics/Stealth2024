@@ -29,11 +29,11 @@ public class DistanceToShotValuesMap {
 
         ROTATION_INTERPOLATION_MAP.put(3.0, Units.degreesToRotations(45.0));
         ROTATION_INTERPOLATION_MAP.put(3.4, Units.degreesToRotations(47.0));
-        ROTATION_INTERPOLATION_MAP.put(3.8, Units.degreesToRotations(47.75));
+        ROTATION_INTERPOLATION_MAP.put(3.8, Units.degreesToRotations(47.5));
         
-        ROTATION_INTERPOLATION_MAP.put(4.2, Units.degreesToRotations(48.5));
-        ROTATION_INTERPOLATION_MAP.put(4.3, Units.degreesToRotations(50));
-        ROTATION_INTERPOLATION_MAP.put(4.58, Units.degreesToRotations(51));
+        ROTATION_INTERPOLATION_MAP.put(4.2, Units.degreesToRotations(47.75));
+        ROTATION_INTERPOLATION_MAP.put(4.3, Units.degreesToRotations(49));
+        ROTATION_INTERPOLATION_MAP.put(4.58, Units.degreesToRotations(50));
         ROTATION_INTERPOLATION_MAP.put(5.8, Units.degreesToRotations(52));
         ROTATION_INTERPOLATION_MAP.put(6.1, Units.degreesToRotations(55));
     }

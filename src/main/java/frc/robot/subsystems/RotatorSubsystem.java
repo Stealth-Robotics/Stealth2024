@@ -52,9 +52,9 @@ public class RotatorSubsystem extends SubsystemBase {
     private double kV = 15.5;
     private double kG = 0.3;
 
-    private double kP = 100;
+    private double kP = 120;
     private double kI = 90;
-    private double kD = 0.0;
+    private double kD = 20;
 
     private DigitalInput homeButton = new DigitalInput(0);
     private DigitalInput toggleMotorModeButton = new DigitalInput(1);
@@ -67,8 +67,8 @@ public class RotatorSubsystem extends SubsystemBase {
     // this is a tolerance of 1 degree
     private final double kTOLERANCE = Units.degreesToRotations(0.75);
 
-    private final double MOTION_MAGIC_JERK = 2;
-    private double MOTION_MAGIC_ACCELERATION = 1.5;
+    private final double MOTION_MAGIC_JERK = 6;
+    private double MOTION_MAGIC_ACCELERATION = 2;
     private double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
@@ -132,7 +132,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     // these methods will only be used with the buttons
-    private void setMotorsToCoast() {
+    public void setMotorsToCoast() {
         motorMode = NeutralModeValue.Coast;
         applyConfigs();
 
