@@ -22,6 +22,7 @@ public class ThreeRingAmpSide extends SequentialCommandGroup {
         public ThreeRingAmpSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
                 addCommands(
+                                new InstantCommand(() -> swerve.setInitialPose("amp side left pickup")),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),

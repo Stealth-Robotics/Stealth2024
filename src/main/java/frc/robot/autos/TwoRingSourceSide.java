@@ -21,6 +21,7 @@ public class TwoRingSourceSide extends SequentialCommandGroup {
         public TwoRingSourceSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
                 addCommands(
+                                new InstantCommand(() -> swerve.setInitialPose("subwoofer to middle ring 4 pickup")),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
@@ -34,11 +35,8 @@ public class TwoRingSourceSide extends SequentialCommandGroup {
                                 new WaitCommand(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("middle to shoot variation", false),
-                                                new ReadyShooter(shooter, rotator, intake, swerve, map,
-                                                                swerve.getDistanceMetersToGoal(
-                                                                                new Translation2d(1.886174249505859,
-                                                                                                4.058809498329657)))),
+                                                swerve.followPathCommand("middle to shoot variation", false)),
+                                new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new StowPreset(rotator, shooter),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)));

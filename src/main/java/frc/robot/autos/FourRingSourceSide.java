@@ -19,6 +19,7 @@ public class FourRingSourceSide extends SequentialCommandGroup {
     public FourRingSourceSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
             IntakeSubsystem intake) {
         addCommands(
+                new InstantCommand(() -> swerve.setInitialPose("right pickup first ring")),
                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
@@ -45,7 +46,7 @@ public class FourRingSourceSide extends SequentialCommandGroup {
                         new StowPreset(rotator, shooter)),
                 new WaitCommand(0.5),
                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
-                swerve.followPathCommand("left ring shoot", false),
+                swerve.followPathCommand("shoot left ring", false),
                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                 new InstantCommand(() -> intake.setIntakeSpeed(0)),

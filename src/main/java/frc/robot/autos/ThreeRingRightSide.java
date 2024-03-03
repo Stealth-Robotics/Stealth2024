@@ -22,13 +22,14 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
         public ThreeRingRightSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
                 addCommands(
+                                new InstantCommand(() -> swerve.setInitialPose("right pickup first ring")),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new ParallelCommandGroup(
                                                 swerve.followPathCommand("right pickup first ring", true),
                                                 new StowPreset(rotator, shooter)),
-                                new WaitCommand(0.5),
+                                new WaitCommand(0.1),
                                 swerve.followPathCommand("shoot right first ring", false),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
@@ -37,7 +38,7 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
                                                 swerve.followPathCommand("pickup middle ring 4", false),
                                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                                 new StowPreset(rotator, shooter)),
-                                new WaitCommand(1),
+                                new WaitCommand(0.25),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
                                                 swerve.followPathCommand("middle to shoot variation", false),

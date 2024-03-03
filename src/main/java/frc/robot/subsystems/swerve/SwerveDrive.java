@@ -11,6 +11,8 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPlannerTrajectory;
+import com.pathplanner.lib.util.GeometryUtil;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -28,7 +30,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.PoseEstimationSystem;
@@ -53,7 +54,8 @@ public class SwerveDrive extends SubsystemBase {
 
     Field2d field2d;
 
-    boolean isRed = false;
+    // Hardcode
+    boolean isRed = true;
 
     private GenericEntry shooterOffset;
 
@@ -74,8 +76,6 @@ public class SwerveDrive extends SubsystemBase {
                 new SwerveModule(2, SwerveConstants.Mod2.constants),
                 new SwerveModule(3, SwerveConstants.Mod3.constants)
         };
-
-        Timer.delay(1.0);
         resetModulesToAbsolute();
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -102,22 +102,22 @@ public class SwerveDrive extends SubsystemBase {
                         new ReplanningConfig()),
                 () -> {
 
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
+                    
+                    return isRed;
                 },
                 this);
 
-        setCurrentAlliance();
-    }
-
-    public void setCurrentAlliance() {
-        isRed = DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
-
         setTargetGoal();
+
+        // setCurrentAlliance();
     }
+
+    // public void setCurrentAlliance() {
+    // isRed = DriverStation.getAlliance().isPresent() &&
+    // DriverStation.getAlliance().get() == Alliance.Red;
+
+    // setTargetGoal();
+    // }
 
     public BooleanSupplier isRed() {
         return () -> isRed;
@@ -235,23 +235,18 @@ public class SwerveDrive extends SubsystemBase {
         }
     }
 
-    public Pose2d flipPose2dToRed(Pose2d pose) {
-        double fieldLenght = visionSubsystem.getFieldHeight();
+    public void setInitialPose(String pathName) {
 
-        return new Pose2d(new Translation2d(fieldLenght - pose.getX(), pose.getY()),
-                pose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+        PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        if (isRed().getAsBoolean()) {
+            setPose(GeometryUtil.flipFieldPose(path.getPreviewStartingHolonomicPose()));
+        } else {
+            setPose(path.getPreviewStartingHolonomicPose());
+        }
     }
 
     public Command followPathCommand(String pathName, boolean initialPath) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-        if (initialPath) {
-            if (isRed().getAsBoolean()) {
-                setPose(flipPose2dToRed(path.getPreviewStartingHolonomicPose()));
-            } else {
-                setPose(path.getPreviewStartingHolonomicPose());
-            }
-        }
 
         return AutoBuilder.followPath(path);
     }
@@ -271,7 +266,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public double getDistanceMetersToGoal(Translation2d pose) {
-        return pose.getDistance(getTargetGoalPose().getTranslation());
+        return pose.getDistance(BLUE_GOAL_POSE.getTranslation());
     }
 
     // returns the angle, in degrees, that the robot needs to be pointing in order
@@ -317,11 +312,11 @@ public class SwerveDrive extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         field2d.setRobotPose(getPose());
-        SmartDashboard.putString("Allian", DriverStation.getAlliance().toString());
+        // SmartDashboard.putString("Allian", DriverStation.getAlliance().toString());
         SmartDashboard.putNumber("distance", getDistanceMetersToGoal());
         SmartDashboard.putNumber("rotation angle to goal", getAngleDegreesToGoal());
         SmartDashboard.putNumber("heading", getHeadingDegrees());
-        SmartDashboard.putString("Pose", getPose().toString());
+        // SmartDashboard.putString("Pose", getPose().toString());
 
         // System.out.println(getPose());
         // System.out.println("distance from target meters: " +

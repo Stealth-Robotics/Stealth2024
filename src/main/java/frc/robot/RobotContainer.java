@@ -26,6 +26,7 @@ import frc.robot.subsystems.vision.PoseEstimationSystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix.platform.can.AutocacheState;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -68,6 +70,11 @@ public class RobotContainer {
         new ThreeRingAmpSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
     autoChooser.addOption("Four ring source side",
         new FourRingSourceSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
+    autoChooser.addOption("nothini", new InstantCommand());
+    autoChooser.addOption("testPath", new ParallelCommandGroup(
+      new InstantCommand(() -> swerveSubsystem.setInitialPose("testPath")),
+      swerveSubsystem.followPathCommand("testPath", true)
+    ));
     SmartDashboard.putData("auto", autoChooser);
 
     // Command Suppliers
@@ -98,7 +105,8 @@ public class RobotContainer {
         swerveSubsystem.isRed()));
 
     intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
-    climber.setDefaultCommand(new ClimberDefault(climberManuaControlSupplier, climber));
+    climber.setDefaultCommand(
+        new ClimberDefault(() -> operatorController.getLeftY(), () -> operatorController.getRightY(), climber));
 
     // Driver Button Commands
 
@@ -114,8 +122,9 @@ public class RobotContainer {
     new Trigger(driverController.rightBumper()).onTrue(
         new AmpPresetCommand(rotatorSubsystem, shooter));
 
-    new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
-        rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(), rotatorSubsystem.getRotatorState()));
+    // new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
+    // rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(),
+    // rotatorSubsystem.getRotatorState()));
 
     // subwoofer shot
     new Trigger(driverController.y()).onTrue(
@@ -123,9 +132,8 @@ public class RobotContainer {
 
     new Trigger(driverController.x()).onTrue(new InstantCommand(() -> shooter.setShooterDutyCycle(0.4)))
         .onFalse(new InstantCommand(() -> shooter.setShooterDutyCycle(0)));
-    
-    
-   // Onboard Button Commands
+
+    // Onboard Button Commands
 
     new Trigger(rotatorHomeButtonSupplier).onTrue(
         rotatorSubsystem.homeArmCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
@@ -146,12 +154,14 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
+    // return swerveSubsystem.followPathCommand("test", true);
   }
 
   public void onInit() {
     rotatorSubsystem.setMotorsToCoast();
-    swerveSubsystem.setCurrentAlliance();
+    // swerveSubsystem.setCurrentAlliance();
     rotatorSubsystem.holdCurrentPosition();
+    shooter.stopShooterMotors();
     ledSubsystem.idle();
   }
 
