@@ -23,6 +23,12 @@ public class ClimberSubsystem extends SubsystemBase {
         CLIMBER_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         CLIMBER_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        // CLIMBER_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // CLIMBER_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+        // CLIMBER_CONFIG.CurrentLimits.SupplyCurrentThreshold = 40;
+        // CLIMBER_CONFIG.CurrentLimits.SupplyTimeThreshold = 0.5;
+
         rightClimber.getPosition().setUpdateFrequency(4);
         leftClimber.getPosition().setUpdateFrequency(4);
 

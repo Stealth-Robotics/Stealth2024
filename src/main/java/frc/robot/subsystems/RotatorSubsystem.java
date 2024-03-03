@@ -19,6 +19,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -26,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants;
 
 public class RotatorSubsystem extends SubsystemBase {
 
@@ -78,6 +81,9 @@ public class RotatorSubsystem extends SubsystemBase {
 
     StatusSignal<Double> rotatorPosition;
 
+    StatusSignal<Double> motor1SupplyCurrent;
+    StatusSignal<Double> motor2SupplyCurrent;
+
     private RotatorState rotatorState = RotatorState.INSIDE_LIMIT;
 
     public RotatorSubsystem() {
@@ -92,9 +98,38 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorPosition = rotatorMotorOne.getPosition();
         rotatorPosition.setUpdateFrequency(500);
 
+        motor1SupplyCurrent = rotatorMotorOne.getSupplyCurrent();
+        motor1SupplyCurrent.setUpdateFrequency(100);
+
+        motor2SupplyCurrent = rotatorMotorTwo.getSupplyCurrent();
+        motor2SupplyCurrent.setUpdateFrequency(100);
+
         rotatorMotorOne.optimizeBusUtilization();
         rotatorMotorTwo.optimizeBusUtilization();
+
         resetEncoder();
+
+        if (Constants.TUNING_MODE) {
+            ShuffleboardTab rotatorTab = Shuffleboard.getTab("Rotator");
+            rotatorTab.add("Motor 1", rotatorMotorOne);
+            rotatorTab.add("Motor 2", rotatorMotorTwo);
+
+            rotatorTab.add("Home Button", homeButton);
+            rotatorTab.addBoolean("Rotator Homed", this::isHomed);
+            rotatorTab.add("Toggle Motor Mode Button", toggleMotorModeButton);
+            rotatorTab.addString("Motor Mode", () -> getMotorMode().toString());
+
+            rotatorTab.addNumber("Rotator Position - Rotations (Raw)", this::getMotorPosition);
+            rotatorTab.addNumber("Rotator Position - Degrees", () -> Units.rotationsToDegrees(getMotorPosition()));
+
+            rotatorTab.addNumber("Rotator Setpoint - Rotations (Raw)", this::getTargetPosition);
+            rotatorTab.addNumber("Rotator Setpoint - Degrees", () -> Units.rotationsToDegrees(getTargetPosition()));
+
+            rotatorTab.addBoolean("Rotator At Target", this::isMotorAtTarget);
+
+            rotatorTab.addNumber("Motor 1 Supply Current", () -> motor1SupplyCurrent.getValueAsDouble());
+            rotatorTab.addNumber("Motor 2 Supply Current", () -> motor2SupplyCurrent.getValueAsDouble());
+        }
     }
 
     private void applyConfigs() {
@@ -121,8 +156,10 @@ public class RotatorSubsystem extends SubsystemBase {
         ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
 
-        ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 40;
-        ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentThreshold = 40;
+        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyTimeThreshold = 0.5;
 
         rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
         rotatorMotorTwo.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
@@ -196,10 +233,9 @@ public class RotatorSubsystem extends SubsystemBase {
     public Command armManualControl(DoubleSupplier manualControlSupplier, Supplier<RotatorState> rotatorStateSupplier) {
         return this.runOnce(() -> {
             double manualControl = manualControlSupplier.getAsDouble();
-            if(rotatorStateSupplier.get() == RotatorState.OUTSIDE_UPPER_LIMIT){
+            if (rotatorStateSupplier.get() == RotatorState.OUTSIDE_UPPER_LIMIT) {
                 manualControl = MathUtil.clamp(manualControl, -0.5, 0);
-            }
-            else{
+            } else {
                 manualControl = MathUtil.clamp(manualControl, -0.5, 0.5);
             }
             setDutyCycle(manualControl);
@@ -248,16 +284,18 @@ public class RotatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        BaseStatusSignal.refreshAll(rotatorPosition);
+        BaseStatusSignal.refreshAll(
+                rotatorPosition,
+                motor1SupplyCurrent,
+                motor2SupplyCurrent);
         SmartDashboard.putNumber("rotator", Units.rotationsToDegrees(getMotorPosition()));
         SmartDashboard.putNumber("rotator target", Units.rotationsToDegrees(getTargetPosition()));
-        
 
-        if(Units.rotationsToDegrees(getMotorPosition()) >= 90){
+        if (Units.rotationsToDegrees(getMotorPosition()) >= 90) {
             rotatorState = RotatorState.OUTSIDE_UPPER_LIMIT;
         }
 
-        else{
+        else {
             rotatorState = RotatorState.INSIDE_LIMIT;
         }
     }
