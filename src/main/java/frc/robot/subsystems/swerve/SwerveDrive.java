@@ -55,7 +55,7 @@ public class SwerveDrive extends SubsystemBase {
     Field2d field2d;
 
     // Hardcode
-    boolean isRed = true;
+    boolean isRed = false;
 
     private GenericEntry shooterOffset;
 

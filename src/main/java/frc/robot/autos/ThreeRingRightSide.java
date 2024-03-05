@@ -24,7 +24,7 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
                 addCommands(
                                 new InstantCommand(() -> swerve.setInitialPose("right pickup first ring")),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
-                                new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
+                                new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new ParallelCommandGroup(
                                                 swerve.followPathCommand("right pickup first ring", true),
@@ -32,7 +32,7 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
                                 new WaitCommand(0.1),
                                 swerve.followPathCommand("shoot right first ring", false),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
-                                new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
+                                new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
                                                 swerve.followPathCommand("pickup middle ring 4", false),

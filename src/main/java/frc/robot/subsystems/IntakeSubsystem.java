@@ -18,8 +18,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         // TODO: GET CAN IDs
         intakeMotor = new TalonFX(20);
-        frontBeamBreak = new DigitalInput(3);
-        backBeamBreak = new DigitalInput(2);
+        frontBeamBreak = new DigitalInput(2);
+        backBeamBreak = new DigitalInput(3);
 
         intakeMotor.getPosition().setUpdateFrequency(4);
 
@@ -55,4 +55,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public Command conveyIntoReadyPosition() {
         return this.run(() -> this.setIntakeSpeed(0.8)).until(() -> isRingFullyInsideIntake());
     }
+
+    // @Override
+    // public void periodic() {
+    //     System.out.println("front: " + isRingAtFrontOfIntake() + ", back: " + isRingFullyInsideIntake());
+    // }
 }

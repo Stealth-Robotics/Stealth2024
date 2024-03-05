@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.autos.CenterTwoRing;
 import frc.robot.autos.FourRingSourceSide;
 import frc.robot.autos.ThreeRingAmpSide;
 import frc.robot.autos.ThreeRingRightSide;
@@ -66,15 +67,12 @@ public class RobotContainer {
         new ThreeRingRightSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
     autoChooser.addOption("Two ring source side",
         new TwoRingSourceSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
-    autoChooser.addOption("Three ring amp side",
+  autoChooser.addOption("Three ring amp side",
         new ThreeRingAmpSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
     autoChooser.addOption("Four ring source side",
         new FourRingSourceSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
     autoChooser.addOption("nothini", new InstantCommand());
-    autoChooser.addOption("testPath", new ParallelCommandGroup(
-      new InstantCommand(() -> swerveSubsystem.setInitialPose("testPath")),
-      swerveSubsystem.followPathCommand("testPath", true)
-    ));
+    autoChooser.addOption("center two ring", new CenterTwoRing(swerveSubsystem, rotatorSubsystem, shooter, intake));
     SmartDashboard.putData("auto", autoChooser);
 
     // Command Suppliers
@@ -142,7 +140,7 @@ public class RobotContainer {
         rotatorSubsystem.toggleMotorModeCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
 
     // Other Triggers
-    new Trigger(() -> intake.isRingFullyInsideIntake())
+    new Trigger(() -> intake.isRingAtFrontOfIntake())
         .onTrue(ledSubsystem.blinkForRingCommand().andThen(new PrintCommand("ring")));
     new Trigger(() -> !intake.isRingFullyInsideIntake()).onTrue(ledSubsystem.idleCommand());
 
