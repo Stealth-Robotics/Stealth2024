@@ -1,17 +1,19 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
@@ -21,7 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double kV = 0.11;
     private double kA = 0.0;
 
-    private double kP = 0.6;
+    private double kP = 0.5;
     private double kI = 0;
     private double kD = 0.0;
 
@@ -49,11 +51,29 @@ public class ShooterSubsystem extends SubsystemBase {
         rightMotor = new TalonFX(17);
 
         applyConfigs();
+
+        if (Constants.TUNING_MODE) {
+            ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
+
+            shooterTab.add(leftMotor);
+            shooterTab.add(rightMotor);
+
+            shooterTab.addNumber("Left Motor Velocity", this::getLeftVelocity);
+            shooterTab.addNumber("Left Error", this::getLeftVelocityError);
+
+            shooterTab.addNumber("Right Velocity", this::getRightVelocity);
+            shooterTab.addNumber("Right Velocity Error", this::getRightVelocityError);
+
+            shooterTab.addBoolean("At Target", this::motorsAtTargetVelocity);
+
+            shooterTab.addDouble("Left Supply Current", this::getLeftSupplyCurrent);
+            shooterTab.addDouble("Right Supply Current", this::getRightSupplyCurrent);
+        }
     }
 
     private void applyConfigs() {
         // TODO: check everything
-        LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         LEFT_TALONFX_CONFIG.Slot0.kS = kS;
         LEFT_TALONFX_CONFIG.Slot0.kV = kV;
@@ -66,6 +86,11 @@ public class ShooterSubsystem extends SubsystemBase {
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
+        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
+        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyCurrentThreshold = 40;
+        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyTimeThreshold = 1.0;
+
         RIGHT_TALONFX_CONFIG = LEFT_TALONFX_CONFIG;
 
         LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -73,6 +98,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
         leftMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
         rightMotor.getConfigurator().apply(RIGHT_TALONFX_CONFIG);
+    }
+
+    private double getLeftSupplyCurrent()
+    {
+        return leftMotor.getSupplyCurrent().getValueAsDouble();
+    }
+
+    private double getRightSupplyCurrent()
+    {
+        return rightMotor.getSupplyCurrent().getValueAsDouble();
     }
 
     /**
@@ -93,6 +128,16 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setRightVelocity(double velocity) {
         rightMotionMagicVelocityVoltage.Velocity = velocity;
         rightMotor.setControl(rightMotionMagicVelocityVoltage);
+    }
+
+    private double getLeftVelocity()
+    {
+        return leftMotor.getVelocity().getValueAsDouble();
+    }
+
+    private double getRightVelocity()
+    {
+        return rightMotor.getVelocity().getValueAsDouble();
     }
 
     /**
@@ -116,10 +161,8 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public void stopShooterMotors() {
-        leftMotionMagicVelocityVoltage.Velocity = 0;
-        rightMotionMagicVelocityVoltage.Velocity = 0;
-        rightMotor.setControl(new CoastOut());
-        leftMotor.setControl(new CoastOut());
+        rightMotor.set(0);
+        leftMotor.set(0);
     }
 
     /**
@@ -130,6 +173,12 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean motorsAtTargetVelocity() {
         return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
+    }
+
+    public void setShooterDutyCycle(double dutyCycle){
+        leftMotor.set(dutyCycle);
+        rightMotor.set(dutyCycle);
+
     }
 
     /**
@@ -145,6 +194,14 @@ public class ShooterSubsystem extends SubsystemBase {
         return new InstantCommand(() -> {
             setLeftVelocity(rps);
             setRightVelocity(rps * SPIN_CONSTANT);
+        }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
+    }
+
+    public Command spinToRps(double rps, double spinConstant) {
+
+        return new InstantCommand(() -> {
+            setLeftVelocity(rps);
+            setRightVelocity(rps * spinConstant);
         }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
     }
 

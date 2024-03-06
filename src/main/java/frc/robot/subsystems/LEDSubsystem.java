@@ -41,7 +41,7 @@ public class LEDSubsystem extends SubsystemBase {
         this.hasRingSupplier = hasRingSupplier;
 
         CANdleConfiguration config = new CANdleConfiguration();
-        config.brightnessScalar = 1.0;
+        config.brightnessScalar = 0.2;
         config.disableWhenLOS = true;
         config.v5Enabled = true;
         config.vBatOutputMode = VBatOutputMode.Off;
@@ -92,9 +92,9 @@ public class LEDSubsystem extends SubsystemBase {
         animate(new StrobeAnimation(255, 0, 100, 0, 0.2, LED_COUNT));
     }
 
-    private void hasRing() {
-        setRGB(0, 255, 0);
-    }
+    // private void hasRing() {
+    //     setRGB(0, 255, 0);
+    // }
 
     public void idle() {
         animate(new RainbowAnimation(1, 0.6, LED_COUNT, true, 0));
@@ -131,11 +131,8 @@ public class LEDSubsystem extends SubsystemBase {
                 () -> gainedRing(), 
                 this
             ),
-            new WaitCommand(1.5),
-            new InstantCommand(
-                () -> hasRing(), 
-                this
-            ));
+            new WaitCommand(2.5),
+            idleCommand());
     }
 
     public Command idleCommand()

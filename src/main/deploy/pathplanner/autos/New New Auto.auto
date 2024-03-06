@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7693765641272955,
+      "y": 4.408850563896284
+    },
+    "rotation": -59.349332043437244
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "right pickup first ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot right first ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup middle ring 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "middle to shoot variation"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

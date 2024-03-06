@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7718906104478876,
+      "y": 4.442350351367369
+    },
+    "rotation": -58.52316065041602
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "right pickup first ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot right first ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "middle ring pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "left ring pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot left ring"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

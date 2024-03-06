@@ -27,7 +27,11 @@ public class IntakeDefaultCommand extends Command {
         //     return;
         // }
         // if (intake.isRingAtFrontOfIntake()) {
-        //     CommandScheduler.getInstance().schedule(intake.conveyIntoReadyPosition());
+        //     intake.setIntakeSpeed(0.7);
+        // }
+        // if(intake.isRingFullyInsideIntake()){
+        //     intake.setIntakeSpeed(0);
+        //     return;
         // }
         intake.setIntakeSpeed(intakeSupplier.getAsDouble());
     }

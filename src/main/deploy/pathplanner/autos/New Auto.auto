@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7718906104478876,
+      "y": 6.689103378206757
+    },
+    "rotation": 59.886266849017616
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "amp side left pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot amp ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup middle ring 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot middle ring 2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -41,7 +41,43 @@ public class ReadyShooter extends SequentialCommandGroup {
                                 new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake)
                                                 .andThen(new WaitCommand(0.1))
                                                 .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
-                                new WaitCommand(0.5),
+                                new WaitCommand(0.1),
+                                new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap));
+
+        }
+
+        public ReadyShooter(ShooterSubsystem shooter, RotatorSubsystem rotator, IntakeSubsystem intake,
+                        SwerveDrive drive,
+                        DistanceToShotValuesMap distanceToShotValuesMap, double distance) {
+                this.shooter = shooter;
+                this.rotator = rotator;
+                this.intake = intake;
+                this.swerveDrive = drive;
+                this.distanceToShotValuesMap = distanceToShotValuesMap;
+                this.distance = distance;
+                addCommands(
+                                new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake)
+                                                .andThen(new WaitCommand(0.1))
+                                                .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
+                                new WaitCommand(0.1),
+                                new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap, distance));
+
+        }
+
+
+        public ReadyShooter(ShooterSubsystem shooter, RotatorSubsystem rotator, IntakeSubsystem intake,
+                        SwerveDrive drive,
+                        DistanceToShotValuesMap distanceToShotValuesMap, DoubleSupplier distanceOffset) {
+                this.swerveDrive = drive;
+
+                this.intake = intake;
+                this.rotator = rotator;
+                this.shooter = shooter;
+                addCommands(
+                                new InstantCommand(() -> intake.setIntakeSpeed(-0.2), intake)
+                                                .andThen(new WaitCommand(0.1))
+                                                .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
+                                new WaitCommand(0.1),
                                 new SubsystemsToTarget(rotator, shooter, drive, distanceToShotValuesMap));
 
         }
