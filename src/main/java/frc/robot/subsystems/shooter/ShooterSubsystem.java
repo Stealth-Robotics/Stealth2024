@@ -27,7 +27,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double kI = 0;
     private double kD = 0.0;
 
-    private double MOTION_MAGIC_ACCELERATION = 100;
+    private double MOTION_MAGIC_ACCELERATION = 200;
     private double MOTION_MAGIC_JERK = 0.0;
 
     public final double SPIN_CONSTANT = 0.8;

@@ -53,7 +53,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
     private double kS = 0.0;
     private double kV = 15.5;
-    private double kG = 0.3;
+    private double kG = 0.1;
 
     private double kP = 120;
     private double kI = 90;

@@ -83,9 +83,7 @@ public class SwerveDrive extends SubsystemBase {
                 SwerveConstants.swerveKinematics,
                 getGyroYaw(),
                 getModulePositions(),
-                new Pose2d(),
-                stateStdDevs,
-                visionStdDevs);
+                new Pose2d());
 
         AutoBuilder.configureHolonomic(
                 this::getPose,
