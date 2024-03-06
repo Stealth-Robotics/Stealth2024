@@ -22,7 +22,6 @@ import frc.robot.subsystems.RotatorSubsystem;
 import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
-import frc.robot.subsystems.vision.PoseEstimationSystem;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -47,8 +46,7 @@ public class RobotContainer {
 
   DistanceToShotValuesMap distanceToShotValuesMap = new DistanceToShotValuesMap();
 
-  private final PoseEstimationSystem poseEstimationSystem = new PoseEstimationSystem();
-  private final SwerveDrive swerveSubsystem = new SwerveDrive(poseEstimationSystem);
+  private final SwerveDrive swerveSubsystem = new SwerveDrive();
   private final RotatorSubsystem rotatorSubsystem = new RotatorSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final LEDSubsystem ledSubsystem = new LEDSubsystem(
