@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -70,7 +71,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
     private final double MOTION_MAGIC_JERK = 6;
     private double MOTION_MAGIC_ACCELERATION = 2;
-    private double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
+    private double MOTION_MAGIC_CRUISE_VELOCITY = 0.6;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
@@ -122,7 +123,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
         rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
 
-        rotatorMotorTwo.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
+        rotatorMotorTwo.setControl(new StrictFollower(14));
 
     }
 
@@ -254,5 +255,7 @@ public class RotatorSubsystem extends SubsystemBase {
         else {
             rotatorState = RotatorState.INSIDE_LIMIT;
         }
+
+        rotatorMotorTwo.setControl(new VoltageOut(rotatorMotorOne.getMotorVoltage().getValueAsDouble()));
     }
 }
