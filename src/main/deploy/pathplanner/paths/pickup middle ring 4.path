@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.069529093372907,
-        "y": 3.7421056771047554
+        "x": 1.7028194056388106,
+        "y": 4.217161408942108
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3362270480886136,
-        "y": 3.375395989370659
+        "x": 1.9695173603545173,
+        "y": 3.850451721208011
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "shoot ring"
     },
     {
       "anchor": {
