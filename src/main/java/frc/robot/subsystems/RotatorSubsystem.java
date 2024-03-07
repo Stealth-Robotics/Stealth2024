@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -19,8 +20,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -28,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants;
 
 public class RotatorSubsystem extends SubsystemBase {
 
@@ -53,7 +51,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
     private double kS = 0.0;
     private double kV = 15.5;
-    private double kG = 0.1;
+    private double kG = 0.3;
 
     private double kP = 120;
     private double kI = 90;
@@ -79,11 +77,6 @@ public class RotatorSubsystem extends SubsystemBase {
     private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
     private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
 
-    StatusSignal<Double> rotatorPosition;
-
-    StatusSignal<Double> motor1SupplyCurrent;
-    StatusSignal<Double> motor2SupplyCurrent;
-
     private RotatorState rotatorState = RotatorState.INSIDE_LIMIT;
 
     public RotatorSubsystem() {
@@ -95,41 +88,7 @@ public class RotatorSubsystem extends SubsystemBase {
         applyConfigs();
         // throw new UnsupportedOperationException("Test rotator code");
 
-        rotatorPosition = rotatorMotorOne.getPosition();
-        rotatorPosition.setUpdateFrequency(500);
-
-        motor1SupplyCurrent = rotatorMotorOne.getSupplyCurrent();
-        motor1SupplyCurrent.setUpdateFrequency(100);
-
-        motor2SupplyCurrent = rotatorMotorTwo.getSupplyCurrent();
-        motor2SupplyCurrent.setUpdateFrequency(100);
-
-        rotatorMotorOne.optimizeBusUtilization();
-        rotatorMotorTwo.optimizeBusUtilization();
-
         resetEncoder();
-
-        if (Constants.TUNING_MODE) {
-            ShuffleboardTab rotatorTab = Shuffleboard.getTab("Rotator");
-            rotatorTab.add("Motor 1", rotatorMotorOne);
-            rotatorTab.add("Motor 2", rotatorMotorTwo);
-
-            rotatorTab.add("Home Button", homeButton);
-            rotatorTab.addBoolean("Rotator Homed", this::isHomed);
-            rotatorTab.add("Toggle Motor Mode Button", toggleMotorModeButton);
-            rotatorTab.addString("Motor Mode", () -> getMotorMode().toString());
-
-            rotatorTab.addNumber("Rotator Position - Rotations (Raw)", this::getMotorPosition);
-            rotatorTab.addNumber("Rotator Position - Degrees", () -> Units.rotationsToDegrees(getMotorPosition()));
-
-            rotatorTab.addNumber("Rotator Setpoint - Rotations (Raw)", this::getTargetPosition);
-            rotatorTab.addNumber("Rotator Setpoint - Degrees", () -> Units.rotationsToDegrees(getTargetPosition()));
-
-            rotatorTab.addBoolean("Rotator At Target", this::isMotorAtTarget);
-
-            rotatorTab.addNumber("Motor 1 Supply Current", () -> motor1SupplyCurrent.getValueAsDouble());
-            rotatorTab.addNumber("Motor 2 Supply Current", () -> motor2SupplyCurrent.getValueAsDouble());
-        }
     }
 
     private void applyConfigs() {
@@ -162,7 +121,6 @@ public class RotatorSubsystem extends SubsystemBase {
         // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyTimeThreshold = 0.5;
 
         rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
-        rotatorMotorTwo.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
 
         rotatorMotorTwo.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
 
@@ -242,9 +200,10 @@ public class RotatorSubsystem extends SubsystemBase {
         });
     }
 
-    private void setDutyCycle(double dutyCycle) {
+    public void setDutyCycle(double dutyCycle) {
         dutyCycleOut.Output = dutyCycle;
         rotatorMotorOne.setControl(dutyCycleOut);
+        
     }
 
     public void holdCurrentPosition() {
@@ -257,7 +216,7 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     private double getMotorPosition() {
-        return rotatorPosition.getValue();
+        return rotatorMotorOne.getPosition().getValueAsDouble();
     }
 
     private double getTargetPosition() {
@@ -284,10 +243,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        BaseStatusSignal.refreshAll(
-                rotatorPosition,
-                motor1SupplyCurrent,
-                motor2SupplyCurrent);
+                
         SmartDashboard.putNumber("rotator", Units.rotationsToDegrees(getMotorPosition()));
         SmartDashboard.putNumber("rotator target", Units.rotationsToDegrees(getTargetPosition()));
 

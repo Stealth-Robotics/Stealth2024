@@ -6,14 +6,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
@@ -27,7 +24,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double kI = 0;
     private double kD = 0.0;
 
-    private double MOTION_MAGIC_ACCELERATION = 200;
+    private double MOTION_MAGIC_ACCELERATION = 400;
     private double MOTION_MAGIC_JERK = 0.0;
 
     public final double SPIN_CONSTANT = 0.8;
@@ -51,24 +48,6 @@ public class ShooterSubsystem extends SubsystemBase {
         rightMotor = new TalonFX(17);
 
         applyConfigs();
-
-        if (Constants.TUNING_MODE) {
-            ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
-
-            shooterTab.add(leftMotor);
-            shooterTab.add(rightMotor);
-
-            shooterTab.addNumber("Left Motor Velocity", this::getLeftVelocity);
-            shooterTab.addNumber("Left Error", this::getLeftVelocityError);
-
-            shooterTab.addNumber("Right Velocity", this::getRightVelocity);
-            shooterTab.addNumber("Right Velocity Error", this::getRightVelocityError);
-
-            shooterTab.addBoolean("At Target", this::motorsAtTargetVelocity);
-
-            shooterTab.addDouble("Left Supply Current", this::getLeftSupplyCurrent);
-            shooterTab.addDouble("Right Supply Current", this::getRightSupplyCurrent);
-        }
     }
 
     private void applyConfigs() {

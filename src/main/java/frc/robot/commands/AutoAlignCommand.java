@@ -18,7 +18,7 @@ public class AutoAlignCommand extends Command {
     private double kI = 0.2;
     private double kD = 0.02;
 
-    private double kTolerance = 1;
+    private double kTolerance = 0.5;
 
     public AutoAlignCommand(SwerveDrive swerve) {
         this.swerve = swerve;

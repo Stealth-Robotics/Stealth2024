@@ -16,8 +16,8 @@ public class AimAndShootCommand extends SequentialCommandGroup {
     public AimAndShootCommand(SwerveDrive drive, RotatorSubsystem rotator, ShooterSubsystem shooter, IntakeSubsystem intake, DistanceToShotValuesMap distanceToShotValuesMap) {
         addCommands(
                 new ParallelCommandGroup(
-                        new AutoAlignCommand(drive).withTimeout(2),
-                        new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap)).withTimeout(2),
+                        new AutoAlignCommand(drive),
+                        new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap)),
                         new RunCommand(() -> intake.setIntakeSpeed(1), intake)
                                                 .until(() -> !intake.isRingFullyInsideIntake())
                         );
@@ -35,8 +35,8 @@ public class AimAndShootCommand extends SequentialCommandGroup {
     public AimAndShootCommand(SwerveDrive drive, RotatorSubsystem rotator, ShooterSubsystem shooter, IntakeSubsystem intake, DistanceToShotValuesMap distanceToShotValuesMap, DoubleSupplier distanceOffset) {
         addCommands(
                 new ParallelCommandGroup(
-                        new AutoAlignCommand(drive).withTimeout(2),
-                        new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap, distanceOffset)).withTimeout(2),
+                        new AutoAlignCommand(drive),
+                        new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap, distanceOffset)),
                         new RunCommand(() -> intake.setIntakeSpeed(1), intake)
                                                 .until(() -> !intake.isRingFullyInsideIntake())
                         );

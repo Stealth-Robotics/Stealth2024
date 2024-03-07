@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.sql.Driver;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -42,10 +43,10 @@ public class SwerveDrive extends SubsystemBase {
     private final Pose2d RED_GOAL_POSE = new Pose2d(new Translation2d(16.58, 5.55), Rotation2d.fromDegrees(180));
     private final Pose2d BLUE_GOAL_POSE = new Pose2d(new Translation2d(-0.04, 5.55), Rotation2d.fromDegrees(0));
 
-    private final Translation2d RED_GOAL_POSE_ROTATION_TARGET = new Translation2d(16.579342 - Units.inchesToMeters(9.1),
+    private final Translation2d RED_GOAL_POSE_ROTATION_TARGET = new Translation2d(16.579342 - Units.inchesToMeters(12),
             5.547867999999999);
     private final Translation2d BLUE_GOAL_POSE_ROTATION_TARGET = new Translation2d(
-            -0.038099999999999995 + Units.inchesToMeters(9.1), 5.547867999999999);
+            -0.038099999999999995 + Units.inchesToMeters(12), 5.547867999999999);
 
     private Pose2d targetGoalPose;
     private Translation2d targetGoalPoseRotationTarget;
@@ -53,7 +54,7 @@ public class SwerveDrive extends SubsystemBase {
     Field2d field2d;
 
     // Hardcode
-    boolean isRed = false;
+    boolean isRed = true;
 
     private GenericEntry shooterOffset;
 
@@ -285,7 +286,7 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
 
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-        if (limelightMeasurement.tagCount >= 1) {//if (limelightMeasurement.tagCount >= 2) {
+        if (limelightMeasurement.tagCount >= 1 && DriverStation.isTeleop()) {//if (limelightMeasurement.tagCount >= 2) {
             //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement.pose,
