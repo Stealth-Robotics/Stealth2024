@@ -60,8 +60,8 @@ public class SubsystemsToTarget extends Command{
             distanceValue = distanceOffset.getAsDouble();
         }
         if(distance == -1){
-            shooterSpeed = map.getInterpolatedShooterSpeed(drive.getDistanceMetersToGoal() + distanceValue + 0.5);
-            rotationAngle = map.getInterpolatedRotationAngle(drive.getDistanceMetersToGoal() + distanceValue + 0.5);
+            shooterSpeed = map.getInterpolatedShooterSpeed(drive.getDistanceMetersToGoal() + distanceValue);
+            rotationAngle = map.getInterpolatedRotationAngle(drive.getDistanceMetersToGoal() + distanceValue);
         }
         else{
             shooterSpeed = map.getInterpolatedShooterSpeed(distance);

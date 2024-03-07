@@ -298,5 +298,7 @@ public class SwerveDrive extends SubsystemBase {
         // SmartDashboard.putString("Allian", DriverStation.getAlliance().toString());
         SmartDashboard.putNumber("distance", getDistanceMetersToGoal());
         SmartDashboard.putString("Pose", getPose().toString());
+        SmartDashboard.putNumber("heading", getHeadingDegrees());
+        SmartDashboard.putNumber("target", getAngleDegreesToGoal());
     }
 }
