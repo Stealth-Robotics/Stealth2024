@@ -3,14 +3,10 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.StrictFollower;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -84,8 +80,6 @@ public class RotatorSubsystem extends SubsystemBase {
         rotatorMotorOne = new TalonFX(15);
         rotatorMotorTwo = new TalonFX(14);
 
-        motorMode = isHomed ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-
         applyConfigs();
         // throw new UnsupportedOperationException("Test rotator code");
 
@@ -116,15 +110,10 @@ public class RotatorSubsystem extends SubsystemBase {
         ROTATOR_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         ROTATOR_MOTOR_CONFIG.MotorOutput.NeutralMode = motorMode;
 
-        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
-        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyCurrentThreshold = 40;
-        // ROTATOR_MOTOR_CONFIG.CurrentLimits.SupplyTimeThreshold = 0.5;
-
         rotatorMotorOne.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
+        rotatorMotorTwo.getConfigurator().apply(ROTATOR_MOTOR_CONFIG);
 
-        rotatorMotorTwo.setControl(new StrictFollower(14));
-
+        rotatorMotorTwo.setControl(new Follower(rotatorMotorOne.getDeviceID(), false));
     }
 
     // these methods will only be used with the buttons
@@ -256,6 +245,6 @@ public class RotatorSubsystem extends SubsystemBase {
             rotatorState = RotatorState.INSIDE_LIMIT;
         }
 
-        rotatorMotorTwo.setControl(new VoltageOut(rotatorMotorOne.getMotorVoltage().getValueAsDouble()));
+        //rotatorMotorTwo.setControl(new VoltageOut(rotatorMotorOne.getMotorVoltage().getValueAsDouble()));
     }
 }
