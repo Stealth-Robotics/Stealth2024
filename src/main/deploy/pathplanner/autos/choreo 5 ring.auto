@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7815991044044495,
+      "y": 4.391750335693359
+    },
+    "rotation": -61.3895381700155
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup ring source side"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot ring 1 source side"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup ring 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup ring 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot ring 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup middle ring 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot middle ring 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup middle ring 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot middle ring 2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "New Folder",
+  "choreoAuto": true
+}
