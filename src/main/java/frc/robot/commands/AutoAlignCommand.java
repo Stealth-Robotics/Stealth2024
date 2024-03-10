@@ -11,7 +11,7 @@ import frc.robot.util.BetterPID;
 public class AutoAlignCommand extends Command {
 
     private final SwerveDrive swerve;
-    private final PIDController rotationPID;
+    private final BetterPID rotationPID;
 
     // TODO: TUNE CONSTANTS
     private double kP = 0.15;
@@ -22,7 +22,7 @@ public class AutoAlignCommand extends Command {
 
     public AutoAlignCommand(SwerveDrive swerve) {
         this.swerve = swerve;
-        rotationPID = new PIDController(kP, kI, kD);
+        rotationPID = new BetterPID(kP, kI, kD, true);
         rotationPID.setTolerance(kTolerance);
         rotationPID.enableContinuousInput(0, 360);
         addRequirements(swerve);
@@ -39,7 +39,7 @@ public class AutoAlignCommand extends Command {
     @Override
     public void execute() {
         double rotationOutput = rotationPID.calculate(swerve.getHeadingDegrees());
-        swerve.drive(new Translation2d(), rotationOutput, false);
+        swerve.drive(new Translation2d(), rotationOutput, true);
     }
 
     @Override

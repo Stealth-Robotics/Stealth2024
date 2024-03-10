@@ -54,7 +54,7 @@ public class SwerveDrive extends SubsystemBase {
     Field2d field2d;
 
     // Hardcode
-    boolean isRed = false;
+    boolean isRed = true;
 
     private GenericEntry shooterOffset;
 
@@ -78,13 +78,15 @@ public class SwerveDrive extends SubsystemBase {
         resetModulesToAbsolute();
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
-        var visionStdDevs = VecBuilder.fill(1, 1, 1);
+        var visionStdDevs = VecBuilder.fill(0.25, 0.25, 0.25);
 
         swerveOdometry = new SwerveDrivePoseEstimator(
                 SwerveConstants.swerveKinematics,
                 getGyroYaw(),
                 getModulePositions(),
-                new Pose2d());
+                new Pose2d(),
+                stateStdDevs,
+                visionStdDevs);
 
         AutoBuilder.configureHolonomic(
                 this::getPose,
@@ -290,7 +292,7 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
 
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-        if (limelightMeasurement.tagCount >= 1 && DriverStation.isTeleop()) {//if (limelightMeasurement.tagCount >= 2) {
+        if (limelightMeasurement.tagCount >= 2) {//if (limelightMeasurement.tagCount >= 2) {
             //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement.pose,

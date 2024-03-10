@@ -54,6 +54,7 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
                                                                                 new Translation2d(1.8611713162512615,
                                                                                                 4.525530919082143)))
                                                                 .withTimeout(2)),
+                                new WaitCommand(0.5),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new StowPreset(rotator, shooter),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)));

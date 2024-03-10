@@ -14,8 +14,9 @@ public class DistanceToShotValuesMap {
         SHOOTER_INTERPOLATION_MAP.put(1.4, 90.0);
         SHOOTER_INTERPOLATION_MAP.put(3.0, 80.0);
 
-        SHOOTER_INTERPOLATION_MAP.put(4.2, 93.0);
-        SHOOTER_INTERPOLATION_MAP.put(6.1, 93.0);
+        
+        SHOOTER_INTERPOLATION_MAP.put(4.2, 90.0);
+        SHOOTER_INTERPOLATION_MAP.put(6.1, 90.0);
 
 
         // TODO: Add values
@@ -24,14 +25,18 @@ public class DistanceToShotValuesMap {
         ROTATION_INTERPOLATION_MAP.put(1.3, Units.degreesToRotations(27.0));
         ROTATION_INTERPOLATION_MAP.put(1.4, Units.degreesToRotations(27.0));
         ROTATION_INTERPOLATION_MAP.put(1.5, Units.degreesToRotations(30.0));
-        ROTATION_INTERPOLATION_MAP.put(1.9, Units.degreesToRotations(36.0));
-        ROTATION_INTERPOLATION_MAP.put(2.4, Units.degreesToRotations(45.5));
+        ROTATION_INTERPOLATION_MAP.put(1.9, Units.degreesToRotations(37.0));
+        ROTATION_INTERPOLATION_MAP.put(2.2, Units.degreesToRotations(39));
+        ROTATION_INTERPOLATION_MAP.put(2.4, Units.degreesToRotations(43));
 
-        ROTATION_INTERPOLATION_MAP.put(3.0, Units.degreesToRotations(45.0));
+        ROTATION_INTERPOLATION_MAP.put(3.0, Units.degreesToRotations(46.0));
         ROTATION_INTERPOLATION_MAP.put(3.4, Units.degreesToRotations(47.0));
         
         ROTATION_INTERPOLATION_MAP.put(3.8, Units.degreesToRotations(49));
-        ROTATION_INTERPOLATION_MAP.put(5.3, Units.degreesToRotations(51));
+        ROTATION_INTERPOLATION_MAP.put(3.99, Units.degreesToRotations(51.5));
+        ROTATION_INTERPOLATION_MAP.put(4.3, Units.degreesToRotations(51.5));
+        ROTATION_INTERPOLATION_MAP.put(4.6, Units.degreesToRotations(51.5));
+        ROTATION_INTERPOLATION_MAP.put(5.3, Units.degreesToRotations(52));
         
     }
 

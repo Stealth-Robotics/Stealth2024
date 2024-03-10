@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7815991044044495,
-      "y": 4.391750335693359
+      "x": 1.380865454673767,
+      "y": 5.46963357925415
     },
-    "rotation": -61.3895381700155
+    "rotation": 7.369151869667181e-27
   },
   "command": {
     "type": "sequential",
@@ -14,19 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "pickup ring source side"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "shoot ring 1 before pickup"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "pickup ring 2"
+            "pathName": "center pickup ring 1"
           }
         },
         {
@@ -63,6 +51,18 @@
           "type": "path",
           "data": {
             "pathName": "shoot middle ring 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup middle ring 3 from left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot middle ring 3 from chain"
           }
         }
       ]

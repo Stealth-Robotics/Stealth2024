@@ -113,7 +113,7 @@ public class RobotContainer {
         .alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
 
     new Trigger(driverController.rightBumper()).onTrue(
-        new AmpPresetCommand(rotatorSubsystem, shooter));
+        new AmpPresetCommand(rotatorSubsystem, shooter,  intake));
 
     // new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
     // rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(),
