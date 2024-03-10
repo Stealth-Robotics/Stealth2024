@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7815991044044495,
+      "y": 4.391750335693359
+    },
+    "rotation": -61.3895381700155
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "subwoofer to middle ring 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "drive to shoot middle ring 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup middle ring 3.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot middle ring 3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "New Folder",
+  "choreoAuto": true
+}

@@ -243,6 +243,10 @@ public class SwerveDrive extends SubsystemBase {
         return AutoBuilder.followPath(path);
     }
 
+    public Command followPathCommand(PathPlannerPath path, boolean initialPath) {
+        return AutoBuilder.followPath(path);
+    }
+
     private Pose2d getTargetGoalPose() {
         return targetGoalPose;
     }

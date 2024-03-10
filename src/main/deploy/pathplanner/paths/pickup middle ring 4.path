@@ -12,7 +12,7 @@
         "y": 3.850451721208011
       },
       "isLocked": false,
-      "linkedName": "shoot ring"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -61,7 +61,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -27.597295868643638,
+    "rotation": -41.3785152958826,
     "velocity": 0
   },
   "useDefaultConstraints": true
