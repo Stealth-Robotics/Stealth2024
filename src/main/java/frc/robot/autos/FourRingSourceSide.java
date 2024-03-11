@@ -57,8 +57,6 @@ public class FourRingSourceSide extends SequentialCommandGroup {
                                                                                 .withTimeout(2.5),
                                                                 new InstantCommand(() -> intake.setIntakeSpeed(0))),
                                                 rotator.rotateToPositionCommand(0)),
-                                new WaitCommand(0.25),
-                                new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),

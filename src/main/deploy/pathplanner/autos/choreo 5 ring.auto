@@ -52,18 +52,6 @@
           "data": {
             "pathName": "shoot middle ring 1"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "pickup middle ring 2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "shoot middle ring 2"
-          }
         }
       ]
     }
