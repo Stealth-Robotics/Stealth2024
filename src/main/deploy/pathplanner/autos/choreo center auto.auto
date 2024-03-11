@@ -5,7 +5,7 @@
       "x": 1.380865454673767,
       "y": 5.46963357925415
     },
-    "rotation": 7.369151869667181e-27
+    "rotation": -1.3396712592464522e-32
   },
   "command": {
     "type": "sequential",
@@ -51,18 +51,6 @@
           "type": "path",
           "data": {
             "pathName": "shoot middle ring 2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "pickup middle ring 3 from left"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "shoot middle ring 3 from chain"
           }
         }
       ]

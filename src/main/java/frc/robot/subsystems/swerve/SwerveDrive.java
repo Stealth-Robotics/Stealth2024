@@ -4,6 +4,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import java.nio.file.Path;
 import java.sql.Driver;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -232,6 +233,16 @@ public class SwerveDrive extends SubsystemBase {
     public void setInitialPose(String pathName) {
 
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+        if (isRed().getAsBoolean()) {
+            setPose(GeometryUtil.flipFieldPose(path.getPreviewStartingHolonomicPose()));
+        } else {
+            setPose(path.getPreviewStartingHolonomicPose());
+        }
+    }
+
+    public void setInitialPose(PathPlannerPath startPath) {
+
+        PathPlannerPath path = startPath;
         if (isRed().getAsBoolean()) {
             setPose(GeometryUtil.flipFieldPose(path.getPreviewStartingHolonomicPose()));
         } else {
