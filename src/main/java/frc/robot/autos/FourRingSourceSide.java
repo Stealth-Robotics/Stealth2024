@@ -32,7 +32,7 @@ public class FourRingSourceSide extends SequentialCommandGroup {
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new FollowPathAndIntake(swerve, intake, rotator,
-                                                PathPlannerPath.fromChoreoTrajectory("right pickup first ring"), true),
+                                                PathPlannerPath.fromChoreoTrajectory("pickup ring source side"), true),
                                 new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
                                                 PathPlannerPath.fromChoreoTrajectory("shoot ring 1 before pickup"),
                                                 isScheduled(), new Translation2d(1.772, 4.909)),

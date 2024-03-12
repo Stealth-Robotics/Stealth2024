@@ -65,7 +65,7 @@ public class RotatorSubsystem extends SubsystemBase {
     // this is a tolerance of 1 degree
     private final double kTOLERANCE = Units.degreesToRotations(0.75);
 
-    private final double MOTION_MAGIC_JERK = 6;
+    private final double MOTION_MAGIC_JERK = 7.5;
     private double MOTION_MAGIC_ACCELERATION = 2;
     private double MOTION_MAGIC_CRUISE_VELOCITY = 0.6;
 

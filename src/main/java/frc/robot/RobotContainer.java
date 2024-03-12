@@ -67,7 +67,8 @@ public class RobotContainer {
     autoChooser.addOption("Four ring source side",
         new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
     autoChooser.addOption("nothini", new InstantCommand());
-    autoChooser.addOption("center two ring", new CenterTwoRing(swerveSubsystem, rotatorSubsystem, shooter, intake));
+    // autoChooser.addOption("center two ring", new CenterTwoRing(swerveSubsystem, rotatorSubsystem, shooter, intake));
+    autoChooser.addOption("center", new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
     SmartDashboard.putData("auto", autoChooser);
 
     // Command Suppliers

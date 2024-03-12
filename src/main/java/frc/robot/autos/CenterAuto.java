@@ -37,10 +37,23 @@ public class CenterAuto extends SequentialCommandGroup {
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new FollowPathAndIntake(swerve, intake, rotator,
                                                 PathPlannerPath.fromChoreoTrajectory("pickup ring 3"), false),
-                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map, PathPlannerPath.fromChoreoTrajectory("shoot ring 3"), isScheduled(), new Translation2d(2.358, 6.213)),
+                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
+                                                PathPlannerPath.fromChoreoTrajectory("shoot ring 3"), isScheduled(),
+                                                new Translation2d(2.358, 6.213)),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
-                                new InstantCommand(() -> intake.setIntakeSpeed(0))
-                                
+                                new InstantCommand(() -> intake.setIntakeSpeed(0)),
+                                new ParallelCommandGroup(
+                                                new FollowPathAndIntake(swerve, intake, rotator,
+                                                                PathPlannerPath.fromChoreoTrajectory(
+                                                                                "pickup middle ring 1"),
+                                                                false),
+                                                new InstantCommand(() -> shooter.stopShooterMotors())),
+                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
+                                                PathPlannerPath.fromChoreoTrajectory("shoot middle ring 1"), false,
+                                                new Translation2d(2.6544923782348633, 6.280165195465088)),
+                                new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
+                                new InstantCommand(() -> intake.setIntakeSpeed(0)),
+                                new StowPreset(rotator, shooter)
 
                 );
         }
