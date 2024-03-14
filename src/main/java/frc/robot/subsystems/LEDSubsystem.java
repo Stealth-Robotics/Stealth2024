@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.time.Instant;
 import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.led.Animation;
@@ -34,7 +35,8 @@ public class LEDSubsystem extends SubsystemBase {
 
     BooleanSupplier hasRingSupplier;
 
-    public LEDSubsystem(BooleanSupplier isHomedSupplier, BooleanSupplier isBrakeModeSupplier, BooleanSupplier hasRingSupplier) {
+    public LEDSubsystem(BooleanSupplier isHomedSupplier, BooleanSupplier isBrakeModeSupplier,
+            BooleanSupplier hasRingSupplier) {
 
         this.isHomeBooleanSupplier = isHomedSupplier;
         this.isBrakeModeSupplier = isBrakeModeSupplier;
@@ -92,8 +94,13 @@ public class LEDSubsystem extends SubsystemBase {
         animate(new StrobeAnimation(255, 0, 100, 0, 0.2, LED_COUNT));
     }
 
+    private void seesRing() {
+        // Change to SingleFadeAnimation if StrobeAnimation is too bright
+        animate(new StrobeAnimation(76, 214, 252, 0, 0.2, LED_COUNT));
+    }
+
     // private void hasRing() {
-    //     setRGB(0, 255, 0);
+    // setRGB(0, 255, 0);
     // }
 
     public void idle() {
@@ -120,23 +127,29 @@ public class LEDSubsystem extends SubsystemBase {
 
     public Command updateDisabledLEDsCommand() {
         return new InstantCommand(
-            () -> updateDisabledLEDs(), 
-            this
-        ).ignoringDisable(true);
+                () -> updateDisabledLEDs(),
+                this).ignoringDisable(true);
     }
 
     public Command blinkForRingCommand() {
         return new SequentialCommandGroup(
-            new InstantCommand(
-                () -> gainedRing(), 
-                this
-            ),
-            new WaitCommand(2.5),
-            idleCommand());
+                new InstantCommand(
+                        () -> gainedRing(),
+                        this),
+                new WaitCommand(2.5),
+                idleCommand());
     }
 
-    public Command idleCommand()
-    {
+    public Command seesRingCommand() {
+        return new SequentialCommandGroup(
+                new InstantCommand(
+                        () -> seesRing(),
+                        this),
+                new WaitCommand(1.5),
+                idleCommand());
+    }
+
+    public Command idleCommand() {
         return new InstantCommand(() -> idle(), this);
     }
 
