@@ -103,7 +103,7 @@ public class SwerveDrive extends SubsystemBase {
                 () -> {
 
                     
-                    return isRed;
+                    return DriverStation.getAlliance().get() == Alliance.Red;
                 },
                 this);
 
@@ -120,10 +120,11 @@ public class SwerveDrive extends SubsystemBase {
     // }
 
     public BooleanSupplier isRed() {
-        return () -> isRed;
+        return () -> DriverStation.getAlliance().get() == Alliance.Red;
     }
 
     public void setTargetGoal() {
+        isRed = DriverStation.getAlliance().get() == Alliance.Red;
         targetGoalPose = isRed
                 ? RED_GOAL_POSE
                 : BLUE_GOAL_POSE;
