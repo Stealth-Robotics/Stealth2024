@@ -299,15 +299,35 @@ public class SwerveDrive extends SubsystemBase {
         return () -> shooterOffset.getDouble(0);
     }
 
+    public double getTx(){
+        return LimelightHelpers.getTX("limelight-driver");
+    }
+
     @Override
     public void periodic() {
 
-        LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-main");
+        LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+        LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
         if (limelightMeasurement.tagCount >= 2) {//if (limelightMeasurement.tagCount >= 2) {
             //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement.pose,
                     limelightMeasurement.timestampSeconds);
+        }
+
+        if (limelightMeasurement1.tagCount >= 2) {//if (limelightMeasurement.tagCount >= 2) {
+            //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+            swerveOdometry.addVisionMeasurement(
+                    limelightMeasurement1.pose,
+                    limelightMeasurement1.timestampSeconds);
+        }
+
+        if (limelightMeasurement2.tagCount >= 2) {//if (limelightMeasurement.tagCount >= 2) {
+            //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+            swerveOdometry.addVisionMeasurement(
+                    limelightMeasurement2.pose,
+                    limelightMeasurement2.timestampSeconds);
         }
 
         swerveOdometry.update(getGyroYaw(), getModulePositions());
@@ -318,5 +338,6 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putString("Pose", getPose().toString());
         SmartDashboard.putNumber("heading", getHeadingDegrees());
         SmartDashboard.putNumber("target", getAngleDegreesToGoal());
+        System.out.println(getTx());
     }
 }
