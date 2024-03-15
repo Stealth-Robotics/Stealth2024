@@ -15,10 +15,10 @@ public class AlignToRing extends Command {
 
     // TODO: TUNE CONSTANTS
     private double kP = 0.075;
-    private double kI = 0.005;
-    private double kD = 0;
+    private double kI = 0.01;
+    private double kD = 0.05;
 
-    private double kTolerance = 0.5;
+    private double kTolerance = 2.5;
 
     public AlignToRing(SwerveDrive swerve) {
         this.swerve = swerve;
@@ -43,12 +43,13 @@ public class AlignToRing extends Command {
 
     @Override
     public boolean isFinished() {
-        return rotationPID.atSetpoint();
+        return rotationPID.atSetpoint() ;
     }
 
     @Override
     public void end(boolean interrupted) {
         swerve.drive(new Translation2d(), 0, false);
+
     }
 
 }

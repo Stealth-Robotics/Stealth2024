@@ -100,27 +100,32 @@ public class SwerveDrive extends SubsystemBase {
                         SwerveConstants.maxSpeed,
                         Math.hypot(SwerveConstants.trackWidth / 2.0, SwerveConstants.wheelBase / 2.0),
                         new ReplanningConfig()),
-                () -> {
-
-                    
-                    return DriverStation.getAlliance().get() == Alliance.Red;
-                },
+                isRed(),
                 this);
 
-        setTargetGoal();
+        // setTargetGoal();
 
-        // setCurrentAlliance();
+        setCurrentAlliance();
     }
 
-    // public void setCurrentAlliance() {
-    // isRed = DriverStation.getAlliance().isPresent() &&
-    // DriverStation.getAlliance().get() == Alliance.Red;
+    public void setCurrentAlliance() {
 
-    // setTargetGoal();
-    // }
+        if(DriverStation.getAlliance().isPresent())
+        {
+            isRed = DriverStation.getAlliance().get() == Alliance.Red;
+            
+        }
+
+        else {
+            isRed = false;
+        }
+                
+
+        setTargetGoal();
+    }
 
     public BooleanSupplier isRed() {
-        return () -> DriverStation.getAlliance().get() == Alliance.Red;
+        return () -> isRed;
     }
 
     public void setTargetGoal() {
@@ -300,32 +305,40 @@ public class SwerveDrive extends SubsystemBase {
         return () -> shooterOffset.getDouble(0);
     }
 
-    public double getTx(){
+    public double getTx() {
         return LimelightHelpers.getTX("limelight-driver");
+    }
+
+    public boolean seesNote()
+    {
+        return LimelightHelpers.getTV("limelight-driver");
     }
 
     @Override
     public void periodic() {
 
-        LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-main");
-        LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
-        LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
-        if (limelightMeasurement.tagCount >= 2) {//if (limelightMeasurement.tagCount >= 2) {
-            //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+        LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers
+                .getBotPoseEstimate_wpiBlue("limelight-main");
+        LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers
+                .getBotPoseEstimate_wpiBlue("limelight-left");
+        LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers
+                .getBotPoseEstimate_wpiBlue("limelight-right");
+        if (limelightMeasurement.tagCount >= 2) {// if (limelightMeasurement.tagCount >= 2) {
+            // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement.pose,
                     limelightMeasurement.timestampSeconds);
         }
 
-        if (limelightMeasurement1.tagCount >= 2) {//if (limelightMeasurement.tagCount >= 2) {
-            //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+        if (limelightMeasurement1.tagCount >= 2) {// if (limelightMeasurement.tagCount >= 2) {
+            // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement1.pose,
                     limelightMeasurement1.timestampSeconds);
         }
 
-        if (limelightMeasurement2.tagCount >= 2) {//if (limelightMeasurement.tagCount >= 2) {
-            //swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+        if (limelightMeasurement2.tagCount >= 2) {// if (limelightMeasurement.tagCount >= 2) {
+            // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement2.pose,
                     limelightMeasurement2.timestampSeconds);
@@ -339,6 +352,5 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putString("Pose", getPose().toString());
         SmartDashboard.putNumber("heading", getHeadingDegrees());
         SmartDashboard.putNumber("target", getAngleDegreesToGoal());
-        System.out.println(getTx());
     }
 }
