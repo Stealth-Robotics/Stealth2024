@@ -18,8 +18,8 @@ public class AimAndShootCommand extends SequentialCommandGroup {
                 addCommands(
                                 new ParallelCommandGroup(
                                                 new SequentialCommandGroup(
-                                                                new AlignToRing(drive),
-                                                                new AlignToRing(drive)),
+                                                                new AutoAlignCommand(drive),
+                                                                new AutoAlignCommand(drive)),
 
                                                 new ReadyShooter(shooter, rotator, intake, drive,
                                                                 distanceToShotValuesMap)),
@@ -43,9 +43,13 @@ public class AimAndShootCommand extends SequentialCommandGroup {
                         DoubleSupplier distanceOffset) {
                 addCommands(
                                 new ParallelCommandGroup(
-                                                new AlignToRing(drive),
+                                                new SequentialCommandGroup(
+                                                                new AutoAlignCommand(drive),
+                                                                new AutoAlignCommand(drive)),
                                                 new ReadyShooter(shooter, rotator, intake, drive,
                                                                 distanceToShotValuesMap, distanceOffset)),
+                                new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap,
+                                                distanceOffset),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake)
                                                 .until(() -> !intake.isRingFullyInsideIntake()));
         }
