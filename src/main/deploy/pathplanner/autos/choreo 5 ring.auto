@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7815991044044495,
-      "y": 4.391750335693359
+      "x": 1.380865454673767,
+      "y": 5.47
     },
-    "rotation": -61.3895381700155
+    "rotation": -7.0632024941535965e-28
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "pickup ring source side"
+            "pathName": "pickup ring middle"
           }
         },
         {
