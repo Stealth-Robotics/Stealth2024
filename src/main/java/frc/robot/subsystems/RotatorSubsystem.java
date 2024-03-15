@@ -258,8 +258,6 @@ public class RotatorSubsystem extends SubsystemBase {
         else {
             rotatorState = RotatorState.INSIDE_LIMIT;
         }
-        System.out.println(getAmpOutIntake().getAsBoolean());
-
         // rotatorMotorTwo.setControl(new
         // VoltageOut(rotatorMotorOne.getMotorVoltage().getValueAsDouble()));
     }
