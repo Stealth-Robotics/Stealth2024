@@ -21,18 +21,18 @@ import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
-public class FourRingSourceSide extends SequentialCommandGroup {
+public class CenterFiveRing extends SequentialCommandGroup {
         DistanceToShotValuesMap map = new DistanceToShotValuesMap();
 
-        public FourRingSourceSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
+        public CenterFiveRing(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
                 addCommands(
-                                new InstantCommand(() -> swerve.setInitialPose("right pickup first ring")),
+                                new InstantCommand(() -> swerve.setInitialPose("pickup ring middle")),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new FollowPathAndIntake(swerve, intake, rotator,
-                                                PathPlannerPath.fromChoreoTrajectory("pickup ring source side"), true),
+                                                PathPlannerPath.fromChoreoTrajectory("pickup ring middle"), true),
                                 new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
                                                 PathPlannerPath.fromChoreoTrajectory("shoot ring 1 before pickup"),
                                                 isScheduled(), new Translation2d(1.772, 4.909)),

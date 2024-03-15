@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.autos.CenterTwoRing;
 import frc.robot.autos.CenterAuto;
+import frc.robot.autos.CenterFiveRing;
 import frc.robot.autos.ThreeRingAmpSide;
 import frc.robot.autos.ThreeRingRightSide;
 import frc.robot.autos.TwoRingSourceSide;
@@ -69,11 +70,12 @@ public class RobotContainer {
                                 new TwoRingSourceSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
                 autoChooser.addOption("Three ring amp side",
                                 new ThreeRingAmpSide(swerveSubsystem, rotatorSubsystem, shooter, intake));
-                autoChooser.addOption("Four ring source side",
+                autoChooser.addOption("Center 4 ring",
                                 new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
+                autoChooser.addOption("center 5 ring",
+                                new CenterFiveRing(swerveSubsystem, rotatorSubsystem, shooter, intake));
                 autoChooser.addOption("nothini", new InstantCommand());
-                // autoChooser.addOption("center two ring", new CenterTwoRing(swerveSubsystem,
-                // rotatorSubsystem, shooter, intake));
+
                 autoChooser.addOption("center", new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
                 autoChooser.addOption("test", new PrintCommand(swerveSubsystem.isRed().toString()));
                 SmartDashboard.putData("auto", autoChooser);
