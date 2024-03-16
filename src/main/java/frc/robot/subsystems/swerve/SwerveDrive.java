@@ -103,33 +103,33 @@ public class SwerveDrive extends SubsystemBase {
                 isRed(),
                 this);
 
-        // setTargetGoal();
+        setTargetGoal();
 
-        setCurrentAlliance();
+        //setCurrentAlliance();
     }
 
-    public void setCurrentAlliance() {
+    // public void setCurrentAlliance() {
 
-        if(DriverStation.getAlliance().isPresent())
-        {
-            isRed = DriverStation.getAlliance().get() == Alliance.Red;
+    //     if(DriverStation.getAlliance().isPresent())
+    //     {
+    //         isRed = DriverStation.getAlliance().get() == Alliance.Red;
             
-        }
+    //     }
 
-        else {
-            isRed = false;
-        }
+    //     else {
+    //         isRed = false;
+    //     }
                 
 
-        setTargetGoal();
-    }
+    //     setTargetGoal();
+    // }
 
     public BooleanSupplier isRed() {
         return () -> isRed;
     }
 
     public void setTargetGoal() {
-        isRed = DriverStation.getAlliance().get() == Alliance.Red;
+        //isRed = DriverStation.getAlliance().get() == Alliance.Red;
         targetGoalPose = isRed
                 ? RED_GOAL_POSE
                 : BLUE_GOAL_POSE;
@@ -319,30 +319,25 @@ public class SwerveDrive extends SubsystemBase {
 
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue("limelight-main");
-        LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers
-                .getBotPoseEstimate_wpiBlue("limelight-left");
-        LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers
-                .getBotPoseEstimate_wpiBlue("limelight-right");
-        if (limelightMeasurement.tagCount >= 2) {// if (limelightMeasurement.tagCount >= 2) {
+        // LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers
+        //         .getBotPoseEstimate_wpiBlue("limelight-left");
+        // LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers
+        //         .getBotPoseEstimate_wpiBlue("limelight-right");
+        
+
+        if (limelightMeasurement.tagCount >= 2 && DriverStation.isTeleopEnabled()) {// if (limelightMeasurement.tagCount >= 2) {
             // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement.pose,
                     limelightMeasurement.timestampSeconds);
         }
 
-        if (limelightMeasurement1.tagCount >= 2) {// if (limelightMeasurement.tagCount >= 2) {
-            // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-            swerveOdometry.addVisionMeasurement(
-                    limelightMeasurement1.pose,
-                    limelightMeasurement1.timestampSeconds);
-        }
-
-        if (limelightMeasurement2.tagCount >= 2) {// if (limelightMeasurement.tagCount >= 2) {
-            // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-            swerveOdometry.addVisionMeasurement(
-                    limelightMeasurement2.pose,
-                    limelightMeasurement2.timestampSeconds);
-        }
+        // if (limelightMeasurement2.tagCount >= 2 && DriverStation.isTeleopEnabled()) {// if (limelightMeasurement.tagCount >= 2) {
+        //     // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+        //     swerveOdometry.addVisionMeasurement(
+        //             limelightMeasurement2.pose,
+        //             limelightMeasurement2.timestampSeconds);
+        //}
 
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 

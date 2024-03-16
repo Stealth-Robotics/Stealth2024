@@ -87,8 +87,8 @@ public class RotatorSubsystem extends SubsystemBase {
 
         ampOutIntake = Shuffleboard.getTab("SmartDashboard").add("amp out intake?", false)
                 .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-        rotatorMotorOne = new TalonFX(15);
-        rotatorMotorTwo = new TalonFX(14);
+        rotatorMotorOne = new TalonFX(14);
+        rotatorMotorTwo = new TalonFX(15);
 
         applyConfigs();
         // throw new UnsupportedOperationException("Test rotator code");

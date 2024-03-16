@@ -24,35 +24,34 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
         public ThreeRingRightSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
                 addCommands(
-                                new InstantCommand(() -> swerve.setInitialPose("right pickup first ring")),
+                                new InstantCommand(() -> swerve.setInitialPose("right ring")),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map).withTimeout(1.5),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new ParallelCommandGroup(
                                                 swerve.followPathCommand(PathPlannerPath
-                                                                .fromChoreoTrajectory("pickup ring source side"), true),
+                                                                .fromPathFile("right ring"), true),
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(0.1),
                                 swerve.followPathCommand(
-                                                PathPlannerPath.fromChoreoTrajectory("shoot ring 1 source side"),
+                                                PathPlannerPath.fromPathFile("shoot right first ring"),
                                                 false),
                                 new ReadyShooter(shooter, rotator, intake, swerve, map).withTimeout(1.5),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
                                                 swerve.followPathCommand(PathPlannerPath
-                                                                .fromChoreoTrajectory("pickup middle ring 4"), false),
+                                                                .fromPathFile("pickup middle ring 4"), false),
                                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(0.25),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand(PathPlannerPath.fromChoreoTrajectory(
-                                                                "drive to shoot middle ring 4"), false),
+                                                swerve.followPathCommand(PathPlannerPath.fromPathFile(
+                                                                "middle to shoot variation"), false),
                                                 new ReadyShooter(shooter, rotator, intake, swerve, map,
                                                                 swerve.getDistanceMetersToGoal(
-                                                                                new Translation2d(1.8611713162512615,
-                                                                                                4.525530919082143)))
+                                                                                new Translation2d(1.92,4.28)))
                                                                 .withTimeout(2)),
                                 new WaitCommand(0.5),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),

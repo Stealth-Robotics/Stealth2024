@@ -44,8 +44,9 @@ public class AimAndShootCommand extends SequentialCommandGroup {
                 addCommands(
                                 new ParallelCommandGroup(
                                                 new SequentialCommandGroup(
-                                                                new AutoAlignCommand(drive),
-                                                                new AutoAlignCommand(drive)),
+                                                                new AutoAlignCommand(drive)
+                                                                // new AutoAlignCommand(drive)
+                                                                ),
                                                 new ReadyShooter(shooter, rotator, intake, drive,
                                                                 distanceToShotValuesMap, distanceOffset)),
                                 new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap,

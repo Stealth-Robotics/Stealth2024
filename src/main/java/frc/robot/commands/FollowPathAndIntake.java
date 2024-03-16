@@ -18,7 +18,7 @@ public class FollowPathAndIntake extends ParallelCommandGroup{
             drive.followPathCommand(path, isInitial),
             new SequentialCommandGroup(
                 new InstantCommand(() -> intakeSubsystem.setIntakeSpeed(1)),
-                new WaitUntilCommand(() -> intakeSubsystem.isRingFullyInsideIntake()).withTimeout(2.5),
+                new WaitUntilCommand(() -> intakeSubsystem.isRingAtFrontOfIntake()).withTimeout(2.5),
                 new InstantCommand(() -> intakeSubsystem.setIntakeSpeed(0))
             ),
             rotatorSubsystem.rotateToPositionCommand(0)

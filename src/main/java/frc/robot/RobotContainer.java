@@ -15,6 +15,7 @@ import frc.robot.commands.AlignToRing;
 import frc.robot.commands.AmpPresetCommand;
 import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
+import frc.robot.commands.Subwoofershot;
 import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
@@ -40,6 +41,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -77,7 +79,9 @@ public class RobotContainer {
                 autoChooser.addOption("nothini", new InstantCommand());
 
                 autoChooser.addOption("center", new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
-                autoChooser.addOption("test", new PrintCommand(swerveSubsystem.isRed().toString()));
+                autoChooser.addOption("test", new SequentialCommandGroup(
+                                new InstantCommand(() -> swerveSubsystem.setInitialPose("testPath")),
+                                swerveSubsystem.followPathCommand("testPath", false)));
                 SmartDashboard.putData("auto", autoChooser);
 
                 // Command Suppliers
@@ -118,18 +122,26 @@ public class RobotContainer {
                 new Trigger(swerveHeadingResetBooleanSupplier)
                                 .onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
+                // new Trigger(driverController.leftBumper())
+                // .onTrue(new ReadyShooter(shooter, rotatorSubsystem, intake, swerveSubsystem,
+                // distanceToShotValuesMap,
+                // 1.4))
+                // .onFalse(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter,
+                // intake,
+                // distanceToShotValuesMap,
+                // swerveSubsystem.getDistanceOffsetSupplier())
+                // .andThen(new ScheduleCommand(
+                // new StowPreset(rotatorSubsystem, shooter))));
                 new Trigger(driverController.leftBumper())
-                                .onTrue(new ReadyShooter(shooter, rotatorSubsystem, intake, swerveSubsystem,
-                                                distanceToShotValuesMap,
-                                                1.4))
-                                .onFalse(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake,
+                                .onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake,
                                                 distanceToShotValuesMap,
                                                 swerveSubsystem.getDistanceOffsetSupplier())
-                                                .andThen(new ScheduleCommand(
-                                                                new StowPreset(rotatorSubsystem, shooter))));
+                                                .andThen(new StowPreset(rotatorSubsystem, shooter)));
 
                 new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors())
                                 .alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
+
+                new Trigger(driverController.povUp()).onTrue(new InstantCommand(() -> rotatorSubsystem.resetEncoder()));
 
                 new Trigger(driverController.rightBumper()).onTrue(
                                 new ConditionalCommand(
@@ -144,8 +156,7 @@ public class RobotContainer {
                 // subwoofer shot
                 new Trigger(driverController.y()).onTrue(
                                 new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake,
-                                                distanceToShotValuesMap,
-                                                1.4));
+                                                distanceToShotValuesMap, 1.4));
 
                 new Trigger(driverController.x()).whileTrue(new AlignToRing(swerveSubsystem));
 
@@ -176,7 +187,7 @@ public class RobotContainer {
         }
 
         public void onInit() {
-                swerveSubsystem.setCurrentAlliance();
+                // swerveSubsystem.setCurrentAlliance();
                 rotatorSubsystem.setMotorsToCoast();
                 rotatorSubsystem.holdCurrentPosition();
                 shooter.stopShooterMotors();

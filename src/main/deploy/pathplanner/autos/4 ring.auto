@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7718906104478876,
-      "y": 4.442350351367369
+      "x": 1.3950925173499227,
+      "y": 5.463126086394522
     },
-    "rotation": -58.52316065041602
+    "rotation": 1.0609116902641973
   },
   "command": {
     "type": "sequential",
@@ -39,6 +39,18 @@
           "type": "path",
           "data": {
             "pathName": "shoot left ring"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "pickup middle ring 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot middle ring 2"
           }
         }
       ]

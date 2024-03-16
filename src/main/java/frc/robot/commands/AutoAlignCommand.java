@@ -14,9 +14,9 @@ public class AutoAlignCommand extends Command {
     private final BetterPID rotationPID;
 
     // TODO: TUNE CONSTANTS
-    private double kP = 0.15;
+    private double kP = 0.1;
     private double kI = 0.2;
-    private double kD = 0.02;
+    private double kD = 0.0;
 
     private double kTolerance = 0.5;
 
