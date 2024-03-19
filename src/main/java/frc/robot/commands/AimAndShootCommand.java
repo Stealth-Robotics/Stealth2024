@@ -24,7 +24,7 @@ public class AimAndShootCommand extends SequentialCommandGroup {
                                                 new ReadyShooter(shooter, rotator, intake, drive,
                                                                 distanceToShotValuesMap)),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake)
-                                                .until(() -> !intake.isRingFullyInsideIntake()));
+                                                .withTimeout(1.5));
         }
 
         public AimAndShootCommand(SwerveDrive drive, RotatorSubsystem rotator, ShooterSubsystem shooter,
@@ -32,10 +32,9 @@ public class AimAndShootCommand extends SequentialCommandGroup {
                 addCommands(
                                 new ParallelCommandGroup(
                                                 new ReadyShooter(shooter, rotator, intake, drive,
-                                                                distanceToShotValuesMap, distance))
-                                                .withTimeout(1.5),
+                                                                distanceToShotValuesMap, distance)),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake)
-                                                .withTimeout(1.0));
+                                                .withTimeout(1.5));
         }
 
         public AimAndShootCommand(SwerveDrive drive, RotatorSubsystem rotator, ShooterSubsystem shooter,
@@ -48,11 +47,9 @@ public class AimAndShootCommand extends SequentialCommandGroup {
                                                                 // new AutoAlignCommand(drive)
                                                                 ),
                                                 new ReadyShooter(shooter, rotator, intake, drive,
-                                                                distanceToShotValuesMap, distanceOffset)),
-                                new ReadyShooter(shooter, rotator, intake, drive, distanceToShotValuesMap,
-                                                distanceOffset),
+                                                                distanceToShotValuesMap, distanceOffset).withTimeout(2)),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake)
-                                                .until(() -> !intake.isRingFullyInsideIntake()));
+                                                .withTimeout(1.5));
         }
 
 }

@@ -10,13 +10,13 @@ public class DistanceToShotValuesMap {
     public DistanceToShotValuesMap()
     {
         // TODO: Add values
-        SHOOTER_INTERPOLATION_MAP.put(0.0, 90.0);
-        SHOOTER_INTERPOLATION_MAP.put(1.4, 90.0);
+        SHOOTER_INTERPOLATION_MAP.put(0.0, 80.0);
+        SHOOTER_INTERPOLATION_MAP.put(1.4, 80.0);
         SHOOTER_INTERPOLATION_MAP.put(3.0, 80.0);
 
         
-        SHOOTER_INTERPOLATION_MAP.put(4.2, 90.0);
-        SHOOTER_INTERPOLATION_MAP.put(6.1, 90.0);
+        SHOOTER_INTERPOLATION_MAP.put(4.2, 80.0);
+        SHOOTER_INTERPOLATION_MAP.put(6.1, 80.0);
 
 
         // TODO: Add values

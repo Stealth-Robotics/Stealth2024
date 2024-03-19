@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -76,7 +77,7 @@ public class RobotContainer {
                                 new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
                 autoChooser.addOption("center 5 ring",
                                 new CenterFiveRing(swerveSubsystem, rotatorSubsystem, shooter, intake));
-                autoChooser.addOption("nothini", new InstantCommand());
+                autoChooser.addOption("nothing", new InstantCommand());
 
                 autoChooser.addOption("center", new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
                 autoChooser.addOption("test", new SequentialCommandGroup(
@@ -133,15 +134,16 @@ public class RobotContainer {
                 // .andThen(new ScheduleCommand(
                 // new StowPreset(rotatorSubsystem, shooter))));
                 new Trigger(driverController.leftBumper())
-                                .onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake,
-                                                distanceToShotValuesMap,
-                                                swerveSubsystem.getDistanceOffsetSupplier())
-                                                .andThen(new StowPreset(rotatorSubsystem, shooter)));
+                                .onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake, distanceToShotValuesMap));
 
                 new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors())
                                 .alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
 
+
+
                 new Trigger(driverController.povUp()).onTrue(new InstantCommand(() -> rotatorSubsystem.resetEncoder()));
+
+                new Trigger(driverController.x()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(50)));
 
                 new Trigger(driverController.rightBumper()).onTrue(
                                 new ConditionalCommand(

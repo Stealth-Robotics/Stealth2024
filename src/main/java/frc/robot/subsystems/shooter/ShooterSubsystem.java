@@ -27,7 +27,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double MOTION_MAGIC_ACCELERATION = 400;
     private double MOTION_MAGIC_JERK = 0.0;
 
-    public final double SPIN_CONSTANT = 0.75;
+    public final double SPIN_CONSTANT = 0.7;
 
     private final MotionMagicVelocityVoltage leftMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0, 0,
             false, 0, 0, false, false, false);
@@ -188,6 +188,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumberArray("shooter values",
                 new Double[] { leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity });
+
+                SmartDashboard.putNumber("velo", leftMotor.getVelocity().getValueAsDouble());
+                SmartDashboard.putNumber("velo target", leftMotionMagicVelocityVoltage.Velocity);
+
 
     }
 }

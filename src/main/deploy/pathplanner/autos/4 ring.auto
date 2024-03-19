@@ -14,19 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "right pickup first ring"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "shoot right first ring"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "middle ring pickup"
+            "pathName": "center pickup 1"
           }
         },
         {
