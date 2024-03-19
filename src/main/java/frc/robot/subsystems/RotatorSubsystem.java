@@ -52,12 +52,12 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 15.5;
+    private double kV = 15;
     private double kG = 0.3;
 
-    private double kP = 120;
-    private double kI = 90;
-    private double kD = 20;
+    private double kP = 10;
+    private double kI = 0;
+    private double kD = 1;
 
     private DigitalInput homeButton = new DigitalInput(0);
     private DigitalInput toggleMotorModeButton = new DigitalInput(1);
@@ -70,9 +70,9 @@ public class RotatorSubsystem extends SubsystemBase {
     // this is a tolerance of 1 degree
     private final double kTOLERANCE = Units.degreesToRotations(0.75);
 
-    private final double MOTION_MAGIC_JERK = 7.5;
+    private final double MOTION_MAGIC_JERK = 6;
     private double MOTION_MAGIC_ACCELERATION = 2;
-    private double MOTION_MAGIC_CRUISE_VELOCITY = 0.6;
+    private double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
