@@ -13,6 +13,7 @@ import frc.robot.autos.TwoRingSourceSide;
 import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.AlignToRing;
 import frc.robot.commands.AmpPresetCommand;
+import frc.robot.commands.DriveWhileAlignedToSpeaker;
 import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
 import frc.robot.commands.Subwoofershot;
@@ -134,16 +135,16 @@ public class RobotContainer {
                 // .andThen(new ScheduleCommand(
                 // new StowPreset(rotatorSubsystem, shooter))));
                 new Trigger(driverController.leftBumper())
-                                .onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake, distanceToShotValuesMap));
+                                .onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake,
+                                                distanceToShotValuesMap));
 
                 new Trigger(driverController.a()).onTrue(new InstantCommand(() -> shooter.stopShooterMotors())
                                 .alongWith(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(0))));
 
-
-
                 new Trigger(driverController.povUp()).onTrue(new InstantCommand(() -> rotatorSubsystem.resetEncoder()));
 
-                new Trigger(driverController.x()).onTrue(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(50)));
+                new Trigger(driverController.x())
+                                .onTrue(rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(50)));
 
                 new Trigger(driverController.rightBumper()).onTrue(
                                 new ConditionalCommand(
@@ -161,6 +162,10 @@ public class RobotContainer {
                                                 distanceToShotValuesMap, 1.4));
 
                 new Trigger(driverController.x()).whileTrue(new AlignToRing(swerveSubsystem));
+
+                new Trigger(driverController.b()).whileTrue(new DriveWhileAlignedToSpeaker(swerveSubsystem,
+                                rotatorSubsystem, swerveTranslationYSupplier, swerveTranslationXSupplier,
+                                swerveSubsystem.isRed()));
 
                 // Onboard Button Commands
 

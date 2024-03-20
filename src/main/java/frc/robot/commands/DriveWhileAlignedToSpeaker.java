@@ -6,12 +6,16 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.RotatorSubsystem;
+import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.util.BetterPID;
 
 public class DriveWhileAlignedToSpeaker extends Command {
+    DistanceToShotValuesMap map = new DistanceToShotValuesMap();
     private SwerveDrive swerveSubsystem;
+    private RotatorSubsystem rotator;
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
     private BooleanSupplier isRed;
@@ -24,13 +28,14 @@ public class DriveWhileAlignedToSpeaker extends Command {
 
     private final BetterPID rotationPID;
 
-    public DriveWhileAlignedToSpeaker(SwerveDrive swerveSubsystem, DoubleSupplier translationSup,
+    public DriveWhileAlignedToSpeaker(SwerveDrive swerveSubsystem, RotatorSubsystem rotator, DoubleSupplier translationSup,
             DoubleSupplier strafeSup, BooleanSupplier isRed) {
         this.swerveSubsystem = swerveSubsystem;
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         this.isRed = isRed;
+        this.rotator = rotator;
 
         rotationPID = new BetterPID(kP, kI, kD, true);
         rotationPID.setTolerance(kTolerance);
@@ -57,6 +62,8 @@ public class DriveWhileAlignedToSpeaker extends Command {
                 new Translation2d(translationVal, strafeVal).times(SwerveConstants.maxSpeed),
                 rotationVal,
                 true);
+
+        rotator.setMotorTargetPosition(map.getInterpolatedRotationAngle(swerveSubsystem.getDistanceMetersToGoal()));
     }
 
 }
