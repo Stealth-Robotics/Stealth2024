@@ -319,26 +319,16 @@ public class SwerveDrive extends SubsystemBase {
 
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue("limelight-main");
-        // LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers
-        //         .getBotPoseEstimate_wpiBlue("limelight-left");
-        // LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers
-        //         .getBotPoseEstimate_wpiBlue("limelight-right");
         
 
-        if (limelightMeasurement.tagCount >= 2 && DriverStation.isTeleopEnabled()) {// if (limelightMeasurement.tagCount >= 2) {
+        if (limelightMeasurement.tagCount >= 1 && DriverStation.isTeleopEnabled() && limelightMeasurement.rawFiducials[0].ambiguity < 0.9) {// if (limelightMeasurement.tagCount >= 2) {
             // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(
                     limelightMeasurement.pose,
                     limelightMeasurement.timestampSeconds);
         }
 
-        // if (limelightMeasurement2.tagCount >= 2 && DriverStation.isTeleopEnabled()) {// if (limelightMeasurement.tagCount >= 2) {
-        //     // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-        //     swerveOdometry.addVisionMeasurement(
-        //             limelightMeasurement2.pose,
-        //             limelightMeasurement2.timestampSeconds);
-        //}
-
+        
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         field2d.setRobotPose(getPose());
