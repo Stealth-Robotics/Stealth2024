@@ -79,7 +79,7 @@ public class SwerveDrive extends SubsystemBase {
         resetModulesToAbsolute();
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
-        var visionStdDevs = VecBuilder.fill(0.25, 0.25, 0.25);
+        var visionStdDevs = VecBuilder.fill(0.7, 0.7, 999999999);
 
         swerveOdometry = new SwerveDrivePoseEstimator(
                 SwerveConstants.swerveKinematics,
