@@ -49,7 +49,8 @@ public class DriveWhileAlignedToSpeaker extends Command {
         /* Get Values, Deadband */
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), SwerveConstants.stickDeadband);
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), SwerveConstants.stickDeadband);
-        double rotationVal = rotationPID.calculate(swerveSubsystem.getAngleDegreesToGoal());
+        rotationPID.setSetpoint(swerveSubsystem.getAngleDegreesToGoal());
+        double rotationVal = rotationPID.calculate(swerveSubsystem.getHeadingDegrees());
 
 
         if (isRed.getAsBoolean()) {

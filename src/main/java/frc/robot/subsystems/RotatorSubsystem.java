@@ -52,11 +52,11 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorTwo;
 
     private double kS = 0.0;
-    private double kV = 15;
+    private double kV = 14.8;
     private double kG = 0.3;
 
-    private double kP = 10;
-    private double kI = 0;
+    private double kP = 30;
+    private double kI = 10;
     private double kD = 1;
 
     private DigitalInput homeButton = new DigitalInput(0);
