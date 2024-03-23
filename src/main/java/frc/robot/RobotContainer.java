@@ -16,7 +16,6 @@ import frc.robot.commands.AmpPresetCommand;
 import frc.robot.commands.DriveWhileAlignedToSpeaker;
 import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
-import frc.robot.commands.Subwoofershot;
 import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
@@ -113,8 +112,6 @@ public class RobotContainer {
                                 swerveRotationSupplier,
                                 swerveRobotOrientedSupplier,
                                 swerveSubsystem.isRed()));
-
-                intake.setDefaultCommand(new IntakeDefaultCommand(intake, intakeManualControlSupplier));
                 climber.setDefaultCommand(
                                 new ClimberDefault(() -> operatorController.getLeftY(),
                                                 () -> operatorController.getRightY(), climber));
@@ -151,6 +148,10 @@ public class RobotContainer {
                                                 rotatorSubsystem.rotateToPositionCommand(Units.degreesToRotations(53)),
                                                 new AmpPresetCommand(rotatorSubsystem, shooter, intake),
                                                 rotatorSubsystem.getAmpOutIntake()));
+                new Trigger(() -> (Math.abs(intakeManualControlSupplier.getAsDouble()) >= 0.1))
+                                .onTrue(intake.deployIntakeCommand()
+                                                .andThen(intake.intakeCommand(intakeManualControlSupplier)))
+                                .onFalse(intake.retractIntakeCommand());
 
                 // new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
                 // rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(),
