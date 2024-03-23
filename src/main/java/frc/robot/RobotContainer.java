@@ -74,7 +74,7 @@ public class RobotContainer {
         autoChooser.addOption("center", new CenterAuto(swerveSubsystem, rotatorSubsystem, shooter, intake));
         autoChooser.addOption("test", new SequentialCommandGroup(
                 new InstantCommand(() -> swerveSubsystem.setInitialPose("testPath")),
-                swerveSubsystem.followPathCommand("testPath", false)));
+                swerveSubsystem.followPathCommand("testPath")));
         SmartDashboard.putData("auto", autoChooser);
 
         // Command Suppliers

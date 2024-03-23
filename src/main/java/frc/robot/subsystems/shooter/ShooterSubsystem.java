@@ -50,7 +50,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     private void applyConfigs() {
-        // TODO: check everything
         LEFT_TALONFX_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         LEFT_TALONFX_CONFIG.Slot0.kS = kS;

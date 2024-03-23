@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import java.time.Instant;
 import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.led.Animation;
@@ -99,10 +98,6 @@ public class LEDSubsystem extends SubsystemBase {
         animate(new StrobeAnimation(76, 214, 252, 0, 0.2, LED_COUNT));
     }
 
-    // private void hasRing() {
-    // setRGB(0, 255, 0);
-    // }
-
     public void idle() {
         animate(new RainbowAnimation(1, 0.6, LED_COUNT, true, 0));
     }
@@ -127,14 +122,14 @@ public class LEDSubsystem extends SubsystemBase {
 
     public Command updateDisabledLEDsCommand() {
         return new InstantCommand(
-                () -> updateDisabledLEDs(),
+                this::updateDisabledLEDs,
                 this).ignoringDisable(true);
     }
 
     public Command blinkForRingCommand() {
         return new SequentialCommandGroup(
                 new InstantCommand(
-                        () -> gainedRing(),
+                        this::gainedRing,
                         this),
                 new WaitCommand(2.5),
                 idleCommand());
@@ -143,14 +138,14 @@ public class LEDSubsystem extends SubsystemBase {
     public Command seesRingCommand() {
         return new SequentialCommandGroup(
                 new InstantCommand(
-                        () -> seesRing(),
+                        this::seesRing,
                         this),
                 new WaitCommand(1.5),
                 idleCommand());
     }
 
     public Command idleCommand() {
-        return new InstantCommand(() -> idle(), this);
+        return new InstantCommand(this::idle, this);
     }
 
     @Override

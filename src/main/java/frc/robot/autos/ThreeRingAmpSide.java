@@ -3,13 +3,11 @@ package frc.robot.autos;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.AimAndShootCommand;
 import frc.robot.commands.FollowPathAndReadyShooter;
 import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
@@ -32,17 +30,17 @@ public class ThreeRingAmpSide extends SequentialCommandGroup {
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("amp side left pickup", true),
+                                                swerve.followPathCommand("amp side left pickup"),
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(0.5),
-                                swerve.followPathCommand("shoot amp ring", false),
+                                swerve.followPathCommand("shoot amp ring"),
                                 new ReadyShooter(shooter, rotator, intake, 
                                                 () -> swerve.getDistanceMetersToGoal()),
 
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("pickup middle ring 2", false),
+                                                swerve.followPathCommand("pickup middle ring 2"),
                                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(1),

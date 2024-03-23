@@ -1,6 +1,5 @@
 package frc.robot.autos;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -30,13 +29,13 @@ public class TwoRingSourceSide extends SequentialCommandGroup {
                                 new StowPreset(rotator, shooter),
                                 new WaitCommand(0.5),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("subwoofer to middle ring 4 pickup", false),
+                                                swerve.followPathCommand("subwoofer to middle ring 4 pickup"),
                                                 new InstantCommand(() -> intake.setIntakeSpeed(1))),
 
                                 new WaitCommand(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
-                                                swerve.followPathCommand("middle to shoot variation", false)),
+                                                swerve.followPathCommand("middle to shoot variation")),
                                 new ReadyShooter(shooter, rotator, intake, 
                                                 () -> swerve.getDistanceMetersToGoal()),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),

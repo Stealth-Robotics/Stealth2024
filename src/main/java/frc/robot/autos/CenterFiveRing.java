@@ -1,7 +1,5 @@
 package frc.robot.autos;
 
-import java.nio.file.Path;
-
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -10,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.FollowPathAndIntake;
 import frc.robot.commands.FollowPathAndReadyShooter;
 import frc.robot.commands.ReadyShooter;
@@ -49,7 +46,7 @@ public class CenterFiveRing extends SequentialCommandGroup {
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new StowPreset(rotator, shooter),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
-                                swerve.followPathCommand("pickup middle ring 2", false),
+                                swerve.followPathCommand("pickup middle ring 2"),
                                 new ParallelCommandGroup(
                                                 new SequentialCommandGroup(
                                                                 new WaitCommand(0.5),
