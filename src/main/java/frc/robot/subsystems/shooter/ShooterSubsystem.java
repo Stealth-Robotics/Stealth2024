@@ -7,10 +7,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.*;
+
+import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
@@ -164,15 +163,15 @@ public class ShooterSubsystem extends SubsystemBase {
      * returns a command that spins up the shooter to the target velocity based on
      * distance from goal
      * 
-     * @param distance in feet from goal
+     * @param rps doublesupplier for rotations per second to spin to
      * @return command that spins up the shooter to the target velocity based on
      *         distance from interpolation map
      */
-    public Command spinToRps(double rps) {
+    public Command spinToRps(DoubleSupplier rps) {
 
-        return new InstantCommand(() -> {
-            setLeftVelocity(rps);
-            setRightVelocity(rps * SPIN_CONSTANT);
+        return Commands.runOnce(() -> {
+            setLeftVelocity(rps.getAsDouble());
+            setRightVelocity(rps.getAsDouble() * SPIN_CONSTANT);
         }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
     }
 

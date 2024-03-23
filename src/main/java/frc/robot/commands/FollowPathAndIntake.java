@@ -21,7 +21,7 @@ public class FollowPathAndIntake extends ParallelCommandGroup{
                 new WaitUntilCommand(() -> intakeSubsystem.isRingAtFrontOfIntake()).withTimeout(2.5),
                 new InstantCommand(() -> intakeSubsystem.setIntakeSpeed(0))
             ),
-            rotatorSubsystem.rotateToPositionCommand(0)
+            rotatorSubsystem.rotateToPositionCommand(() -> 0)
         );
     }
     

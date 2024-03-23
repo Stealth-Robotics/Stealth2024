@@ -17,7 +17,7 @@ public class FollowPathAndReadyShooter extends ParallelCommandGroup{
     public FollowPathAndReadyShooter(SwerveDrive drive, IntakeSubsystem intakeSubsystem, RotatorSubsystem rotatorSubsystem, ShooterSubsystem shooterSubsystem, DistanceToShotValuesMap map, PathPlannerPath path, boolean isInitial, Translation2d distanceToShootFrom){
         addCommands(
             drive.followPathCommand(path, isInitial),
-            new ReadyShooter(shooterSubsystem, rotatorSubsystem, intakeSubsystem, drive, map, drive.getDistanceMetersToGoal(distanceToShootFrom))
+            new ReadyShooter(shooterSubsystem, rotatorSubsystem, intakeSubsystem, () -> drive.getDistanceMetersToGoal(distanceToShootFrom))
         );
     }
     

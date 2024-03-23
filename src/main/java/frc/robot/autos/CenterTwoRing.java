@@ -23,7 +23,9 @@ public class CenterTwoRing extends SequentialCommandGroup {
                         IntakeSubsystem intake) {
                 addCommands(
                                 new InstantCommand(() -> swerve.setInitialPose("center first pickup")),
-                                new ReadyShooter(shooter, rotator, intake, swerve, map, 1.4),
+                                new ReadyShooter(shooter, rotator, intake, 
+                                                () -> swerve.getDistanceMetersToGoal()),
+
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.75),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new StowPreset(rotator, shooter),
@@ -32,7 +34,9 @@ public class CenterTwoRing extends SequentialCommandGroup {
                                 new WaitCommand(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 swerve.followPathCommand("ring to subwoofer shoot", false),
-                                new ReadyShooter(shooter, rotator, intake, swerve, map, 1.4),
+                                new ReadyShooter(shooter, rotator, intake, 
+                                                () -> swerve.getDistanceMetersToGoal()),
+
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new StowPreset(rotator, shooter),

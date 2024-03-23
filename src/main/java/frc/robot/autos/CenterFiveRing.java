@@ -28,12 +28,16 @@ public class CenterFiveRing extends SequentialCommandGroup {
                         IntakeSubsystem intake) {
                 addCommands(
                                 new InstantCommand(() -> swerve.setInitialPose("center pickup 1")),
-                                new ReadyShooter(shooter, rotator, intake, swerve, map),
+                                new ReadyShooter(shooter, rotator, intake, 
+                                                () -> swerve.getDistanceMetersToGoal()),
+
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new FollowPathAndIntake(swerve, intake, rotator,
                                                 PathPlannerPath.fromPathFile("center pickup 1"), true),
-                                new ReadyShooter(shooter, rotator, intake, swerve, map),
+                                new ReadyShooter(shooter, rotator, intake, 
+                                                () -> swerve.getDistanceMetersToGoal()),
+
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new FollowPathAndIntake(swerve, intake, rotator,

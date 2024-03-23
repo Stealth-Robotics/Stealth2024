@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AimAndShootCommand;
+import frc.robot.commands.FollowPathAndReadyShooter;
 import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -25,7 +26,8 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
                         IntakeSubsystem intake) {
                 addCommands(
                                 new InstantCommand(() -> swerve.setInitialPose("right ring")),
-                                new ReadyShooter(shooter, rotator, intake, swerve, map).withTimeout(2),
+                                new ReadyShooter(shooter, rotator, intake, 
+                                                () -> swerve.getDistanceMetersToGoal()).withTimeout(2),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new ParallelCommandGroup(
@@ -36,7 +38,8 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
                                 swerve.followPathCommand(
                                                 PathPlannerPath.fromPathFile("shoot right first ring"),
                                                 false),
-                                new ReadyShooter(shooter, rotator, intake, swerve, map).withTimeout(2),
+                                new ReadyShooter(shooter, rotator, intake, 
+                                                () -> swerve.getDistanceMetersToGoal()).withTimeout(2),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new ParallelCommandGroup(
@@ -46,13 +49,10 @@ public class ThreeRingRightSide extends SequentialCommandGroup {
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(0.25),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
-                                new ParallelCommandGroup(
-                                                swerve.followPathCommand(PathPlannerPath.fromPathFile(
-                                                                "middle to shoot variation"), false),
-                                                new ReadyShooter(shooter, rotator, intake, swerve, map,
-                                                                swerve.getDistanceMetersToGoal(
-                                                                                new Translation2d(1.92,4.28)))
-                                                                .withTimeout(2)),
+                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
+                                                PathPlannerPath.fromPathFile("middle to shoot variation"), false,
+                                                new Translation2d(1.92, 4.28)),
+
                                 new WaitCommand(0.5),
                                 new RunCommand(() -> intake.setIntakeSpeed(0.8), intake).withTimeout(0.5),
                                 new StowPreset(rotator, shooter),
