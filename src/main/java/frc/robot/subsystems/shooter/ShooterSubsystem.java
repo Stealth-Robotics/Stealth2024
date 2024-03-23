@@ -15,16 +15,16 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX leftMotor;
     private final TalonFX rightMotor;
 
-    private double kS = 0.195;
-    private double kV = 0.11;
-    private double kA = 0.0;
+    private final double kS = 0.195;
+    private final double kV = 0.11;
+    private final double kA = 0.0;
 
-    private double kP = 0.5;
-    private double kI = 0;
-    private double kD = 0.0;
+    private final double kP = 0.5;
+    private final double kI = 0;
+    private final double kD = 0.0;
 
-    private double MOTION_MAGIC_ACCELERATION = 400;
-    private double MOTION_MAGIC_JERK = 0.0;
+    private final double MOTION_MAGIC_ACCELERATION = 400;
+    private final double MOTION_MAGIC_JERK = 0.0;
 
     public final double SPIN_CONSTANT = 0.8;
 
@@ -64,28 +64,12 @@ public class ShooterSubsystem extends SubsystemBase {
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
-        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyCurrentLimitEnable = true;
-        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyCurrentLimit = 30;
-        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyCurrentThreshold = 40;
-        // LEFT_TALONFX_CONFIG.CurrentLimits.SupplyTimeThreshold = 1.0;
-
         RIGHT_TALONFX_CONFIG = LEFT_TALONFX_CONFIG;
 
         LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        RIGHT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         leftMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
         rightMotor.getConfigurator().apply(RIGHT_TALONFX_CONFIG);
-    }
-
-    private double getLeftSupplyCurrent()
-    {
-        return leftMotor.getSupplyCurrent().getValueAsDouble();
-    }
-
-    private double getRightSupplyCurrent()
-    {
-        return rightMotor.getSupplyCurrent().getValueAsDouble();
     }
 
     /**
@@ -106,16 +90,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setRightVelocity(double velocity) {
         rightMotionMagicVelocityVoltage.Velocity = velocity;
         rightMotor.setControl(rightMotionMagicVelocityVoltage);
-    }
-
-    private double getLeftVelocity()
-    {
-        return leftMotor.getVelocity().getValueAsDouble();
-    }
-
-    private double getRightVelocity()
-    {
-        return rightMotor.getVelocity().getValueAsDouble();
     }
 
     /**
@@ -148,15 +122,9 @@ public class ShooterSubsystem extends SubsystemBase {
      * 
      * @return true if both motors are within the velocity tolerance
      */
-    public boolean motorsAtTargetVelocity() {
+    private boolean motorsAtTargetVelocity() {
         return Math.abs(getLeftVelocityError()) <= VEOLOCITY_TOLERANCE
                 && Math.abs(getRightVelocityError()) <= VEOLOCITY_TOLERANCE;
-    }
-
-    public void setShooterDutyCycle(double dutyCycle){
-        leftMotor.set(dutyCycle);
-        rightMotor.set(dutyCycle);
-
     }
 
     /**
@@ -175,13 +143,6 @@ public class ShooterSubsystem extends SubsystemBase {
         }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
     }
 
-    public Command spinToRps(double rps, double spinConstant) {
-
-        return new InstantCommand(() -> {
-            setLeftVelocity(rps);
-            setRightVelocity(rps * spinConstant);
-        }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
-    }
 
     @Override
     public void periodic() {
