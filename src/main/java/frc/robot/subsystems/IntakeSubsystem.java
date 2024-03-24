@@ -58,6 +58,9 @@ public class IntakeSubsystem extends SubsystemBase {
         TalonFXConfiguration DEPLOY_MOTOR_CONFIG = new TalonFXConfiguration();
         INTAKE_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         INTAKE_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // TODO: Change if needed
+        
+        
+        DEPLOY_MOTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         DEPLOY_MOTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // TODO: Change if needed
 
         DEPLOY_MOTOR_CONFIG.Slot0.kP = kP;

@@ -20,6 +20,7 @@ import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
@@ -61,6 +62,8 @@ public class RobotContainer {
                         () -> intake.isRingFullyInsideIntake());
         private final ShooterSubsystem shooter = new ShooterSubsystem();
         private final ClimberSubsystem climber = new ClimberSubsystem();
+
+        private final IndexerSubsystem indxer = new IndexerSubsystem();
 
         private final CommandXboxController driverController = new CommandXboxController(0);
         private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -150,8 +153,10 @@ public class RobotContainer {
                                                 rotatorSubsystem.getAmpOutIntake()));
                 new Trigger(() -> (Math.abs(intakeManualControlSupplier.getAsDouble()) >= 0.1))
                                 .onTrue(intake.deployIntakeCommand()
-                                                .andThen(intake.intakeCommand(intakeManualControlSupplier)))
-                                .onFalse(intake.retractIntakeCommand());
+                                                .andThen(intake.intakeCommand(intakeManualControlSupplier))
+                                                .alongWith(new InstantCommand(() -> indxer.setIndexerSpeed(0.3))))
+                                .onFalse(intake.retractIntakeCommand()
+                                                .alongWith(new InstantCommand(() -> indxer.setIndexerSpeed(0))));
 
                 // new Trigger(() -> Math.abs(operatorController.getLeftY()) > 0.1).onTrue(
                 // rotatorSubsystem.armManualControl(() -> -operatorController.getLeftY(),
