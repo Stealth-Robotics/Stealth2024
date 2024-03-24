@@ -88,14 +88,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public Command deployIntakeCommand() {
         //TODO: tune position
-        return new InstantCommand(() -> setDeployTarget(0), this)
+        return this.runOnce(() -> setDeployTarget(0))
                 .andThen(new WaitUntilCommand(() -> getDeployAtSetpoint()))
                 .andThen(new InstantCommand(() -> setDeployedGains(), this));
     }
 
     public Command retractIntakeCommand() {
         //TODO: tune position
-        return new InstantCommand(() -> setDeployTarget(0), this)
+        return this.runOnce(() -> setDeployTarget(0))
                 .andThen(new WaitUntilCommand(() -> getDeployAtSetpoint()));
     }
 
@@ -122,7 +122,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public Command intakeCommand(DoubleSupplier speed) {
-        return Commands.run(()->setIntakeSpeed(speed.getAsDouble()), this)
+        return this.run(()->setIntakeSpeed(speed.getAsDouble()))
         .until(() -> Math.abs(speed.getAsDouble()) < 0.1)
         .finallyDo(() -> setIntakeSpeed(0));
     }
@@ -140,9 +140,4 @@ public class IntakeSubsystem extends SubsystemBase {
         return this.run(() -> this.setIntakeSpeed(0.8)).until(() -> isRingFullyInsideIntake());
     }
 
-    // @Override
-    // public void periodic() {
-    // System.out.println("front: " + isRingAtFrontOfIntake() + ", back: " +
-    // isRingFullyInsideIntake());
-    // }
 }
