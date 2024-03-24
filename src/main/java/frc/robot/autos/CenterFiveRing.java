@@ -14,33 +14,31 @@ import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
-import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class CenterFiveRing extends SequentialCommandGroup {
-        DistanceToShotValuesMap map = new DistanceToShotValuesMap();
 
         public CenterFiveRing(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
                 addCommands(
                                 new InstantCommand(() -> swerve.setInitialPose("center pickup 1")),
-                                new ReadyShooter(shooter, rotator, intake, 
+                                new ReadyShooter(shooter, rotator, intake,
                                                 () -> swerve.getDistanceMetersToGoal()),
 
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(1)),
                                 new FollowPathAndIntake(swerve, intake, rotator,
-                                                PathPlannerPath.fromPathFile("center pickup 1"), true),
-                                new ReadyShooter(shooter, rotator, intake, 
+                                                PathPlannerPath.fromPathFile("center pickup 1")),
+                                new ReadyShooter(shooter, rotator, intake,
                                                 () -> swerve.getDistanceMetersToGoal()),
 
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
                                 new FollowPathAndIntake(swerve, intake, rotator,
-                                                PathPlannerPath.fromPathFile("left ring pickup"), false),
-                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
-                                                PathPlannerPath.fromPathFile("shoot left ring"), false,
+                                                PathPlannerPath.fromPathFile("left ring pickup")),
+                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter,
+                                                PathPlannerPath.fromPathFile("shoot left ring"),
                                                 new Translation2d(1.81, 6.06)),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
@@ -51,9 +49,8 @@ public class CenterFiveRing extends SequentialCommandGroup {
                                                 new SequentialCommandGroup(
                                                                 new WaitCommand(0.5),
                                                                 new InstantCommand(() -> intake.setIntakeSpeed(0))),
-                                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
+                                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter,
                                                                 PathPlannerPath.fromPathFile("shoot middle ring 2"),
-                                                                false,
                                                                 new Translation2d(2.49, 6.03))),
                                 new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(0.5),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),

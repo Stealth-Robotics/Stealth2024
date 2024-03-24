@@ -14,7 +14,6 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.util.BetterPID;
 
 public class DriveWhileAlignedToSpeaker extends Command {
-    DistanceToShotValuesMap map = new DistanceToShotValuesMap();
     private SwerveDrive swerveSubsystem;
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
@@ -29,13 +28,12 @@ public class DriveWhileAlignedToSpeaker extends Command {
     private final BetterPID rotationPID;
 
     public DriveWhileAlignedToSpeaker(SwerveDrive swerveSubsystem, DoubleSupplier translationSup,
-                                      DoubleSupplier strafeSup, BooleanSupplier isRed) {
+            DoubleSupplier strafeSup, BooleanSupplier isRed) {
         this.swerveSubsystem = swerveSubsystem;
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         this.isRed = isRed;
-
 
         rotationPID = new BetterPID(kP, kI, kD, true);
         rotationPID.setTolerance(kTolerance);
@@ -51,7 +49,6 @@ public class DriveWhileAlignedToSpeaker extends Command {
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), SwerveConstants.stickDeadband);
         rotationPID.setSetpoint(swerveSubsystem.getAngleDegreesToGoal());
         double rotationVal = rotationPID.calculate(swerveSubsystem.getHeadingDegrees());
-
 
         if (isRed.getAsBoolean()) {
             translationVal *= -1;

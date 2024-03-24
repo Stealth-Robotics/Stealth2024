@@ -7,7 +7,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 import java.util.function.DoubleSupplier;
 
@@ -39,7 +42,6 @@ public class ShooterSubsystem extends SubsystemBase {
     private final double VEOLOCITY_TOLERANCE = 1;
 
     TalonFXConfiguration LEFT_TALONFX_CONFIG = new TalonFXConfiguration();
-    TalonFXConfiguration RIGHT_TALONFX_CONFIG = new TalonFXConfiguration();
 
     public ShooterSubsystem() {
         // TODO: find can ids
@@ -63,12 +65,11 @@ public class ShooterSubsystem extends SubsystemBase {
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
-        RIGHT_TALONFX_CONFIG = LEFT_TALONFX_CONFIG;
 
         LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         leftMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
-        rightMotor.getConfigurator().apply(RIGHT_TALONFX_CONFIG);
+        rightMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
     }
 
     /**
@@ -136,10 +137,10 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public Command spinToRps(DoubleSupplier rps) {
 
-        return Commands.runOnce(() -> {
+        return this.runOnce(() -> {
             setLeftVelocity(rps.getAsDouble());
             setRightVelocity(rps.getAsDouble() * SPIN_CONSTANT);
-        }, this).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
+        }).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
     }
 
 

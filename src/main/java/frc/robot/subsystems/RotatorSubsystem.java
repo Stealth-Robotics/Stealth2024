@@ -198,12 +198,12 @@ public class RotatorSubsystem extends SubsystemBase {
     }
 
     public Command rotateToPositionCommand(DoubleSupplier rotations) {
-        return Commands.runOnce(() -> setMotorTargetPosition(rotations.getAsDouble()), this)
+        return this.runOnce(() -> setMotorTargetPosition(rotations.getAsDouble()))
                 .andThen(new WaitUntilCommand(this::isMotorAtTarget));
     }
 
     public Command rotateWhileDrivingCommand(DoubleSupplier rotations){
-        return Commands.run(() -> this.setMotorTargetPosition(rotations.getAsDouble()));
+        return this.run(() -> this.setMotorTargetPosition(rotations.getAsDouble()));
     }
 
     public BooleanSupplier getAmpOutIntake() {

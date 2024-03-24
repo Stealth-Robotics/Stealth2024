@@ -8,12 +8,10 @@ import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
-import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class CenterTwoRing extends SequentialCommandGroup {
-        DistanceToShotValuesMap map = new DistanceToShotValuesMap();
 
         public CenterTwoRing(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {

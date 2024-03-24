@@ -13,12 +13,10 @@ import frc.robot.commands.ReadyShooter;
 import frc.robot.commands.StowPreset;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RotatorSubsystem;
-import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.swerve.SwerveDrive;
 
 public class ThreeRingAmpSide extends SequentialCommandGroup {
-        DistanceToShotValuesMap map = new DistanceToShotValuesMap();
 
         public ThreeRingAmpSide(SwerveDrive swerve, RotatorSubsystem rotator, ShooterSubsystem shooter,
                         IntakeSubsystem intake) {
@@ -45,8 +43,8 @@ public class ThreeRingAmpSide extends SequentialCommandGroup {
                                                 new StowPreset(rotator, shooter)),
                                 new WaitCommand(1),
                                 new InstantCommand(() -> intake.setIntakeSpeed(0)),
-                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter, map,
-                                                PathPlannerPath.fromPathFile("shoot middle ring 2"), false,
+                                new FollowPathAndReadyShooter(swerve, intake, rotator, shooter,
+                                                PathPlannerPath.fromPathFile("shoot middle ring 2"),
                                                 new Translation2d(2.487968842604352,
                                                                 6.02748285496571)),
 

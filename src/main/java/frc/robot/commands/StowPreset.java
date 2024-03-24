@@ -10,7 +10,7 @@ public class StowPreset extends SequentialCommandGroup{
 
     public StowPreset(RotatorSubsystem rotator, ShooterSubsystem shooter){
         addCommands(
-            rotator.rotateToPositionCommand(() -> 0),
+            rotator.rotateToPositionCommand(() -> Units.degreesToRadians(0)),
             new InstantCommand(() -> shooter.stopShooterMotors())
         );
     }
