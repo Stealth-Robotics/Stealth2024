@@ -42,7 +42,7 @@ public class CenterAuto extends SequentialCommandGroup {
                                                 new FollowPathAndIntake(swerve, intake, rotator,
                                                                 PathPlannerPath.fromChoreoTrajectory(
                                                                                 "pickup middle ring 1")),
-                                                new InstantCommand(() -> shooter.stopShooterMotors())),
+                                                shooter.stopShooterMotorsCommand()),
                                 new FollowPathAndReadyShooter(swerve, intake, rotator, shooter,
                                                 PathPlannerPath.fromChoreoTrajectory("shoot middle ring 1"),
                                                 new Translation2d(2.6544923782348633, 6.280165195465088)),
