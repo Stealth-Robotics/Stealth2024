@@ -65,7 +65,6 @@ public class ShooterSubsystem extends SubsystemBase {
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         LEFT_TALONFX_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
-
         LEFT_TALONFX_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         leftMotor.getConfigurator().apply(LEFT_TALONFX_CONFIG);
@@ -112,9 +111,15 @@ public class ShooterSubsystem extends SubsystemBase {
         return rightMotor.getVelocity().getValueAsDouble() - rightMotionMagicVelocityVoltage.Velocity;
     }
 
-    public void stopShooterMotors() {
+    private void stopShooterMotors() {
         rightMotor.set(0);
         leftMotor.set(0);
+    }
+
+    public Command stopShooterMotorsCommand() {
+        return this.runOnce(() -> stopShooterMotors())
+                .andThen(new WaitUntilCommand(() -> (leftMotor.getVelocity().getValueAsDouble() <= VEOLOCITY_TOLERANCE
+                        && rightMotor.getVelocity().getValueAsDouble() <= VEOLOCITY_TOLERANCE)));
     }
 
     /**
@@ -143,15 +148,13 @@ public class ShooterSubsystem extends SubsystemBase {
         }).andThen(new WaitUntilCommand(this::motorsAtTargetVelocity));
     }
 
-
     @Override
     public void periodic() {
         SmartDashboard.putNumberArray("shooter values",
                 new Double[] { leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity });
 
-                SmartDashboard.putNumber("velo", leftMotor.getVelocity().getValueAsDouble());
-                SmartDashboard.putNumber("velo target", leftMotionMagicVelocityVoltage.Velocity);
-
+        SmartDashboard.putNumber("velo", leftMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("velo target", leftMotionMagicVelocityVoltage.Velocity);
 
     }
 }

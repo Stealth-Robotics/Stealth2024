@@ -14,6 +14,7 @@ import frc.robot.commands.AlignToRing;
 import frc.robot.commands.AmpPresetCommand;
 import frc.robot.commands.DriveWhileAlignedToSpeaker;
 import frc.robot.commands.ReadyShooter;
+import frc.robot.commands.StowPreset;
 import frc.robot.commands.defaultCommands.ClimberDefault;
 import frc.robot.commands.defaultCommands.IntakeDefaultCommand;
 import frc.robot.commands.defaultCommands.SwerveDriveTeleop;
@@ -116,9 +117,7 @@ public class RobotContainer {
                                 .onTrue(new AimAndShootCommand(swerveSubsystem, rotatorSubsystem, shooter, intake,
                                                 () -> swerveSubsystem.getDistanceMetersToGoal()));
 
-                new Trigger(driverController.a()).onTrue(new InstantCommand(shooter::stopShooterMotors)
-                                .alongWith(rotatorSubsystem
-                                                .rotateToPositionCommand(() -> Units.degreesToRotations(0))));
+                new Trigger(driverController.a()).onTrue(new StowPreset(rotatorSubsystem, shooter));
 
                 new Trigger(driverController.povUp()).onTrue(new InstantCommand(rotatorSubsystem::resetEncoder));
 
@@ -180,7 +179,7 @@ public class RobotContainer {
                 // swerveSubsystem.setCurrentAlliance();
                 rotatorSubsystem.setMotorsToCoast();
                 rotatorSubsystem.holdCurrentPosition();
-                shooter.stopShooterMotors();
+                shooter.stopShooterMotorsCommand().schedule();
                 ledSubsystem.idle();
         }
 
