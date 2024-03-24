@@ -3,7 +3,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/Pigeon 2 (v6) [12]": "Gyro"
+      "/SmartDashboard/Pigeon 2 (v6) [12]": "Gyro",
+      "/SmartDashboard/auto": "String Chooser"
     },
     "windows": {
       "/SmartDashboard/Field": {

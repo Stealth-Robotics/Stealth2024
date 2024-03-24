@@ -2,10 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -14,28 +12,16 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.*;
 
 public class RotatorSubsystem extends SubsystemBase {
-
-    private enum RotatorState {
-        OUTSIDE_UPPER_LIMIT,
-        INSIDE_LIMIT
-    }
 
     // Explantation: Gear ration = how many turns of the motor shaft = 1 full
     // revolution of the arm
@@ -51,16 +37,16 @@ public class RotatorSubsystem extends SubsystemBase {
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
 
-    private double kS = 0.0;
-    private double kV = 14.8;
-    private double kG = 0.3;
+    private final double kS = 0.0;
+    private final double kV = 14.8;
+    private final double kG = 0.3;
 
-    private double kP = 30;
-    private double kI = 10;
-    private double kD = 1;
+    private final double kP = 30;
+    private final double kI = 10;
+    private final double kD = 1;
 
-    private DigitalInput homeButton = new DigitalInput(0);
-    private DigitalInput toggleMotorModeButton = new DigitalInput(1);
+    private final DigitalInput homeButton = new DigitalInput(0);
+    private final DigitalInput toggleMotorModeButton = new DigitalInput(1);
 
     private NeutralModeValue motorMode = NeutralModeValue.Coast;
     private boolean isHomed = false;
@@ -71,17 +57,14 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double kTOLERANCE = Units.degreesToRotations(0.75);
 
     private final double MOTION_MAGIC_JERK = 6;
-    private double MOTION_MAGIC_ACCELERATION = 2;
-    private double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
+    private final double MOTION_MAGIC_ACCELERATION = 2;
+    private final double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
 
     private final TalonFXConfiguration ROTATOR_MOTOR_CONFIG = new TalonFXConfiguration();
 
-    private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
-    private DutyCycleOut dutyCycleOut = new DutyCycleOut(0);
+    private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
-    private RotatorState rotatorState = RotatorState.INSIDE_LIMIT;
-
-    private GenericEntry ampOutIntake;
+    private final GenericEntry ampOutIntake;
 
     public RotatorSubsystem() {
 
@@ -159,7 +142,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
                 }, this).ignoringDisable(true),
                 new PrintCommand("driver station is enabled").ignoringDisable(true),
-                () -> DriverStation.isDisabled());
+                DriverStation::isDisabled);
 
     }
 
@@ -184,25 +167,7 @@ public class RotatorSubsystem extends SubsystemBase {
 
                 }, this).ignoringDisable(true),
                 new PrintCommand("driver station is enabled").ignoringDisable(true),
-                () -> DriverStation.isDisabled());
-
-    }
-
-    public Command armManualControl(DoubleSupplier manualControlSupplier, Supplier<RotatorState> rotatorStateSupplier) {
-        return this.runOnce(() -> {
-            double manualControl = manualControlSupplier.getAsDouble();
-            if (rotatorStateSupplier.get() == RotatorState.OUTSIDE_UPPER_LIMIT) {
-                manualControl = MathUtil.clamp(manualControl, -0.5, 0);
-            } else {
-                manualControl = MathUtil.clamp(manualControl, -0.5, 0.5);
-            }
-            setDutyCycle(manualControl);
-        });
-    }
-
-    public void setDutyCycle(double dutyCycle) {
-        dutyCycleOut.Output = dutyCycle;
-        rotatorMotorOne.setControl(dutyCycleOut);
+                DriverStation::isDisabled);
 
     }
 
@@ -223,22 +188,22 @@ public class RotatorSubsystem extends SubsystemBase {
         return motionMagicVoltage.Position;
     }
 
-    public boolean isMotorAtTarget() {
+    private boolean isMotorAtTarget() {
         return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
     }
 
-    public void setMotorTargetPosition(double rotations) {
+    private void setMotorTargetPosition(double rotations) {
         motionMagicVoltage.Position = rotations;
         rotatorMotorOne.setControl(motionMagicVoltage);
     }
 
-    public Command rotateToPositionCommand(double rotations) {
-        return new InstantCommand(() -> setMotorTargetPosition(rotations), this)
+    public Command rotateToPositionCommand(DoubleSupplier rotations) {
+        return this.runOnce(() -> setMotorTargetPosition(rotations.getAsDouble()))
                 .andThen(new WaitUntilCommand(this::isMotorAtTarget));
     }
 
-    public Supplier<RotatorState> getRotatorState() {
-        return () -> rotatorState;
+    public Command rotateWhileDrivingCommand(DoubleSupplier rotations){
+        return this.run(() -> this.setMotorTargetPosition(rotations.getAsDouble()));
     }
 
     public BooleanSupplier getAmpOutIntake() {
@@ -251,14 +216,5 @@ public class RotatorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("rotator", Units.rotationsToDegrees(getMotorPosition()));
         SmartDashboard.putNumber("rotator target", Units.rotationsToDegrees(getTargetPosition()));
 
-        if (Units.rotationsToDegrees(getMotorPosition()) >= 90) {
-            rotatorState = RotatorState.OUTSIDE_UPPER_LIMIT;
-        }
-
-        else {
-            rotatorState = RotatorState.INSIDE_LIMIT;
-        }
-        // rotatorMotorTwo.setControl(new
-        // VoltageOut(rotatorMotorOne.getMotorVoltage().getValueAsDouble()));
     }
 }
