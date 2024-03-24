@@ -171,7 +171,8 @@ public class RobotContainer {
                 // Onboard Button Commands
 
                 new Trigger(rotatorHomeButtonSupplier).onTrue(
-                                rotatorSubsystem.homeArmCommand().andThen(ledSubsystem.updateDisabledLEDsCommand()));
+                                rotatorSubsystem.homeArmCommand().alongWith(intake.homeDeployCommand())
+                                                .andThen(ledSubsystem.updateDisabledLEDsCommand()));
 
                 new Trigger(rotatorToggleMotorModeButtonSupplier).onTrue(
                                 rotatorSubsystem.toggleMotorModeCommand()
