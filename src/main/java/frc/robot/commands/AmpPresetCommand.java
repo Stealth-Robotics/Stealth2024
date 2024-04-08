@@ -20,8 +20,8 @@ public class AmpPresetCommand extends ParallelCommandGroup {
                         .andThen(new WaitCommand(0.1))
                         .andThen(new InstantCommand(() -> intake.setIntakeSpeed(0), intake)),
                 new WaitCommand(0.1),
-                rotator.rotateToPositionCommand(Units.degreesToRotations(101)),
-                shooter.spinToRps(35)
+                rotator.rotateToPositionCommand(() -> Units.degreesToRotations(101)),
+                shooter.spinToRps(() -> 35)
 
         );
     }

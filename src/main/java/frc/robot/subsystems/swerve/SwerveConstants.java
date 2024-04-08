@@ -52,8 +52,8 @@ public final class SwerveConstants {
     public static final double angleCurrentThresholdTime = 0.1;
     public static final boolean angleEnableCurrentLimit = true;
 
-    public static final int driveCurrentLimit = 35;
-    public static final int driveCurrentThreshold = 60;
+    public static final int driveCurrentLimit = 50;
+    public static final int driveCurrentThreshold = 80;
     public static final double driveCurrentThresholdTime = 0.1;
     public static final boolean driveEnableCurrentLimit = true;
 
@@ -71,9 +71,9 @@ public final class SwerveConstants {
 
     /* Swerve Profiling Values */
     /** Meters per Second */
-    public static final double maxSpeed = 6.0;
+    public static final double maxSpeed = Units.feetToMeters(16.5);
     /** Radians per Second */
-    public static final double maxAngularVelocity = 18.0;
+    public static final double maxAngularVelocity = Units.degreesToRadians(540);
 
     /* Neutral Modes */
     public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;

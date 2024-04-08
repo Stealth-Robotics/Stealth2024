@@ -4,8 +4,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
-import java.nio.file.Path;
-import java.sql.Driver;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -13,7 +11,6 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.util.GeometryUtil;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -28,7 +25,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -57,7 +53,7 @@ public class SwerveDrive extends SubsystemBase {
     // Hardcode
     boolean isRed = false;
 
-    private GenericEntry shooterOffset;
+    private final GenericEntry shooterOffset;
 
     public SwerveDrive() {
 
@@ -191,10 +187,6 @@ public class SwerveDrive extends SubsystemBase {
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
-    public void addVisionMeasurement(Pose2d visionMeasurement, double timestamp) {
-        swerveOdometry.addVisionMeasurement(visionMeasurement, timestamp);
-    }
-
     public Rotation2d getHeading() {
         return getPose().getRotation();
     }
@@ -248,21 +240,20 @@ public class SwerveDrive extends SubsystemBase {
 
     public void setInitialPose(PathPlannerPath startPath) {
 
-        PathPlannerPath path = startPath;
         if (isRed().getAsBoolean()) {
-            setPose(GeometryUtil.flipFieldPose(path.getPreviewStartingHolonomicPose()));
+            setPose(GeometryUtil.flipFieldPose(startPath.getPreviewStartingHolonomicPose()));
         } else {
-            setPose(path.getPreviewStartingHolonomicPose());
+            setPose(startPath.getPreviewStartingHolonomicPose());
         }
     }
 
-    public Command followPathCommand(String pathName, boolean initialPath) {
+    public Command followPathCommand(String pathName) {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
         return AutoBuilder.followPath(path);
     }
 
-    public Command followPathCommand(PathPlannerPath path, boolean initialPath) {
+    public Command followPathCommand(PathPlannerPath path) {
         return AutoBuilder.followPath(path);
     }
 

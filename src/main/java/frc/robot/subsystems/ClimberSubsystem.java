@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.lang.management.CompilationMXBean;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -25,7 +23,7 @@ public class ClimberSubsystem extends SubsystemBase {
     private final double kD = 0.0;
     private final double kTolerance = 0.0;
 
-    private PositionVoltage climberPositionVoltage = new PositionVoltage(0);
+    private final PositionVoltage climberPositionVoltage = new PositionVoltage(0);
 
     public ClimberSubsystem() { // TODO: Get CAN IDs
         leftClimber = new TalonFX(18);
@@ -63,16 +61,11 @@ public class ClimberSubsystem extends SubsystemBase {
         rightClimber.setControl(climberPositionVoltage);
     }
 
-    public void setPower(double power) {
-        leftClimber.set(power);
-        rightClimber.set(power);
-    }
-
     public Command climberToMaxHeight() {
         return new SequentialCommandGroup(
             //sets climber to 5 rotations of motor shaft, need to test
             new InstantCommand(() -> this.setTargetPosition(5), this),
-            new WaitUntilCommand(() -> getClimberAtSetpoint())
+            new WaitUntilCommand(this::getClimberAtSetpoint)
         );
     }
 
