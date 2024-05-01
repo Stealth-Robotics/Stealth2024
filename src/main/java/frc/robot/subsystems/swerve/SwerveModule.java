@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -73,8 +72,7 @@ public class SwerveModule {
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-                Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(),
-                        SwerveConstants.wheelCircumference),
+                Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), SwerveConstants.wheelCircumference),
                 Rotation2d.fromRotations(mAngleMotor.getPosition().getValue()));
     }
 }

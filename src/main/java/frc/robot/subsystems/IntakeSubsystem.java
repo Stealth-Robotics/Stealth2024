@@ -45,5 +45,4 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean isRingFullyInsideIntake() {
         return !backBeamBreak.get();
     }
-
 }

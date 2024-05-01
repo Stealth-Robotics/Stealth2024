@@ -1,10 +1,7 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.util.BetterPID;
 
@@ -24,10 +21,10 @@ public class AlignToRing extends Command {
         this.swerve = swerve;
         rotationPID = new BetterPID(kP, kI, kD, true);
         rotationPID.setTolerance(kTolerance);
-        
 
         // will remove once tested
-        // throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
+        // throw new UnsupportedOperationException("AutoAlignCommand is not yet
+        // implemented");
     }
 
     @Override
@@ -43,13 +40,11 @@ public class AlignToRing extends Command {
 
     @Override
     public boolean isFinished() {
-        return rotationPID.atSetpoint() ;
+        return rotationPID.atSetpoint();
     }
 
     @Override
     public void end(boolean interrupted) {
         swerve.drive(new Translation2d(), 0, false);
-
     }
-
 }

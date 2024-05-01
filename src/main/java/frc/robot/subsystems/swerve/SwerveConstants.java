@@ -3,7 +3,6 @@ package frc.robot.subsystems.swerve;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -25,13 +24,11 @@ public final class SwerveConstants {
     public static final double wheelCircumference = chosenModule.wheelCircumference;
 
     /*
-     * Swerve Kinematics
-     * No need to ever change this unless you are not doing a traditional
-     * rectangular/square 4 module swerve
+     * Swerve Kinematics No need to ever change this unless you are not doing a
+     * traditional rectangular/square 4 module swerve
      */
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-            new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-            new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+            new Translation2d(wheelBase / 2.0, trackWidth / 2.0), new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
             new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
             new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
@@ -59,8 +56,8 @@ public final class SwerveConstants {
 
     /*
      * These values are used by the drive falcon to ramp in open loop and closed
-     * loop driving.
-     * We found a small open loop ramp (0.25) helps with tread wear, tipping, etc
+     * loop driving. We found a small open loop ramp (0.25) helps with tread wear,
+     * tipping, etc
      */
     public static final double openLoopRamp = 0.25;
 
@@ -72,6 +69,7 @@ public final class SwerveConstants {
     /* Swerve Profiling Values */
     /** Meters per Second */
     public static final double maxSpeed = Units.feetToMeters(16.5);
+
     /** Radians per Second */
     public static final double maxAngularVelocity = Units.degreesToRadians(540);
 
@@ -123,6 +121,5 @@ public final class SwerveConstants {
     public static final class AutoConstants {
         public static final double TRANSLATION_CONTROLLER_P_COEFF = 12;
         public static final double ROTATION_CONTROLLER_P_COEFF = 12;
-
     }
 }

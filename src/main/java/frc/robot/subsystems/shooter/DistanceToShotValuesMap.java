@@ -34,7 +34,6 @@ public class DistanceToShotValuesMap {
         ROTATION_INTERPOLATION_MAP.put(4.3, Units.degreesToRotations(53.5 - 5));
         ROTATION_INTERPOLATION_MAP.put(4.6, Units.degreesToRotations(54.5 - 5));
         ROTATION_INTERPOLATION_MAP.put(5.3, Units.degreesToRotations(55 - 5));
-
     }
 
     public double getInterpolatedShooterSpeed(double distance) {
@@ -43,13 +42,12 @@ public class DistanceToShotValuesMap {
 
     /**
      * Interpolates the rotation angle based on the distance to the goal
-     * 
-     * @param distance in feet
-     *                 returns interpolated rotation angle in degrees
+     *
+     * @param distance
+     *            in feet returns interpolated rotation angle in degrees
      * @return interpolated rotation angle in degrees
      */
     public double getInterpolatedRotationAngle(double distance) {
         return ROTATION_INTERPOLATION_MAP.get(distance);
     }
-
 }

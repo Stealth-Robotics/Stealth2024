@@ -1,21 +1,19 @@
 package frc.robot.subsystems;
 
-import java.util.function.BooleanSupplier;
-
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
-import com.ctre.phoenix.led.CANdle.VBatOutputMode;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import java.util.function.BooleanSupplier;
 
 public class LEDSubsystem extends SubsystemBase {
 
@@ -40,8 +38,7 @@ public class LEDSubsystem extends SubsystemBase {
         this.isHomeBooleanSupplier = isHomedSupplier;
         this.isBrakeModeSupplier = isBrakeModeSupplier;
         this.hasRingSupplier = hasRingSupplier;
-
-        CANdleConfiguration config = new CANdleConfiguration();
+CANdleConfiguration config = new CANdleConfiguration();
         config.brightnessScalar = 0.2;
         config.disableWhenLOS = true;
         config.v5Enabled = true;
@@ -121,26 +118,16 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public Command updateDisabledLEDsCommand() {
-        return new InstantCommand(
-                this::updateDisabledLEDs,
-                this).ignoringDisable(true);
+        return new InstantCommand(this::updateDisabledLEDs, this).ignoringDisable(true);
     }
 
     public Command blinkForRingCommand() {
-        return new SequentialCommandGroup(
-                new InstantCommand(
-                        this::gainedRing,
-                        this),
-                new WaitCommand(2.5),
+        return new SequentialCommandGroup(new InstantCommand(this::gainedRing, this), new WaitCommand(2.5),
                 idleCommand());
     }
 
     public Command seesRingCommand() {
-        return new SequentialCommandGroup(
-                new InstantCommand(
-                        this::seesRing,
-                        this),
-                new WaitCommand(1.5),
+        return new SequentialCommandGroup(new InstantCommand(this::seesRing, this), new WaitCommand(1.5),
                 idleCommand());
     }
 

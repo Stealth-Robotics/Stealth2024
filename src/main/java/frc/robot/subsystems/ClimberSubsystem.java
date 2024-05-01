@@ -5,7 +5,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -40,19 +39,18 @@ public class ClimberSubsystem extends SubsystemBase {
         CLIMBER_CONFIG.Slot0.kI = kI;
         CLIMBER_CONFIG.Slot0.kD = kD;
 
-
         rightClimber.getPosition().setUpdateFrequency(50);
         leftClimber.getPosition().setUpdateFrequency(50);
 
         rightClimber.getConfigurator().apply(CLIMBER_CONFIG);
         CLIMBER_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         leftClimber.getConfigurator().apply(CLIMBER_CONFIG);
-
     }
 
     private boolean getClimberAtSetpoint() {
         return (Math.abs(leftClimber.getPosition().getValueAsDouble() - climberPositionVoltage.Position) <= kTolerance
-                && Math.abs(rightClimber.getPosition().getValueAsDouble() - climberPositionVoltage.Position) <= kTolerance);
+                && Math.abs(
+                        rightClimber.getPosition().getValueAsDouble() - climberPositionVoltage.Position) <= kTolerance);
     }
 
     private void setTargetPosition(double position) {
@@ -63,10 +61,9 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public Command climberToMaxHeight() {
         return new SequentialCommandGroup(
-            //sets climber to 5 rotations of motor shaft, need to test
-            new InstantCommand(() -> this.setTargetPosition(5), this),
-            new WaitUntilCommand(this::getClimberAtSetpoint)
-        );
+                // sets climber to 5 rotations of motor shaft, need to test
+                new InstantCommand(() -> this.setTargetPosition(5), this),
+                new WaitUntilCommand(this::getClimberAtSetpoint));
     }
 
     public void setLeftClimber(double power) {

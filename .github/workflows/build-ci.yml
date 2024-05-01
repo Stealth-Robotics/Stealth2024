@@ -24,3 +24,6 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
       with:
         arguments: build
+
+    - name: Spotless
+      run: ./gradlew spotlessApply

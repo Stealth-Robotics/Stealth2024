@@ -1,17 +1,13 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.RotatorSubsystem;
-import frc.robot.subsystems.shooter.DistanceToShotValuesMap;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.util.BetterPID;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class DriveWhileAlignedToSpeaker extends Command {
     private SwerveDrive swerveSubsystem;
@@ -56,10 +52,7 @@ public class DriveWhileAlignedToSpeaker extends Command {
         }
 
         /* Drive */
-        swerveSubsystem.drive(
-                new Translation2d(translationVal, strafeVal).times(SwerveConstants.maxSpeed),
-                rotationVal,
+        swerveSubsystem.drive(new Translation2d(translationVal, strafeVal).times(SwerveConstants.maxSpeed), rotationVal,
                 true);
     }
-
 }

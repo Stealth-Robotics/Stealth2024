@@ -1,10 +1,8 @@
 package frc.robot.commands.defaultCommands;
 
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
+import java.util.function.DoubleSupplier;
 
 public class ClimberDefault extends Command {
 
@@ -25,19 +23,14 @@ public class ClimberDefault extends Command {
     public void execute() {
         if (Math.abs(climberLeftManualControlSupplier.getAsDouble()) > 0.5) {
             climber.setLeftClimber(-climberLeftManualControlSupplier.getAsDouble());
-        }
-
-        else {
+        } else {
             climber.setLeftClimber(0);
         }
 
         if (Math.abs(climberRightManualControlSupplier.getAsDouble()) > 0.5) {
             climber.setRightClimber(-climberRightManualControlSupplier.getAsDouble());
-        }
-
-        else {
+        } else {
             climber.setRightClimber(0);
         }
     }
-
 }

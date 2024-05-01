@@ -1,14 +1,12 @@
 package frc.robot.commands.defaultCommands;
 
-import frc.robot.subsystems.swerve.SwerveConstants;
-import frc.robot.subsystems.swerve.SwerveDrive;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.swerve.SwerveConstants;
+import frc.robot.subsystems.swerve.SwerveDrive;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class SwerveDriveTeleop extends Command {
     private SwerveDrive swerveSubsystem;
@@ -18,7 +16,8 @@ public class SwerveDriveTeleop extends Command {
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier isRed;
 
-    public SwerveDriveTeleop(SwerveDrive swerveSubsystem, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier isRed) {
+    public SwerveDriveTeleop(SwerveDrive swerveSubsystem, DoubleSupplier translationSup, DoubleSupplier strafeSup,
+            DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier isRed) {
         this.swerveSubsystem = swerveSubsystem;
         addRequirements(swerveSubsystem);
 
@@ -45,9 +44,7 @@ public class SwerveDriveTeleop extends Command {
         }
 
         /* Drive */
-        swerveSubsystem.drive(
-                new Translation2d(translationVal, strafeVal).times(SwerveConstants.maxSpeed),
-                rotationVal * SwerveConstants.maxAngularVelocity,
-                !robotCentricSup.getAsBoolean());
+        swerveSubsystem.drive(new Translation2d(translationVal, strafeVal).times(SwerveConstants.maxSpeed),
+                rotationVal * SwerveConstants.maxAngularVelocity, !robotCentricSup.getAsBoolean());
     }
 }

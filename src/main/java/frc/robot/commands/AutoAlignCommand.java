@@ -1,10 +1,8 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.util.BetterPID;
 
@@ -28,7 +26,8 @@ public class AutoAlignCommand extends Command {
         addRequirements(swerve);
 
         // will remove once tested
-        // throw new UnsupportedOperationException("AutoAlignCommand is not yet implemented");
+        // throw new UnsupportedOperationException("AutoAlignCommand is not yet
+        // implemented");
     }
 
     @Override
@@ -61,5 +60,4 @@ public class AutoAlignCommand extends Command {
         builder.addDoubleProperty("kD", rotationPID::getD, rotationPID::setD);
         builder.addDoubleProperty("kTolerance", rotationPID::getPositionTolerance, rotationPID::setTolerance);
     }
-
 }

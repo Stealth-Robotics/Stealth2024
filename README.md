@@ -1,46 +1,46 @@
 # Stealth Robotics 4089
 
 ```
-                                           *****                                
-                                *&@@@@@@@@@@@@@@@@@@@@@@@/                      
-                          ,#@@@@@@@@@@@@@&%%#%%%&@@@@@@@@@@@@@.                 
-                       @@@@@@@@@%%######################%@@@@@@@@.              
-                     @@@@@&#################################%@@@@@@             
-                   *@@@@@######################################@@@@@*           
-                  (@@@@&##########################%%&&@@@@@@@@&%%@@@@*          
-                 ,@@@@&###################%@@@@@@@@@@@@@@@@@@@@@@@@@@@%         
-                 @@@@@################&@@@@@@@@@@#**,,,,,,,,,,*(&@@@@@@@@&      
-                /@@@@@##############@@@@@@*,,,,,,,,,,,.          .,,,#@@@@@@    
-                &@@@@#############@@@@@(,,,,,,,,,,                   .,,@@@@@(  
-                @@@@@############@@@@@,,,,,,,,,,,.                    ,,,*@@@@@ 
+                                           *****
+                                *&@@@@@@@@@@@@@@@@@@@@@@@/
+                          ,#@@@@@@@@@@@@@&%%#%%%&@@@@@@@@@@@@@.
+                       @@@@@@@@@%%######################%@@@@@@@@.
+                     @@@@@&#################################%@@@@@@
+                   *@@@@@######################################@@@@@*
+                  (@@@@&##########################%%&&@@@@@@@@&%%@@@@*
+                 ,@@@@&###################%@@@@@@@@@@@@@@@@@@@@@@@@@@@%
+                 @@@@@################&@@@@@@@@@@#**,,,,,,,,,,*(&@@@@@@@@&
+                /@@@@@##############@@@@@@*,,,,,,,,,,,.          .,,,#@@@@@@
+                &@@@@#############@@@@@(,,,,,,,,,,                   .,,@@@@@(
+                @@@@@############@@@@@,,,,,,,,,,,.                    ,,,*@@@@@
       &@@@@@@@@@@@@@@###########@@@@@#*,,,,,,,,,,,,                 .,,,,,,@@@@*
    #@@@@@@@@@&#&@@@@&%%#########@@@@###*,,,,,,,,,,,,,,,.       .,,,,,,,,,,,/@@@@
   @@@@@%#######@@@@@&%%#########@@@@#####*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,%@@@@
  *@@@@%########@@@@@%%%%########@@@@@#######(*,,,,,,,,,,,,,,,,,,,,,,,,*(##%@@@@@
- &@@@@#########@@@@@%%%%#########@@@@@###############((/////((##########%@@@@@@ 
- @@@@&%%%%%%%%%@@@@@%%%%##########&@@@@@&############################@@@@@@@@*  
- @@@@&%%%%%%%%%@@@@@%%%%%###########&@@@@@@@@&%############%%&@@@@@@@@@@@@#     
-.@@@@%%%%%%%%%%@@@@@%%%%%##############%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@(      
-(@@@@%%%%%%%%%%@@@@@%%%%%%####################%@@@@@@@@@@@@@&%%#######@@@@      
-(@@@@%%%%%%%%%%@@@@@%%%%%%%##########################################%@@@@      
-(@@@@%%%%%%%%%%@@@@@%%%%%%%%#########################################%@@@@      
-(@@@@%%%%%%%%%%@@@@@%%%%%%%%%########################################%@@@@      
-.@@@@%%%%%%%%%%@@@@@%%%%%%%%%%%%#####################################%@@@@      
- @@@@&%%%%%%%%%&@@@@%%%%%%%%%%%%%%%%#################################&@@@@      
- @@@@@%%%%%%%%%&@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@&      
- (@@@@&%%%%%%%%&@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@%      
-  @@@@@%%%%%%%%&@@@@&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@#      
-  ,@@@@@%%%%%%%&@@@@&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@*      
-   #@@@@@%%%%%%&@@@@&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@.      
-    ,@@@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%&%%%%%&&@@@@@@@%%%%%%%%%%%&@@@@       
-       *@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%&@@@@@@@@@@@@@@%%%%%%%%%%%%%@@@@@       
-                /@@@@%%%%%%%%%%%%%%%%%%%@@@(    .@@@@%%%%%%%%%%%%%%%@@@@&       
-                 @@@@&%%%%%%%%%%%%%%%%%%@@@%    /@@@@%%%%%%%%%%%%%%%@@@@%       
-                 @@@@@%%%%%%%%%%%%%%%%%%@@@(    @@@@@%%%%%%%%%%%%%%%@@@@.       
-                 @@@@@%%%%%%%%%%%%%%%%%%@@@(    @@@@&%%%%%%%%%%%%%%&@@@(        
-                 (@@@@%%%%%%%%%%%%%%%%%&@@@     @@@@@%%%%%%%%%%%%@@@@@@         
-                 .@@@@@%%%%%%%%%%%%%@@@@@@      ,@@@@@@@@@@@@@@@@@@@@#          
-                   /&@@@@@@@@@@@@@@@@@@%           /@@@@@@@@@@@@(.              
+ &@@@@#########@@@@@%%%%#########@@@@@###############((/////((##########%@@@@@@
+ @@@@&%%%%%%%%%@@@@@%%%%##########&@@@@@&############################@@@@@@@@*
+ @@@@&%%%%%%%%%@@@@@%%%%%###########&@@@@@@@@&%############%%&@@@@@@@@@@@@#
+.@@@@%%%%%%%%%%@@@@@%%%%%##############%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@(
+(@@@@%%%%%%%%%%@@@@@%%%%%%####################%@@@@@@@@@@@@@&%%#######@@@@
+(@@@@%%%%%%%%%%@@@@@%%%%%%%##########################################%@@@@
+(@@@@%%%%%%%%%%@@@@@%%%%%%%%#########################################%@@@@
+(@@@@%%%%%%%%%%@@@@@%%%%%%%%%########################################%@@@@
+.@@@@%%%%%%%%%%@@@@@%%%%%%%%%%%%#####################################%@@@@
+ @@@@&%%%%%%%%%&@@@@%%%%%%%%%%%%%%%%#################################&@@@@
+ @@@@@%%%%%%%%%&@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@&
+ (@@@@&%%%%%%%%&@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@%
+  @@@@@%%%%%%%%&@@@@&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@#
+  ,@@@@@%%%%%%%&@@@@&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@*
+   #@@@@@%%%%%%&@@@@&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@@@.
+    ,@@@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%&%%%%%&&@@@@@@@%%%%%%%%%%%&@@@@
+       *@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%&@@@@@@@@@@@@@@%%%%%%%%%%%%%@@@@@
+                /@@@@%%%%%%%%%%%%%%%%%%%@@@(    .@@@@%%%%%%%%%%%%%%%@@@@&
+                 @@@@&%%%%%%%%%%%%%%%%%%@@@%    /@@@@%%%%%%%%%%%%%%%@@@@%
+                 @@@@@%%%%%%%%%%%%%%%%%%@@@(    @@@@@%%%%%%%%%%%%%%%@@@@.
+                 @@@@@%%%%%%%%%%%%%%%%%%@@@(    @@@@&%%%%%%%%%%%%%%&@@@(
+                 (@@@@%%%%%%%%%%%%%%%%%&@@@     @@@@@%%%%%%%%%%%%@@@@@@
+                 .@@@@@%%%%%%%%%%%%%@@@@@@      ,@@@@@@@@@@@@@@@@@@@@#
+                   /&@@@@@@@@@@@@@@@@@@%           /@@@@@@@@@@@@(.
                         /@@@@@@@@@@(.
 ```
 ## Coding Guidelines
@@ -49,7 +49,7 @@ Here are some guidelines for writing code for our robot, for your reference when
 - Code should follow general formatting rules. Class names are upper camel case, and method and variable names are lower camel case. Constants should be completely upper case, with underscores as separtors.
 - Stealth has a standard of calling subsystems _______Subsystem, Commands _______Command, and commands intended to be default commands _______DefaultCommand. Please stick to this standard for consistency.
 - Code should be formatted regularly to keep it readable (`Alt+Shift+F` on VSCode).
-- Code should be commented when appropriate. 
+- Code should be commented when appropriate.
 ##### Safety:
 - When tuning a PID for the first time, clamp the motor output. You can still print and graph the actual calculation, but limiting motor power when still tuning will prevent unexpected and unsafe robot action.
 - Systems should have current limits when appropriate. We dont want to have to burn fuses or trip breakers if we don't have to.
@@ -77,6 +77,6 @@ If you have submitted a pull request, and it has been a full meeting and the rev
 Reviewers promise to always:
 - Make sure to always respect the programmers. We understand that you do not have to write code exactly how we would, and we don't need to think or act like you.
 - We will always only evaluate code based on how it will affect the robot. If the code would hurt the robot, hurt people, or cause harm to the codebase of the robot later on, then we will work together to get the code to a place where it is ready to be on main. Reviewers are only there to look for bugs, leaky or broken abstractions, egregious efficiency issues, and redundant functionality or duplicated code.
-- We will not focus on things like extra parentheses, variable names that we don't like, or other petty things that don't actually matter. These will only be commented on if they are truly confusing and could cause other programmers on the team to slip up. 
+- We will not focus on things like extra parentheses, variable names that we don't like, or other petty things that don't actually matter. These will only be commented on if they are truly confusing and could cause other programmers on the team to slip up.
 
 Putting your code out there to review is hard. We know you spent time and energy making that code, and for many it can feel like a form of self expression. It is hard to do, and we acknowledge that. The reviewers will **always** be respectful and will only offer information for the benefit of your coding knowledge and the health of the robot. We look forward to coding with all of you!

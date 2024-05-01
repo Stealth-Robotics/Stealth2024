@@ -5,13 +5,10 @@ import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-
 import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -73,8 +70,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * sets the target velocity for the left motor in rotations per second
-     * 
-     * @param velocity in rotations per second
+     *
+     * @param velocity
+     *            in rotations per second
      */
     public void setLeftVelocity(double velocity) {
         leftMotionMagicVelocityVoltage.Velocity = velocity;
@@ -83,8 +81,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * sets the target velocity for the right motor in rotations per second
-     * 
-     * @param velocity in rotations per second
+     *
+     * @param velocity
+     *            in rotations per second
      */
     public void setRightVelocity(double velocity) {
         rightMotionMagicVelocityVoltage.Velocity = velocity;
@@ -94,7 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * returns the difference between the left motor's current velocity and the
      * target velocity
-     * 
+     *
      * @return velocity error in rotations per second
      */
     private double getLeftVelocityError() {
@@ -104,7 +103,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * returns the difference between the right motor's current velocity and the
      * target velocity
-     * 
+     *
      * @return velocity error in rotations per second
      */
     private double getRightVelocityError() {
@@ -124,7 +123,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /**
      * returns if both motors are within the velocity tolerance
-     * 
+     *
      * @return true if both motors are within the velocity tolerance
      */
     private boolean motorsAtTargetVelocity() {
@@ -135,8 +134,9 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * returns a command that spins up the shooter to the target velocity based on
      * distance from goal
-     * 
-     * @param rps doublesupplier for rotations per second to spin to
+     *
+     * @param rps
+     *            doublesupplier for rotations per second to spin to
      * @return command that spins up the shooter to the target velocity based on
      *         distance from interpolation map
      */
@@ -151,10 +151,9 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumberArray("shooter values",
-                new Double[] { leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity });
+                new Double[]{leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity});
 
         SmartDashboard.putNumber("velo", leftMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("velo target", leftMotionMagicVelocityVoltage.Velocity);
-
     }
 }

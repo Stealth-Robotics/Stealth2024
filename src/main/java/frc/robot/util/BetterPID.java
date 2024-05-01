@@ -2,11 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-//THIS PID CONTROLLER IS A MODIFIED VERSION OF THE WPILIB PID CONTROLLER
-//https://github.com/wpilibsuite/allwpilib/blob/6cc7e52de74abce2b01de4f94cb58a3047a81f5c/wpimath/src/main/java/edu/wpi/first/math/controller/PIDController.java#L15
+// THIS PID CONTROLLER IS A MODIFIED VERSION OF THE WPILIB PID CONTROLLER
+// https://github.com/wpilibsuite/allwpilib/blob/6cc7e52de74abce2b01de4f94cb58a3047a81f5c/wpimath/src/main/java/edu/wpi/first/math/controller/PIDController.java#L15
 
-//THE MODIFICATIONS ARE:
-//The PID utilizes coonditional statements to prevent integral windup
+// THE MODIFICATIONS ARE:
+// The PID utilizes coonditional statements to prevent integral windup
 
 package frc.robot.util;
 
@@ -72,33 +72,43 @@ public class BetterPID implements Sendable, AutoCloseable {
 
     /**
      * Allocates a PIDController with the given constants for kp, ki, and kd and a
-     * default period of
-     * 0.02 seconds.
+     * default period of 0.02 seconds.
      *
-     * @param kp The proportional coefficient.
-     * @param ki The integral coefficient.
-     * @param kd The derivative coefficient.
-     * @throws IllegalArgumentException if kp &lt; 0
-     * @throws IllegalArgumentException if ki &lt; 0
-     * @throws IllegalArgumentException if kd &lt; 0
+     * @param kp
+     *            The proportional coefficient.
+     * @param ki
+     *            The integral coefficient.
+     * @param kd
+     *            The derivative coefficient.
+     * @throws IllegalArgumentException
+     *             if kp &lt; 0
+     * @throws IllegalArgumentException
+     *             if ki &lt; 0
+     * @throws IllegalArgumentException
+     *             if kd &lt; 0
      */
-
     public BetterPID(double kp, double ki, double kd) {
         this(kp, ki, kd, false);
     }
 
     /**
      * Allocates a PIDController with the given constants for kp, ki, and kd and a
-     * default period of
-     * 0.02 seconds.
+     * default period of 0.02 seconds.
      *
-     * @param kp                     The proportional coefficient.
-     * @param ki                     The integral coefficient.
-     * @param kd                     The derivative coefficient.
-     * @param conditionalIntegration Whether to use conditional integration
-     * @throws IllegalArgumentException if kp &lt; 0
-     * @throws IllegalArgumentException if ki &lt; 0
-     * @throws IllegalArgumentException if kd &lt; 0
+     * @param kp
+     *            The proportional coefficient.
+     * @param ki
+     *            The integral coefficient.
+     * @param kd
+     *            The derivative coefficient.
+     * @param conditionalIntegration
+     *            Whether to use conditional integration
+     * @throws IllegalArgumentException
+     *             if kp &lt; 0
+     * @throws IllegalArgumentException
+     *             if ki &lt; 0
+     * @throws IllegalArgumentException
+     *             if kd &lt; 0
      */
     public BetterPID(double kp, double ki, double kd, boolean conditionalIntegration) {
         this(kp, ki, kd, 0.02);
@@ -108,14 +118,22 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Allocates a PIDController with the given constants for kp, ki, and kd.
      *
-     * @param kp     The proportional coefficient.
-     * @param ki     The integral coefficient.
-     * @param kd     The derivative coefficient.
-     * @param period The period between controller updates in seconds.
-     * @throws IllegalArgumentException if kp &lt; 0
-     * @throws IllegalArgumentException if ki &lt; 0
-     * @throws IllegalArgumentException if kd &lt; 0
-     * @throws IllegalArgumentException if period &lt;= 0
+     * @param kp
+     *            The proportional coefficient.
+     * @param ki
+     *            The integral coefficient.
+     * @param kd
+     *            The derivative coefficient.
+     * @param period
+     *            The period between controller updates in seconds.
+     * @throws IllegalArgumentException
+     *             if kp &lt; 0
+     * @throws IllegalArgumentException
+     *             if ki &lt; 0
+     * @throws IllegalArgumentException
+     *             if kd &lt; 0
+     * @throws IllegalArgumentException
+     *             if period &lt;= 0
      */
     @SuppressWarnings("this-escape")
     public BetterPID(double kp, double ki, double kd, double period) {
@@ -154,9 +172,12 @@ public class BetterPID implements Sendable, AutoCloseable {
      * <p>
      * Set the proportional, integral, and differential coefficients.
      *
-     * @param kp The proportional coefficient.
-     * @param ki The integral coefficient.
-     * @param kd The derivative coefficient.
+     * @param kp
+     *            The proportional coefficient.
+     * @param ki
+     *            The integral coefficient.
+     * @param kd
+     *            The derivative coefficient.
      */
     public void setPID(double kp, double ki, double kd) {
         m_kp = kp;
@@ -167,7 +188,8 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Sets the Proportional coefficient of the PID controller gain.
      *
-     * @param kp The proportional coefficient. Must be &gt;= 0.
+     * @param kp
+     *            The proportional coefficient. Must be &gt;= 0.
      */
     public void setP(double kp) {
         m_kp = kp;
@@ -176,7 +198,8 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Sets the Integral coefficient of the PID controller gain.
      *
-     * @param ki The integral coefficient. Must be &gt;= 0.
+     * @param ki
+     *            The integral coefficient. Must be &gt;= 0.
      */
     public void setI(double ki) {
         m_ki = ki;
@@ -185,7 +208,8 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Sets the Differential coefficient of the PID controller gain.
      *
-     * @param kd The differential coefficient. Must be &gt;= 0.
+     * @param kd
+     *            The differential coefficient. Must be &gt;= 0.
      */
     public void setD(double kd) {
         m_kd = kd;
@@ -193,17 +217,16 @@ public class BetterPID implements Sendable, AutoCloseable {
 
     /**
      * Sets the IZone range. When the absolute value of the position error is
-     * greater than IZone, the
-     * total accumulated error will reset to zero, disabling integral gain until the
-     * absolute value of
-     * the position error is less than IZone. This is used to prevent integral
-     * windup. Must be
-     * non-negative. Passing a value of zero will effectively disable integral gain.
-     * Passing a value
-     * of {@link Double#POSITIVE_INFINITY} disables IZone functionality.
+     * greater than IZone, the total accumulated error will reset to zero, disabling
+     * integral gain until the absolute value of the position error is less than
+     * IZone. This is used to prevent integral windup. Must be non-negative. Passing
+     * a value of zero will effectively disable integral gain. Passing a value of
+     * {@link Double#POSITIVE_INFINITY} disables IZone functionality.
      *
-     * @param iZone Maximum magnitude of error to allow integral control.
-     * @throws IllegalArgumentException if iZone &lt; 0
+     * @param iZone
+     *            Maximum magnitude of error to allow integral control.
+     * @throws IllegalArgumentException
+     *             if iZone &lt; 0
      */
     public void setIZone(double iZone) {
         if (iZone < 0) {
@@ -278,7 +301,8 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Sets the setpoint for the PIDController.
      *
-     * @param setpoint The desired setpoint.
+     * @param setpoint
+     *            The desired setpoint.
      */
     public void setSetpoint(double setpoint) {
         m_setpoint = setpoint;
@@ -312,9 +336,7 @@ public class BetterPID implements Sendable, AutoCloseable {
      * @return Whether the error is within the acceptable bounds.
      */
     public boolean atSetpoint() {
-        return m_haveMeasurement
-                && m_haveSetpoint
-                && Math.abs(m_positionError) < m_positionTolerance
+        return m_haveMeasurement && m_haveSetpoint && Math.abs(m_positionError) < m_positionTolerance
                 && Math.abs(m_velocityError) < m_velocityTolerance;
     }
 
@@ -323,11 +345,13 @@ public class BetterPID implements Sendable, AutoCloseable {
      *
      * <p>
      * Rather then using the max and min input range as constraints, it considers
-     * them to be the
-     * same point and automatically calculates the shortest route to the setpoint.
+     * them to be the same point and automatically calculates the shortest route to
+     * the setpoint.
      *
-     * @param minimumInput The minimum value expected from the input.
-     * @param maximumInput The maximum value expected from the input.
+     * @param minimumInput
+     *            The minimum value expected from the input.
+     * @param maximumInput
+     *            The maximum value expected from the input.
      */
     public void enableContinuousInput(double minimumInput, double maximumInput) {
         m_continuous = true;
@@ -354,11 +378,12 @@ public class BetterPID implements Sendable, AutoCloseable {
      *
      * <p>
      * When the cap is reached, the integrator value is added to the controller
-     * output rather than
-     * the integrator value times the integral gain.
+     * output rather than the integrator value times the integral gain.
      *
-     * @param minimumIntegral The minimum value of the integrator.
-     * @param maximumIntegral The maximum value of the integrator.
+     * @param minimumIntegral
+     *            The minimum value of the integrator.
+     * @param maximumIntegral
+     *            The maximum value of the integrator.
      */
     public void setIntegratorRange(double minimumIntegral, double maximumIntegral) {
         m_minimumIntegral = minimumIntegral;
@@ -368,7 +393,8 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Sets the error which is considered tolerable for use with atSetpoint().
      *
-     * @param positionTolerance Position error which is tolerable.
+     * @param positionTolerance
+     *            Position error which is tolerable.
      */
     public void setTolerance(double positionTolerance) {
         setTolerance(positionTolerance, Double.POSITIVE_INFINITY);
@@ -377,8 +403,10 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Sets the error which is considered tolerable for use with atSetpoint().
      *
-     * @param positionTolerance Position error which is tolerable.
-     * @param velocityTolerance Velocity error which is tolerable.
+     * @param positionTolerance
+     *            Position error which is tolerable.
+     * @param velocityTolerance
+     *            Velocity error which is tolerable.
      */
     public void setTolerance(double positionTolerance, double velocityTolerance) {
         m_positionTolerance = positionTolerance;
@@ -406,8 +434,10 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Returns the next output of the PID controller.
      *
-     * @param measurement The current measurement of the process variable.
-     * @param setpoint    The new setpoint of the controller.
+     * @param measurement
+     *            The current measurement of the process variable.
+     * @param setpoint
+     *            The new setpoint of the controller.
      * @return The next controller output.
      */
     public double calculate(double measurement, double setpoint) {
@@ -419,7 +449,8 @@ public class BetterPID implements Sendable, AutoCloseable {
     /**
      * Returns the next output of the PID controller.
      *
-     * @param measurement The current measurement of the process variable.
+     * @param measurement
+     *            The current measurement of the process variable.
      * @return The next controller output.
      */
     public double calculate(double measurement) {
@@ -441,20 +472,15 @@ public class BetterPID implements Sendable, AutoCloseable {
         // total error
         if (Math.abs(m_positionError) > m_iZone) {
             m_totalError = 0;
-        }
-
-        else if (m_ki != 0 && Math.abs(m_kp * m_positionError + m_kd * m_velocityError) < 1.0) {
+        } else if (m_ki != 0 && Math.abs(m_kp * m_positionError + m_kd * m_velocityError) < 1.0) {
             m_totalError += m_positionError * m_period;
-        }
-
-        else if (m_ki != 0) {
-            m_totalError = MathUtil.clamp(
-                    m_totalError + m_positionError * m_period,
-                    m_minimumIntegral / m_ki,
+        } else if (m_ki != 0) {
+            m_totalError = MathUtil.clamp(m_totalError + m_positionError * m_period, m_minimumIntegral / m_ki,
                     m_maximumIntegral / m_ki);
         }
 
-        // checks if the input is saturated (caclc > 0.9), and if the integral buildup is going the
+        // checks if the input is saturated (caclc > 0.9), and if the integral buildup
+        // is going the
         // wrong way (sign of calc is opposite of sign of position error)
         // if this is the case, we return the calculated output without the integral
         // term
@@ -480,16 +506,13 @@ public class BetterPID implements Sendable, AutoCloseable {
         builder.addDoubleProperty("p", this::getP, this::setP);
         builder.addDoubleProperty("i", this::getI, this::setI);
         builder.addDoubleProperty("d", this::getD, this::setD);
-        builder.addDoubleProperty(
-                "izone",
-                this::getIZone,
-                (double toSet) -> {
-                    try {
-                        setIZone(toSet);
-                    } catch (IllegalArgumentException e) {
-                        MathSharedStore.reportError("IZone must be a non-negative number!", e.getStackTrace());
-                    }
-                });
+        builder.addDoubleProperty("izone", this::getIZone, (double toSet) -> {
+            try {
+                setIZone(toSet);
+            } catch (IllegalArgumentException e) {
+                MathSharedStore.reportError("IZone must be a non-negative number!", e.getStackTrace());
+            }
+        });
         builder.addDoubleProperty("setpoint", this::getSetpoint, this::setSetpoint);
     }
 }
