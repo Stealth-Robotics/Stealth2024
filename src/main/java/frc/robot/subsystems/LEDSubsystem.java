@@ -38,7 +38,7 @@ public class LEDSubsystem extends SubsystemBase {
         this.isHomeBooleanSupplier = isHomedSupplier;
         this.isBrakeModeSupplier = isBrakeModeSupplier;
         this.hasRingSupplier = hasRingSupplier;
-CANdleConfiguration config = new CANdleConfiguration();
+        CANdleConfiguration config = new CANdleConfiguration();
         config.brightnessScalar = 0.2;
         config.disableWhenLOS = true;
         config.v5Enabled = true;
