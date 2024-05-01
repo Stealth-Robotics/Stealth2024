@@ -20,7 +20,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Spotless
-      run: ./gradlew spotlessApply
+      run: ./gradlew spotlessCheck
         
     - name: Build with Gradle
       uses: gradle/actions/setup-gradle@v3
