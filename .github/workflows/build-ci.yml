@@ -19,11 +19,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Spotless
+      run: ./gradlew spotlessApply
         
     - name: Build with Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         arguments: build
 
-    - name: Spotless
-      run: ./gradlew spotlessApply
