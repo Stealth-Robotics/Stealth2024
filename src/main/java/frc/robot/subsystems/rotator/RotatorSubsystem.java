@@ -3,6 +3,8 @@ package frc.robot.subsystems.rotator;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -71,7 +73,9 @@ public class RotatorSubsystem extends SubsystemBase {
     private final RotatorIO rotatorIO;
     private final RotatorInputsAutoLogged rotatorInputs = new RotatorInputsAutoLogged();
 
-    public RotatorSubsystem() {
+    public RotatorSubsystem(RotatorIO io) {
+
+        this.rotatorIO = io;
 
         ampOutIntake = Shuffleboard.getTab("SmartDashboard").add("amp out intake?", false)
                 .withWidget(BuiltInWidgets.kToggleSwitch).getEntry();

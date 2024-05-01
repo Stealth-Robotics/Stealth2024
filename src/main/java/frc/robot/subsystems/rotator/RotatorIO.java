@@ -10,6 +10,7 @@ public interface RotatorIO {
         double rotatorAppliedVolts;
         double currentDrawAmps;
         double angVeloRadPerSec;
+        double rotatorGoalPositionRotations;
     }
     
     default void updateInputs(RotatorInputs inputs){}
