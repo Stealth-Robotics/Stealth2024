@@ -44,6 +44,6 @@
       ]
     }
   },
-  "folder": "New Folder",
+  "folder": null,
   "choreoAuto": true
 }

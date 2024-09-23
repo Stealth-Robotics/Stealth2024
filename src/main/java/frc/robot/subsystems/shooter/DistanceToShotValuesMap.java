@@ -20,7 +20,7 @@ public class DistanceToShotValuesMap {
         // values should be in rotations
         ROTATION_INTERPOLATION_MAP.put(0.0, Units.degreesToRotations(27.0));
         ROTATION_INTERPOLATION_MAP.put(1.3, Units.degreesToRotations(27.0));
-        ROTATION_INTERPOLATION_MAP.put(1.4, Units.degreesToRotations(27.0));
+        ROTATION_INTERPOLATION_MAP.put(1.4, Units.degreesToRotations(28.0));
         ROTATION_INTERPOLATION_MAP.put(1.5, Units.degreesToRotations(30.0));
         ROTATION_INTERPOLATION_MAP.put(1.9, Units.degreesToRotations(37.0 - 5));
         ROTATION_INTERPOLATION_MAP.put(2.2, Units.degreesToRotations(39 - 5));

@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -30,17 +32,17 @@ public class RotatorSubsystem extends SubsystemBase {
     private final double ROTATOR_GEAR_RATIO = (80.0 / 10.0) * (82.0 / 18.0) * (52.0 / 15.0);
     // the offset of the home position and straight out on the arm. I.E. what should
     // the encoder read when the arm is on the hard stop?
-    private final double ZERO_OFFSET = -0.0009765;
+    private final double ZERO_OFFSET = Units.degreesToRotations(-1.25);
 
     private final TalonFX rotatorMotorOne;
     private final TalonFX rotatorMotorTwo;
 
     private final double kS = 0.0;
-    private final double kV = 14.8;
+    private final double kV = 0.0;
     private final double kG = 0.3;
 
-    private final double kP = 30;
-    private final double kI = 10;
+    private final double kP = 90;
+    private final double kI = 40;
     private final double kD = 1;
 
     private final DigitalInput homeButton = new DigitalInput(0);
@@ -52,9 +54,9 @@ public class RotatorSubsystem extends SubsystemBase {
     // tolerance in radians
     // TODO: TUNE THIS
     // this is a tolerance of 1 degree
-    private final double kTOLERANCE = Units.degreesToRotations(0.75);
+    private final double kTOLERANCE = Units.degreesToRotations(1);
 
-    private final double MOTION_MAGIC_JERK = 6;
+    private final double MOTION_MAGIC_JERK = 7;
     private final double MOTION_MAGIC_ACCELERATION = 2;
     private final double MOTION_MAGIC_CRUISE_VELOCITY = 0.5;
 
@@ -87,7 +89,7 @@ public class RotatorSubsystem extends SubsystemBase {
         ROTATOR_MOTOR_CONFIG.Slot0.kI = kI;
         ROTATOR_MOTOR_CONFIG.Slot0.kD = kD;
 
-        ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
+        // ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
         ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         ROTATOR_MOTOR_CONFIG.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
 
@@ -131,7 +133,8 @@ public class RotatorSubsystem extends SubsystemBase {
             if (motorMode == NeutralModeValue.Coast) {
                 setMotorsToBrake();
                 motorMode = NeutralModeValue.Brake;
-            } else {
+            }
+            else {
                 setMotorsToCoast();
                 motorMode = NeutralModeValue.Coast;
             }
@@ -180,6 +183,10 @@ public class RotatorSubsystem extends SubsystemBase {
         return Math.abs(getMotorPosition() - getTargetPosition()) <= kTOLERANCE;
     }
 
+    private boolean isMotorAtTarget(double tolerance) {
+        return Math.abs(getMotorPosition() - getTargetPosition()) <= tolerance;
+    }
+
     private void setMotorTargetPosition(double rotations) {
         motionMagicVoltage.Position = rotations;
         rotatorMotorOne.setControl(motionMagicVoltage);
@@ -190,6 +197,11 @@ public class RotatorSubsystem extends SubsystemBase {
                 .andThen(new WaitUntilCommand(this::isMotorAtTarget));
     }
 
+    public Command rotateToPositionCommand(DoubleSupplier rotations, double tolerance) {
+        return this.runOnce(() -> setMotorTargetPosition(rotations.getAsDouble()))
+                .andThen(new WaitUntilCommand(() -> this.isMotorAtTarget(tolerance)));
+    }
+
     public Command rotateWhileDrivingCommand(DoubleSupplier rotations) {
         return this.run(() -> this.setMotorTargetPosition(rotations.getAsDouble()));
     }
@@ -198,10 +210,21 @@ public class RotatorSubsystem extends SubsystemBase {
         return () -> ampOutIntake.getBoolean(false);
     }
 
+    public Command armManulControl(DoubleSupplier power) {
+        return this.run(() -> rotatorMotorOne.setControl(new DutyCycleOut(power.getAsDouble())))
+                .until(() -> Math.abs(power.getAsDouble()) < 0.1)
+                .andThen(new InstantCommand(() -> holdCurrentPosition()));
+    }
+
     @Override
     public void periodic() {
 
         SmartDashboard.putNumber("rotator", Units.rotationsToDegrees(getMotorPosition()));
         SmartDashboard.putNumber("rotator target", Units.rotationsToDegrees(getTargetPosition()));
+
+        // if (rotatorMotorOne.getSupplyCurrent().getValueAsDouble() > 10
+        // && rotatorMotorOne.getVelocity().getValueAsDouble() < 0.05) {
+        // resetEncoder();
+        // }
     }
 }

@@ -9,6 +9,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,18 +20,24 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.vision.LimelightHelpers;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class SwerveDrive extends SubsystemBase {
     public SwerveDrivePoseEstimator swerveOdometry;
+    NetworkTable mainCam = NetworkTableInstance.getDefault().getTable("limelight-right");
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
@@ -47,8 +54,13 @@ public class SwerveDrive extends SubsystemBase {
 
     Field2d field2d;
 
+    private PIDController rotationPID;
+    private final double kP = 0.3;
+    private final double kI = 0.0;
+    private final double kD = 0.0;
+
     // Hardcode
-    boolean isRed = false;
+    boolean isRed = true;
 
     private final GenericEntry shooterOffset;
 
@@ -63,10 +75,10 @@ public class SwerveDrive extends SubsystemBase {
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
 
-        mSwerveMods = new SwerveModule[]{new SwerveModule(0, SwerveConstants.Mod0.constants),
+        mSwerveMods = new SwerveModule[] { new SwerveModule(0, SwerveConstants.Mod0.constants),
                 new SwerveModule(1, SwerveConstants.Mod1.constants),
                 new SwerveModule(2, SwerveConstants.Mod2.constants),
-                new SwerveModule(3, SwerveConstants.Mod3.constants)};
+                new SwerveModule(3, SwerveConstants.Mod3.constants) };
         resetModulesToAbsolute();
 
         var stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
@@ -88,6 +100,8 @@ public class SwerveDrive extends SubsystemBase {
         setTargetGoal();
 
         // setCurrentAlliance();
+        rotationPID = new PIDController(kP, kI, kD);
+        rotationPID.setTolerance(0.0);
     }
 
     // public void setCurrentAlliance() {
@@ -182,7 +196,8 @@ public class SwerveDrive extends SubsystemBase {
             new Rotation2d();
             swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
                     new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
-        } else {
+        }
+        else {
             swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(),
                     new Pose2d(getPose().getTranslation(), new Rotation2d()));
         }
@@ -203,7 +218,8 @@ public class SwerveDrive extends SubsystemBase {
         PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
         if (isRed().getAsBoolean()) {
             setPose(GeometryUtil.flipFieldPose(path.getPreviewStartingHolonomicPose()));
-        } else {
+        }
+        else {
             setPose(path.getPreviewStartingHolonomicPose());
         }
     }
@@ -212,7 +228,8 @@ public class SwerveDrive extends SubsystemBase {
 
         if (isRed().getAsBoolean()) {
             setPose(GeometryUtil.flipFieldPose(startPath.getPreviewStartingHolonomicPose()));
-        } else {
+        }
+        else {
             setPose(startPath.getPreviewStartingHolonomicPose());
         }
     }
@@ -255,7 +272,8 @@ public class SwerveDrive extends SubsystemBase {
         if (target >= 5 && target <= 40) {
             target -= 5;
             return target;
-        } else if (target >= 325 && target <= 350) {
+        }
+        else if (target >= 325 && target <= 350) {
             target += 5;
             return target;
         }
@@ -274,14 +292,34 @@ public class SwerveDrive extends SubsystemBase {
         return LimelightHelpers.getTV("limelight-driver");
     }
 
+    public Command rotateToGoal() {
+        return this.runOnce(() -> rotationPID.setSetpoint(0.0))
+                .andThen(new WaitUntilCommand(() -> rotationPID.atSetpoint()))
+                .raceWith(
+                        Commands.run(() -> drive(new Translation2d(0, 0),
+                                rotationPID.calculate(LimelightHelpers.getTX("limelight-main")), false)));
+    }
+
+    // public double get2dDistance() {
+    // double tX = LimelightHelpers.getTX("limelight-main");
+    // double tY = LimelightHelpers.getTY("limelight-main");
+    // }
+
     @Override
     public void periodic() {
 
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue("limelight-main");
 
+        double[] bp = mainCam.getEntry("targetpose_robotspace")
+                .getDoubleArray(new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
+
+        if (bp.length >= 6) {
+            SmartDashboard.putNumber("distance 2d", bp[2]);
+        }
+
         if (limelightMeasurement.tagCount >= 1 && DriverStation.isTeleopEnabled()
-                && limelightMeasurement.rawFiducials[0].ambiguity < 0.9) { // if (limelightMeasurement.tagCount >= 2) {
+        /* && limelightMeasurement.rawFiducials[0].ambiguity < 0.9 */) { // if (limelightMeasurement.tagCount >= 2) {
             // swerveOdometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             swerveOdometry.addVisionMeasurement(limelightMeasurement.pose, limelightMeasurement.timestampSeconds);
         }

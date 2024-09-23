@@ -8,7 +8,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 public class StowPreset extends ParallelCommandGroup {
 
     public StowPreset(RotatorSubsystem rotator, ShooterSubsystem shooter) {
-        addCommands(rotator.rotateToPositionCommand(() -> Units.degreesToRadians(0)),
+        addCommands(rotator.rotateToPositionCommand(() -> Units.degreesToRotations(2)),
                 shooter.stopShooterMotorsCommand());
     }
 }

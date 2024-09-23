@@ -11,11 +11,12 @@ import java.util.function.DoubleSupplier;
 
 public class AimAndShootCommand extends SequentialCommandGroup {
 
-    public AimAndShootCommand(SwerveDrive drive, RotatorSubsystem rotator, ShooterSubsystem shooter,
-            IntakeSubsystem intake, DoubleSupplier distanceFromGoalSupplier) {
-        addCommands(
-                new ParallelCommandGroup(new ReadyShooter(shooter, rotator, intake, distanceFromGoalSupplier),
-                        new AutoAlignCommand(drive)),
-                new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(1.5));
-    }
+        public AimAndShootCommand(SwerveDrive drive, RotatorSubsystem rotator, ShooterSubsystem shooter,
+                        IntakeSubsystem intake, DoubleSupplier distanceFromGoalSupplier) {
+                addCommands(
+                                new ParallelCommandGroup(
+                                                new ReadyShooter(shooter, rotator, intake, distanceFromGoalSupplier),
+                                                new AutoAlignCommand(drive)),
+                                new RunCommand(() -> intake.setIntakeSpeed(1), intake).withTimeout(1.5));
+        }
 }

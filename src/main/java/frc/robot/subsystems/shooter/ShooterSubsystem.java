@@ -151,7 +151,7 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumberArray("shooter values",
-                new Double[]{leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity});
+                new Double[] { leftMotor.getVelocity().getValueAsDouble(), leftMotionMagicVelocityVoltage.Velocity });
 
         SmartDashboard.putNumber("velo", leftMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("velo target", leftMotionMagicVelocityVoltage.Velocity);

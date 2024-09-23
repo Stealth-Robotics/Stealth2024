@@ -5,7 +5,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -44,5 +47,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public boolean isRingFullyInsideIntake() {
         return !backBeamBreak.get();
+    }
+
+    public Command convey() {
+        return this.runOnce(() -> setIntakeSpeed(1))
+                .andThen(new WaitCommand(1))
+                .andThen(Commands.runOnce(() -> setIntakeSpeed(0)));
     }
 }
